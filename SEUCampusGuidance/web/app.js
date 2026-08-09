@@ -1549,6 +1549,7 @@
       }
       const nearbyFeatureButton = event.target.closest("[data-nearby-feature]");
       if (nearbyFeatureButton) {
+        closeNearby();
         selectFeature(nearbyFeatureButton.dataset.nearbyFeature);
         return;
       }
@@ -1556,6 +1557,7 @@
       if (nearbyRouteButton) {
         const feature = featureById[nearbyRouteButton.dataset.nearbyRoute];
         if (feature) {
+          closeNearby();
           selectFeature(feature.id);
           openRouteForFeature(feature);
         }
