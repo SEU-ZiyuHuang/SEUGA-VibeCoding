@@ -1081,6 +1081,19 @@
     return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng, coordinateSystem: "GCJ-02" } : null;
   }
 
+  function makeTencentMapAccessible() {
+    if (!elements.tencentMap) return;
+    const annotate = () => {
+      elements.tencentMap.querySelectorAll("img:not([alt])").forEach((image) => image.setAttribute("alt", ""));
+      elements.tencentMap.querySelectorAll("a").forEach((link) => {
+        if (!link.getAttribute("aria-label") && !link.textContent.trim()) link.setAttribute("aria-label", "打开腾讯地图");
+      });
+    };
+    annotate();
+    const observer = new MutationObserver(annotate);
+    observer.observe(elements.tencentMap, { childList: true, subtree: true });
+  }
+
   function initializeTencentMap() {
     if (!window.TMap || !window.APP_CONFIG.tencentMapKey) return;
     elements.fallbackMap.hidden = true;
@@ -1093,6 +1106,7 @@
       pitch: 0,
       rotation: 0,
     });
+    makeTencentMapAccessible();
     const markerSvg = (color) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 46"><path fill="${color}" stroke="white" stroke-width="3" d="M18 1.5c-9 0-16.5 7.2-16.5 16.2C1.5 30 18 44.5 18 44.5S34.5 30 34.5 17.7C34.5 8.7 27 1.5 18 1.5Z"/><circle cx="18" cy="17.5" r="6" fill="white"/></svg>`)}`;
     const selectedMarkerSvg = (color) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 64"><circle cx="26" cy="27" r="24" fill="${color}" opacity=".18"/><circle cx="26" cy="27" r="19" fill="white" opacity=".88"/><path fill="${color}" stroke="white" stroke-width="3.5" d="M26 2.5C13.7 2.5 3.5 12.1 3.5 24.2 3.5 38.2 26 61 26 61s22.5-22.8 22.5-36.8C48.5 12.1 38.3 2.5 26 2.5Z"/><circle cx="26" cy="24" r="7.5" fill="white"/></svg>`)}`;
     const markerStyles = {};
