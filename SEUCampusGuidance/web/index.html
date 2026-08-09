@@ -26,7 +26,8 @@
         </div>
         <div class="top-actions">
           <span id="dataStatus" class="status-pill success">指南版本 · 2025.08</span>
-          <button id="annotationButton" class="ghost-button annotation-button" type="button">标注地图</button>
+          <button id="serviceButton" class="ghost-button service-button" type="button">办事服务</button>
+          <button id="annotationButton" class="ghost-button annotation-button" type="button" hidden aria-hidden="true" tabindex="-1">标注地图</button>
           <button id="guideButton" class="ghost-button">校园指南</button>
           <button id="agentButton" class="primary-button">问校园 Agent</button>
         </div>
@@ -131,12 +132,26 @@
           </div>
 
           <div class="map-toolbar">
-            <button id="locateButton" class="map-tool" title="定位">◎</button>
-            <button id="zoomInButton" class="map-tool" title="放大">＋</button>
-            <button id="zoomOutButton" class="map-tool" title="缩小">−</button>
+            <button id="nearbyButton" class="map-tool map-tool-nearby" type="button" title="附近服务" aria-label="查看附近服务">近</button>
+            <button id="locateButton" class="map-tool" type="button" title="定位" aria-label="定位我的位置">◎</button>
+            <button id="zoomInButton" class="map-tool" type="button" title="放大" aria-label="放大地图">＋</button>
+            <button id="zoomOutButton" class="map-tool" type="button" title="缩小" aria-label="缩小地图">−</button>
           </div>
 
           <div id="layerBar" class="layer-bar"></div>
+
+          <section id="nearbyPanel" class="nearby-panel" hidden aria-live="polite" aria-label="附近服务">
+            <div class="nearby-panel-header">
+              <div>
+                <span class="eyebrow">NEARBY</span>
+                <h2>离我最近</h2>
+              </div>
+              <button id="nearbyClose" class="icon-button" type="button" aria-label="关闭附近服务">×</button>
+            </div>
+            <p id="nearbyStatus" class="nearby-status">定位后可按距离查看餐饮、打印、医疗和出行服务。</p>
+            <div id="nearbyFilters" class="nearby-filters" aria-label="附近服务分类"></div>
+            <div id="nearbyList" class="nearby-list"></div>
+          </section>
 
           <section id="annotationPanel" class="annotation-panel" hidden aria-live="polite">
             <div class="annotation-panel-header">
@@ -291,6 +306,22 @@
       </div>
     </section>
 
+    <section id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="serviceModalTitle" aria-hidden="true" inert>
+      <div class="modal-card service-modal-card">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">CAMPUS SERVICES</span>
+            <h2 id="serviceModalTitle">校园办事服务</h2>
+          </div>
+          <button id="serviceClose" class="icon-button" type="button" aria-label="关闭办事服务">×</button>
+        </div>
+        <div class="service-layout">
+          <nav id="workflowList" class="workflow-list" aria-label="办事流程"></nav>
+          <article id="workflowDetail" class="workflow-detail" aria-live="polite"></article>
+        </div>
+      </div>
+    </section>
+
     <script src="./runtime-config.js"></script>
     <script>window.APP_CONFIG = window.APP_CONFIG || { tencentMapKey: "", agentEnabled: false };</script>
     <script src="../data/guide-data.js"></script>
@@ -298,6 +329,7 @@
     <script src="../data/manual-poi.js"></script>
     <script src="../data/annotation-import-20260806.js"></script>
     <script src="../data/guide-pages.js"></script>
+    <script src="../data/service-workflows.js"></script>
     <script src="./coordinates.js"></script>
     <script src="./app.js"></script>
   </body>

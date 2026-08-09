@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102d24" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>四牌楼校园指南 · 内容管理</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23173f32'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-size='22' font-family='Arial' font-weight='700' fill='%23e4eadb'%3ESEU%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <div class="admin-shell">
+      <header class="admin-topbar">
+        <a class="admin-brand" href="/" aria-label="返回校园指南">
+          <span>SEU</span>
+          <div><strong>内容管理</strong><small>四牌楼校园指南</small></div>
+        </a>
+        <div class="admin-top-actions">
+          <span id="publishState" class="publish-state">安全连接</span>
+          <a class="back-link" href="/">查看网站</a>
+          <button id="logoutButton" class="quiet-button" type="button" hidden>退出</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="loginView" class="login-view">
+          <form id="loginForm" class="login-card">
+            <span class="eyebrow">CONTENT STUDIO</span>
+            <h1>登录内容管理后台</h1>
+            <p>更新地点介绍、开放时间和校园办事流程。只有发布后的内容会显示在网站上。</p>
+            <label>
+              <span>管理口令</span>
+              <input id="passwordInput" type="password" name="password" minlength="12" required autocomplete="current-password" placeholder="输入管理口令" />
+            </label>
+            <button id="loginButton" class="primary-action" type="submit">进入后台</button>
+            <div id="loginNotice" class="form-notice" role="status"></div>
+          </form>
+        </section>
+
+        <section id="editorView" class="editor-view" hidden>
+          <aside class="content-index">
+            <div class="index-heading">
+              <span class="eyebrow">CONTENT</span>
+              <h1>内容条目</h1>
+            </div>
+            <div class="content-tabs" role="tablist" aria-label="内容类型">
+              <button class="content-tab active" type="button" data-content-kind="feature" role="tab" aria-selected="true">地点信息</button>
+              <button class="content-tab" type="button" data-content-kind="workflow" role="tab" aria-selected="false">办事流程</button>
+            </div>
+            <label class="content-search">
+              <span aria-hidden="true">⌕</span>
+              <input id="contentSearch" type="search" placeholder="搜索内容条目" autocomplete="off" />
+            </label>
+            <div id="contentList" class="content-list"></div>
+          </aside>
+
+          <section class="content-editor">
+            <div class="editor-heading">
+              <div>
+                <span id="editorEyebrow" class="eyebrow">PLACE</span>
+                <h2 id="editorTitle">选择一条内容</h2>
+              </div>
+              <span id="overrideBadge" class="override-badge">使用指南原文</span>
+            </div>
+            <form id="contentForm" class="content-form">
+              <label>
+                <span>标题</span>
+                <input id="fieldTitle" name="title" maxlength="80" required />
+              </label>
+              <label>
+                <span>摘要 / 介绍</span>
+                <textarea id="fieldSummary" name="summary" rows="5" maxlength="800"></textarea>
+              </label>
+              <div id="featureFields" class="field-group">
+                <label>
+                  <span>位置</span>
+                  <input id="fieldLocation" name="location" maxlength="200" />
+                </label>
+                <label>
+                  <span>开放或服务时间</span>
+                  <input id="fieldHours" name="hours" maxlength="160" />
+                </label>
+              </div>
+              <div id="workflowFields" class="field-group" hidden>
+                <label>
+                  <span>办理前准备（每行一项）</span>
+                  <textarea id="fieldPreparation" name="preparation" rows="4"></textarea>
+                </label>
+                <label>
+                  <span>办理步骤（每行一步）</span>
+                  <textarea id="fieldSteps" name="steps" rows="9"></textarea>
+                </label>
+                <label>
+                  <span>重要提醒</span>
+                  <textarea id="fieldNotice" name="notice" rows="3" maxlength="500"></textarea>
+                </label>
+              </div>
+              <div class="editor-actions">
+                <button class="primary-action" type="submit">保存到发布草稿</button>
+                <button id="restoreEntry" class="secondary-action" type="button">恢复指南原文</button>
+              </div>
+            </form>
+          </section>
+
+          <aside class="publish-panel">
+            <div>
+              <span class="eyebrow">PUBLISH</span>
+              <h2>发布中心</h2>
+              <p>先保存当前条目，再统一发布。发布不会修改原始指南数据，可随时恢复。</p>
+            </div>
+            <dl class="publish-meta">
+              <div><dt>地点改动</dt><dd id="featureChangeCount">0</dd></div>
+              <div><dt>流程改动</dt><dd id="workflowChangeCount">0</dd></div>
+              <div><dt>上次发布</dt><dd id="lastPublishedAt">尚未发布</dd></div>
+            </dl>
+            <button id="publishButton" class="publish-button" type="button">发布到网站</button>
+            <button id="discardDraft" class="secondary-action full" type="button">放弃未发布改动</button>
+            <div id="publishNotice" class="form-notice" role="status"></div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="../data/map-features.js"></script>
+    <script src="../data/manual-poi.js"></script>
+    <script src="../data/annotation-import-20260806.js"></script>
+    <script src="../data/service-workflows.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>

@@ -6,9 +6,12 @@
   "description": "东南大学校园地图与智能指南 Demo",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check coordinates.js && node --check prepare-vercel.mjs && node --check app.js && node --check api/runtime-config.js && node --check api/agent/chat.js"
+    "check": "node --check server.mjs && node --check coordinates.js && node --check prepare-vercel.mjs && node --check app.js && node --check admin.js && node --check api/runtime-config.js && node --check api/agent/chat.js && node --check api/map/walking.js && node --check api/content.js && node --check api/admin/session.js && node --check api/admin/content.js && node --check api/_shared/admin-auth.js && node --check api/_shared/content-store.js"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.7.0"
   }
 }

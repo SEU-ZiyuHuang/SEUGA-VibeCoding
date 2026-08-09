@@ -13,6 +13,16 @@
     annotationMarkers: null,
     userMarker: null,
     userLocation: null,
+    locationPromise: null,
+    routeData: null,
+    routeError: "",
+    routeFeatureId: null,
+    routeRequestId: null,
+    routePolyline: null,
+    routeLoading: false,
+    nearbyOpen: false,
+    nearbyCategory: "all",
+    serviceWorkflowId: null,
     annotations: [],
     selectedAnnotationId: null,
     annotationMode: false,
@@ -33,6 +43,12 @@
     fallbackMap: document.querySelector("#fallbackMap"),
     tencentMap: document.querySelector("#tencentMap"),
     layerBar: document.querySelector("#layerBar"),
+    nearbyButton: document.querySelector("#nearbyButton"),
+    nearbyPanel: document.querySelector("#nearbyPanel"),
+    nearbyClose: document.querySelector("#nearbyClose"),
+    nearbyStatus: document.querySelector("#nearbyStatus"),
+    nearbyFilters: document.querySelector("#nearbyFilters"),
+    nearbyList: document.querySelector("#nearbyList"),
     annotationButton: document.querySelector("#annotationButton"),
     annotationPanel: document.querySelector("#annotationPanel"),
     annotationCount: document.querySelector("#annotationCount"),
@@ -75,12 +91,18 @@
     guideRecordTitle: document.querySelector("#guideRecordTitle"),
     guideRecordCount: document.querySelector("#guideRecordCount"),
     guideRecordList: document.querySelector("#guideRecordList"),
+    serviceButton: document.querySelector("#serviceButton"),
+    serviceModal: document.querySelector("#serviceModal"),
+    serviceClose: document.querySelector("#serviceClose"),
+    workflowList: document.querySelector("#workflowList"),
+    workflowDetail: document.querySelector("#workflowDetail"),
     sidebar: document.querySelector(".sidebar"),
     dataStatus: document.querySelector("#dataStatus"),
   };
 
   const manualPoi = Array.isArray(window.MANUAL_POI) ? window.MANUAL_POI : [];
   const importedAnnotations = Array.isArray(window.IMPORTED_ANNOTATIONS) ? window.IMPORTED_ANNOTATIONS : [];
+  const serviceWorkflows = Array.isArray(window.SERVICE_WORKFLOWS) ? window.SERVICE_WORKFLOWS : [];
   const featureCoordinateStorageKey = "seu-campus-map-coordinate-overrides-v1";
 
   function readFeatureCoordinateOverrides() {
@@ -120,6 +142,7 @@
 
   const themeById = Object.fromEntries(window.MAP_THEMES.map((theme) => [theme.id, theme]));
   const featureById = Object.fromEntries(window.MAP_FEATURES.map((feature) => [feature.id, feature]));
+  const workflowById = Object.fromEntries(serviceWorkflows.map((workflow) => [workflow.id, workflow]));
   const toTencentCoordinate = (latitude, longitude, coordinateSystem = "WGS84") => (
     coordinateSystem === "GCJ-02"
       ? { latitude, longitude }
@@ -142,6 +165,45 @@
     "一卡通与生活服务": { icon: "卡", summary: "一卡通、洗衣、外卖、医疗与AED" },
   };
   const annotationStorageKey = "seu-campus-map-annotations-v1";
+
+  function applyPublishedContent(content) {
+    const featureFields = ["name", "description", "location", "hours"];
+    const workflowFields = ["title", "summary", "notice", "preparation", "steps"];
+    Object.entries(content?.featureOverrides || {}).forEach(([id, override]) => {
+      const feature = featureById[id];
+      if (!feature || !override || typeof override !== "object") return;
+      featureFields.forEach((field) => {
+        if (typeof override[field] === "string") feature[field] = override[field];
+      });
+    });
+    Object.entries(content?.workflowOverrides || {}).forEach(([id, override]) => {
+      const workflow = workflowById[id];
+      if (!workflow || !override || typeof override !== "object") return;
+      workflowFields.forEach((field) => {
+        if (typeof override[field] === "string") workflow[field] = override[field];
+        if ((field === "preparation" || field === "steps") && Array.isArray(override[field])) {
+          workflow[field] = override[field].filter((item) => typeof item === "string" && item.trim());
+        }
+      });
+    });
+  }
+
+  async function loadPublishedContent() {
+    try {
+      const response = await fetch("/api/content", { cache: "no-store" });
+      if (!response.ok) return;
+      const payload = await response.json();
+      applyPublishedContent(payload.content);
+      renderAll();
+      renderServiceWorkflows();
+      if (state.selectedId) {
+        const selected = resolveFeature(state.selectedId, !featureById[state.selectedId]);
+        if (selected) renderDetail(selected);
+      }
+    } catch (error) {
+      console.warn("已继续使用内置校园指南内容。", error);
+    }
+  }
 
   function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
@@ -227,6 +289,109 @@
     if (!Number.isFinite(distance)) return "";
     if (distance < 1000) return `${Math.max(10, Math.round(distance / 10) * 10)} m`;
     return `${(distance / 1000).toFixed(distance < 10000 ? 1 : 0)} km`;
+  }
+
+  const nearbyCategories = [
+    { id: "all", label: "全部" },
+    { id: "dining", label: "餐饮" },
+    { id: "service", label: "生活服务" },
+    { id: "medical", label: "医疗急救" },
+    { id: "study", label: "学习空间" },
+    { id: "transport", label: "交通" },
+  ];
+
+  function setUserLocation(coordinate, centerMap = true) {
+    state.userLocation = coordinate;
+    if (centerMap && state.tmap) state.tmap.easeTo({ center: new TMap.LatLng(coordinate.latitude, coordinate.longitude), zoom: 18 });
+    renderResults();
+    renderNearby();
+    if (state.selectedAnnotationId) {
+      const annotation = state.annotations.find((item) => item.id === state.selectedAnnotationId);
+      if (annotation) selectAnnotation(annotation);
+    } else if (state.selectedId) {
+      const selected = resolveFeature(state.selectedId, !featureById[state.selectedId]);
+      if (selected) renderDetail(selected);
+    }
+    restoreDataStatus();
+  }
+
+  function requestUserLocation({ centerMap = true } = {}) {
+    if (state.userLocation) return Promise.resolve(state.userLocation);
+    if (state.locationPromise) return state.locationPromise;
+    if (!navigator.geolocation) return Promise.reject(new Error("当前浏览器不支持定位。"));
+    elements.dataStatus.textContent = "正在定位…";
+    elements.dataStatus.classList.remove("success");
+    elements.dataStatus.classList.add("warning");
+    state.locationPromise = new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const coordinate = toTencentCoordinate(position.coords.latitude, position.coords.longitude);
+        setUserLocation(coordinate, centerMap);
+        resolve(coordinate);
+      }, () => {
+        state.userLocation = null;
+        restoreDataStatus();
+        reject(new Error("未获得定位权限。请在浏览器地址栏允许位置访问后重试。"));
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+    }).finally(() => { state.locationPromise = null; });
+    return state.locationPromise;
+  }
+
+  function nearbyFeatures() {
+    if (!state.userLocation) return [];
+    const supported = new Set(["dining", "service", "medical", "study", "transport"]);
+    return window.MAP_FEATURES
+      .filter((feature) => supported.has(feature.category)
+        && (state.nearbyCategory === "all" || feature.category === state.nearbyCategory)
+        && Number.isFinite(Number(feature.lat))
+        && Number.isFinite(Number(feature.lng)))
+      .map((feature) => ({ feature, distance: featureDistance(feature) }))
+      .filter((item) => Number.isFinite(item.distance))
+      .sort((left, right) => left.distance - right.distance)
+      .slice(0, 8);
+  }
+
+  function renderNearby() {
+    if (!elements.nearbyPanel) return;
+    elements.nearbyPanel.hidden = !state.nearbyOpen;
+    elements.nearbyButton.classList.toggle("active", state.nearbyOpen);
+    elements.nearbyFilters.innerHTML = nearbyCategories.map((category) => `
+      <button class="nearby-filter ${state.nearbyCategory === category.id ? "active" : ""}" type="button" data-nearby-category="${category.id}">${category.label}</button>
+    `).join("");
+    if (!state.userLocation) {
+      elements.nearbyStatus.textContent = "需要获取你的位置，才能计算附近服务的实际距离。";
+      elements.nearbyList.innerHTML = `<button class="nearby-locate" type="button" data-nearby-action="locate">允许定位并查看</button>`;
+      return;
+    }
+    const items = nearbyFeatures();
+    elements.nearbyStatus.textContent = "已按直线距离由近到远排列；点击地点可查看详情。";
+    elements.nearbyList.innerHTML = items.length ? items.map(({ feature, distance }, index) => `
+      <article class="nearby-item">
+        <button class="nearby-place" type="button" data-nearby-feature="${escapeHtml(feature.id)}">
+          <span class="nearby-rank">${index + 1}</span>
+          <span><strong>${escapeHtml(feature.name)}</strong><small>${escapeHtml(publicLocation(feature))}</small></span>
+          <em>${formatDistance(distance)}</em>
+        </button>
+        <button class="nearby-route" type="button" data-nearby-route="${escapeHtml(feature.id)}" aria-label="规划到 ${escapeHtml(feature.name)} 的路线">路线</button>
+      </article>
+    `).join("") : `<div class="nearby-empty">这个分类暂时没有可计算距离的地点。</div>`;
+  }
+
+  async function openNearby() {
+    state.nearbyOpen = true;
+    renderNearby();
+    if (state.userLocation) return;
+    try {
+      await requestUserLocation({ centerMap: false });
+      showToast("已定位，附近服务已按距离排列。", "success");
+    } catch (error) {
+      elements.nearbyStatus.textContent = error.message;
+      showToast(error.message, "warning");
+    }
+  }
+
+  function closeNearby() {
+    state.nearbyOpen = false;
+    renderNearby();
   }
 
   function setAnnotationNotice(message, isWarning = false) {
@@ -717,6 +882,7 @@
   function selectFeature(id, isKnowledge = false) {
     const feature = resolveFeature(id, isKnowledge);
     if (!feature) return;
+    if (state.routeFeatureId && state.routeFeatureId !== id) clearRoute();
     state.selectedAnnotationId = null;
     state.selectedId = id;
     renderResults();
@@ -837,16 +1003,10 @@
     showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 3200);
   }
 
-  function openRouteForFeature(feature) {
-    if (!feature || !Number.isFinite(Number(feature.lat)) || !Number.isFinite(Number(feature.lng))) {
-      showToast("这个地点还没有可用于路线规划的坐标。", "warning");
-      return;
-    }
+  function routeUriForFeature(feature) {
+    if (!feature || !Number.isFinite(Number(feature.lat)) || !Number.isFinite(Number(feature.lng))) return "";
     const key = window.APP_CONFIG.tencentMapKey;
-    if (!key) {
-      showToast("配置腾讯地图 Key 后即可打开步行路线。", "warning");
-      return;
-    }
+    if (!key) return "";
     const target = toTencentCoordinate(Number(feature.lat), Number(feature.lng), feature.coordinateSystem);
     const params = new URLSearchParams({
       type: "walk",
@@ -856,7 +1016,102 @@
       tocoord: `${target.latitude},${target.longitude}`,
       referer: key,
     });
-    window.open(`https://apis.map.qq.com/uri/v1/routeplan?${params.toString()}`, "_blank", "noopener,noreferrer");
+    return `https://apis.map.qq.com/uri/v1/routeplan?${params.toString()}`;
+  }
+
+  function clearRoute() {
+    state.routeData = null;
+    state.routeError = "";
+    state.routeFeatureId = null;
+    state.routeRequestId = null;
+    state.routeLoading = false;
+    state.routePolyline?.setGeometries([]);
+  }
+
+  function drawRoute(route) {
+    if (!state.tmap || !state.routePolyline || !Array.isArray(route?.polyline) || route.polyline.length < 2) return;
+    const paths = route.polyline.map((point) => new TMap.LatLng(point.latitude, point.longitude));
+    state.routePolyline.setGeometries([{ id: "active-walking-route", styleId: "walking-route", paths }]);
+    const centerIndex = Math.floor(paths.length / 2);
+    state.tmap.easeTo({
+      center: paths[centerIndex],
+      zoom: route.distance < 450 ? 19 : route.distance < 1200 ? 18 : 17,
+    });
+  }
+
+  function renderRouteSummary(feature) {
+    if (state.routeFeatureId !== feature?.id) return "";
+    if (state.routeLoading) {
+      return `<section class="route-summary route-loading" aria-live="polite"><span class="route-loader" aria-hidden="true"></span><div><strong>正在规划步行路线</strong><small>正在根据你的位置计算校园道路</small></div></section>`;
+    }
+    const route = state.routeData;
+    const externalUri = routeUriForFeature(feature);
+    if (!route && state.routeError) {
+      return `<section class="route-summary route-error" role="status">
+        <strong>站内路线暂时未生成</strong>
+        <p>${escapeHtml(state.routeError)}</p>
+        ${externalUri ? `<a class="route-external" href="${escapeHtml(externalUri)}" target="_blank" rel="noreferrer">改用腾讯地图导航 →</a>` : ""}
+      </section>`;
+    }
+    if (!route) return "";
+    return `<section class="route-summary">
+      <div class="route-overview">
+        <span><strong>${formatDistance(route.distance)}</strong><small>步行距离</small></span>
+        <span><strong>${Math.max(1, Math.round(route.duration))} 分钟</strong><small>预计用时</small></span>
+        <span><strong>${escapeHtml(route.direction || "校内")}</strong><small>整体方向</small></span>
+      </div>
+      <div class="detail-section-heading"><span>路线步骤</span><small>${route.steps.length} 步</small></div>
+      <ol class="route-steps">${route.steps.map((step) => `
+        <li><span class="route-step-dot" aria-hidden="true"></span><div><strong>${escapeHtml(step.instruction)}</strong><small>${formatDistance(step.distance)}</small></div></li>
+      `).join("")}</ol>
+      ${externalUri ? `<a class="route-external" href="${escapeHtml(externalUri)}" target="_blank" rel="noreferrer">在腾讯地图中继续导航 →</a>` : ""}
+    </section>`;
+  }
+
+  async function openRouteForFeature(feature) {
+    if (!feature || !Number.isFinite(Number(feature.lat)) || !Number.isFinite(Number(feature.lng))) {
+      showToast("这个地点还没有可用于路线规划的坐标。", "warning");
+      return;
+    }
+    const key = window.APP_CONFIG.tencentMapKey;
+    if (!key) {
+      showToast("配置腾讯地图 Key 后即可打开步行路线。", "warning");
+      return;
+    }
+    state.routeFeatureId = feature.id;
+    state.routeData = null;
+    state.routeError = "";
+    state.routeLoading = true;
+    const requestId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    state.routeRequestId = requestId;
+    renderDetail(feature);
+    try {
+      const from = await requestUserLocation({ centerMap: false });
+      if (state.routeRequestId !== requestId) return;
+      const to = toTencentCoordinate(Number(feature.lat), Number(feature.lng), feature.coordinateSystem);
+      const response = await fetch("/api/map/walking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ from, to }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.route) throw new Error(payload.error || "暂时无法规划步行路线。");
+      if (state.routeRequestId !== requestId) return;
+      state.routeData = payload.route;
+      drawRoute(payload.route);
+      showToast(`路线已生成：步行约 ${formatDistance(payload.route.distance)}。`, "success");
+    } catch (error) {
+      if (state.routeRequestId !== requestId) return;
+      state.routeData = null;
+      state.routeError = error.message || "暂时无法规划步行路线。";
+      state.routePolyline?.setGeometries([]);
+      showToast(error.message || "暂时无法规划步行路线。", "warning");
+    } finally {
+      if (state.routeRequestId === requestId) {
+        state.routeLoading = false;
+        if (state.selectedId === feature.id || state.selectedAnnotationId === feature.id) renderDetail(feature);
+      }
+    }
   }
 
   function focusAnnotation(annotation) {
@@ -890,8 +1145,9 @@
       ${featureDistance(feature) !== null ? `<div class="detail-grid"><span>距你</span><strong>${formatDistance(featureDistance(feature))} · 直线距离</strong></div>` : ""}
       ${tags ? `<div class="detail-grid"><span>设施与服务</span><div class="tag-list">${tags}</div></div>` : ""}
       ${renderRelatedGuide(feature)}
+      ${renderRouteSummary(feature)}
       <div class="detail-actions">
-        ${linkedPlace ? `<button class="route-button" data-detail-action="show-map" data-place-id="${escapeHtml(linkedPlace.id)}">地图上查看</button>` : `<button class="route-button" data-detail-action="route" ${feature.knowledgeOnly ? "disabled" : ""}>步行路线</button>`}
+        ${linkedPlace ? `<button class="route-button" data-detail-action="show-map" data-place-id="${escapeHtml(linkedPlace.id)}">地图上查看</button>` : `<button class="route-button" data-detail-action="route" ${feature.knowledgeOnly || state.routeLoading ? "disabled" : ""}>${state.routeFeatureId === feature.id && state.routeData ? "重新规划" : state.routeLoading ? "规划中…" : "步行路线"}</button>`}
         <button class="ask-button" data-detail-action="ask">继续问 Agent</button>
         ${hasEditableCoordinate && state.annotationMode ? `<button class="coordinate-button" data-detail-action="edit-coordinate">校正地图位置</button>` : ""}
       </div>
@@ -900,6 +1156,7 @@
   }
 
   function closeDetail() {
+    clearRoute();
     state.selectedId = null;
     state.selectedAnnotationId = null;
     elements.detailPanel.classList.remove("open");
@@ -973,6 +1230,55 @@
       </button>`;
     }).join("");
     renderGuideView();
+  }
+
+  function renderServiceWorkflows() {
+    if (!elements.workflowList || !elements.workflowDetail || !serviceWorkflows.length) return;
+    if (!state.serviceWorkflowId || !workflowById[state.serviceWorkflowId]) state.serviceWorkflowId = serviceWorkflows[0].id;
+    elements.workflowList.innerHTML = serviceWorkflows.map((workflow) => `
+      <button class="workflow-card ${state.serviceWorkflowId === workflow.id ? "active" : ""}" type="button" data-workflow-id="${escapeHtml(workflow.id)}">
+        <span class="workflow-icon">${escapeHtml(workflow.icon)}</span>
+        <span><small>${escapeHtml(workflow.category)}</small><strong>${escapeHtml(workflow.title)}</strong><em>${escapeHtml(workflow.summary)}</em></span>
+        <b aria-hidden="true">→</b>
+      </button>
+    `).join("");
+    const workflow = workflowById[state.serviceWorkflowId];
+    const places = (workflow.mapFeatureIds || []).map((id) => featureById[id]).filter(Boolean);
+    elements.workflowDetail.innerHTML = `
+      <span class="workflow-category">${escapeHtml(workflow.category)}</span>
+      <h3>${escapeHtml(workflow.title)}</h3>
+      <p class="workflow-summary">${escapeHtml(workflow.summary)}</p>
+      <section class="workflow-preparation">
+        <div class="detail-section-heading"><span>办理前准备</span><small>${workflow.preparation.length} 项</small></div>
+        <ul>${workflow.preparation.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      </section>
+      <section class="workflow-steps">
+        <div class="detail-section-heading"><span>办理步骤</span><small>${workflow.steps.length} 步</small></div>
+        <ol>${workflow.steps.map((step, index) => `<li><span>${index + 1}</span><p>${escapeHtml(step)}</p></li>`).join("")}</ol>
+      </section>
+      ${workflow.notice ? `<aside class="workflow-notice"><strong>办理提醒</strong><p>${escapeHtml(workflow.notice)}</p></aside>` : ""}
+      <div class="workflow-actions">
+        ${places.map((place) => `<button class="secondary-action" type="button" data-workflow-place="${escapeHtml(place.id)}">地图查看 · ${escapeHtml(place.name)}</button>`).join("")}
+        <button class="primary-action" type="button" data-workflow-ask="${escapeHtml(workflow.id)}">继续问校园 Agent</button>
+      </div>
+    `;
+  }
+
+  function openServices(workflowId = "") {
+    if (workflowId && workflowById[workflowId]) state.serviceWorkflowId = workflowId;
+    renderServiceWorkflows();
+    elements.serviceModal.removeAttribute("inert");
+    elements.serviceModal.setAttribute("aria-hidden", "false");
+    elements.serviceModal.classList.add("open");
+    window.setTimeout(() => elements.workflowList.querySelector(".workflow-card.active")?.focus(), 0);
+  }
+
+  function closeServices() {
+    if (!elements.serviceModal.classList.contains("open")) return;
+    elements.serviceModal.classList.remove("open");
+    elements.serviceModal.setAttribute("aria-hidden", "true");
+    elements.serviceModal.setAttribute("inert", "");
+    elements.serviceButton.focus();
   }
 
   function addMessage(role, content, loading = false) {
@@ -1155,6 +1461,22 @@
       },
       geometries: [],
     });
+    state.routePolyline = new TMap.MultiPolyline({
+      map: state.tmap,
+      zIndex: 150,
+      styles: {
+        "walking-route": new TMap.PolylineStyle({
+          color: "#245342",
+          width: 8,
+          borderWidth: 3,
+          borderColor: "rgba(255,253,246,.96)",
+          lineCap: "round",
+          showArrow: true,
+          arrowOptions: { width: 7, height: 5, space: 58 },
+        }),
+      },
+      geometries: [],
+    });
     state.tmapMarkers.on("click", (event) => {
       const id = event?.geometry?.id;
       if (id) selectFeature(id);
@@ -1174,6 +1496,7 @@
     });
     restoreDataStatus();
     renderMarkers();
+    if (state.routeData) drawRoute(state.routeData);
   }
 
   function loadTencentMap() {
@@ -1190,12 +1513,58 @@
   function renderAll() {
     renderThemes();
     renderLayerBar();
+    renderNearby();
     renderAnnotationPanel();
     renderResults();
   }
 
   function bindEvents() {
     document.addEventListener("click", (event) => {
+      const workflowButton = event.target.closest("[data-workflow-id]");
+      if (workflowButton) {
+        state.serviceWorkflowId = workflowButton.dataset.workflowId;
+        renderServiceWorkflows();
+        return;
+      }
+      const workflowPlaceButton = event.target.closest("[data-workflow-place]");
+      if (workflowPlaceButton) {
+        closeServices();
+        selectFeature(workflowPlaceButton.dataset.workflowPlace);
+        return;
+      }
+      const workflowAskButton = event.target.closest("[data-workflow-ask]");
+      if (workflowAskButton) {
+        const workflow = workflowById[workflowAskButton.dataset.workflowAsk];
+        if (workflow) {
+          closeServices();
+          openAgent(workflow.agentPrompt || `请介绍${workflow.title}的办理流程。`);
+        }
+        return;
+      }
+      const nearbyCategoryButton = event.target.closest("[data-nearby-category]");
+      if (nearbyCategoryButton) {
+        state.nearbyCategory = nearbyCategoryButton.dataset.nearbyCategory;
+        renderNearby();
+        return;
+      }
+      const nearbyFeatureButton = event.target.closest("[data-nearby-feature]");
+      if (nearbyFeatureButton) {
+        selectFeature(nearbyFeatureButton.dataset.nearbyFeature);
+        return;
+      }
+      const nearbyRouteButton = event.target.closest("[data-nearby-route]");
+      if (nearbyRouteButton) {
+        const feature = featureById[nearbyRouteButton.dataset.nearbyRoute];
+        if (feature) {
+          selectFeature(feature.id);
+          openRouteForFeature(feature);
+        }
+        return;
+      }
+      if (event.target.closest('[data-nearby-action="locate"]')) {
+        openNearby();
+        return;
+      }
       const guideViewButton = event.target.closest("[data-guide-view]");
       if (guideViewButton) {
         state.guideView = guideViewButton.dataset.guideView === "original" ? "original" : "structured";
@@ -1256,7 +1625,7 @@
     });
     document.addEventListener("keydown", (event) => {
       if (event.key === "/" && document.activeElement !== elements.searchInput) { event.preventDefault(); elements.searchInput.focus(); }
-      if (event.key === "Escape") { closeDetail(); closeAnnotationEditor(); closeCoordinateEditor(); elements.agentDrawer.classList.remove("open"); closeGuide(); }
+      if (event.key === "Escape") { closeDetail(); closeNearby(); closeAnnotationEditor(); closeCoordinateEditor(); elements.agentDrawer.classList.remove("open"); closeGuide(); closeServices(); }
     });
     document.querySelectorAll(".filter-chip").forEach((button) => button.addEventListener("click", () => {
       document.querySelectorAll(".filter-chip").forEach((item) => item.classList.remove("active"));
@@ -1267,6 +1636,8 @@
     document.querySelector("#detailClose").addEventListener("click", closeDetail);
     document.querySelector("#agentButton").addEventListener("click", () => openAgent());
     document.querySelector("#agentClose").addEventListener("click", () => elements.agentDrawer.classList.remove("open"));
+    elements.serviceButton.addEventListener("click", () => openServices());
+    elements.serviceClose.addEventListener("click", closeServices);
     document.querySelector("#guideButton").addEventListener("click", openGuide);
     document.querySelector("#guideClose").addEventListener("click", closeGuide);
     elements.annotationButton.addEventListener("click", toggleAnnotationMode);
@@ -1295,6 +1666,9 @@
       updateAnnotationStatus();
     });
     elements.guideModal.addEventListener("click", (event) => { if (event.target === elements.guideModal) closeGuide(); });
+    elements.serviceModal.addEventListener("click", (event) => { if (event.target === elements.serviceModal) closeServices(); });
+    elements.nearbyButton.addEventListener("click", () => { if (state.nearbyOpen) closeNearby(); else openNearby(); });
+    elements.nearbyClose.addEventListener("click", closeNearby);
     document.querySelector("#mobileCollapse").addEventListener("click", () => elements.sidebar.classList.toggle("collapsed"));
     elements.detailPanel.addEventListener("click", (event) => {
       if (!state.selectedAnnotationId) return;
@@ -1336,33 +1710,13 @@
       if (state.tmap) state.tmap.zoomTo(state.tmap.getZoom() - 1);
       else { state.fallbackZoom = Math.max(.9, state.fallbackZoom - .08); elements.fallbackMap.style.transform = `scale(${state.fallbackZoom})`; }
     });
-    document.querySelector("#locateButton").addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        showToast("当前浏览器不支持定位，仍可继续浏览校园指南。", "warning");
-        return;
-      }
-      elements.dataStatus.textContent = "正在定位…";
-      elements.dataStatus.classList.remove("success");
-      elements.dataStatus.classList.add("warning");
-      navigator.geolocation.getCurrentPosition((position) => {
-        const coordinate = toTencentCoordinate(position.coords.latitude, position.coords.longitude);
-        state.userLocation = coordinate;
-        if (state.tmap) state.tmap.easeTo({ center: new TMap.LatLng(coordinate.latitude, coordinate.longitude), zoom: 18 });
-        renderResults();
-        if (state.selectedAnnotationId) {
-          const annotation = state.annotations.find((item) => item.id === state.selectedAnnotationId);
-          if (annotation) selectAnnotation(annotation);
-        } else if (state.selectedId) {
-          const selected = resolveFeature(state.selectedId, !featureById[state.selectedId]);
-          if (selected) renderDetail(selected);
-        }
-        restoreDataStatus();
+    document.querySelector("#locateButton").addEventListener("click", async () => {
+      try {
+        await requestUserLocation();
         showToast("已定位，地点列表已按直线距离排序。", "success");
-      }, () => {
-        state.userLocation = null;
-        restoreDataStatus();
-        showToast("未获得定位权限，仍可继续浏览校园指南。", "warning");
-      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+      } catch (error) {
+        showToast(error.message || "未获得定位权限，仍可继续浏览校园指南。", "warning");
+      }
     });
     elements.fallbackMap.addEventListener("click", (event) => {
       if (!state.annotationMode || event.target.closest(".map-marker")) return;
@@ -1380,12 +1734,14 @@
     loadAnnotations();
     renderGuideGallery();
     renderGuideBrowser();
+    renderServiceWorkflows();
     renderAll();
     bindEvents();
     elements.agentMode.textContent = window.APP_CONFIG.agentEnabled ? "校园知识模式" : "本地指南模式";
     elements.promptSuggestions.innerHTML = ["晚上哪里能打印？", "中午吃什么？", "哪里可以自习？", "校医院怎么走？"].map((prompt) => `<button class="prompt-suggestion" data-prompt="${prompt}">${prompt}</button>`).join("");
     addMessage("assistant", "你好，我是四牌楼校园 Agent，可以帮你查找学习、餐饮、宿舍、办事和交通信息。");
     loadTencentMap();
+    loadPublishedContent();
   }
 
   initialize();

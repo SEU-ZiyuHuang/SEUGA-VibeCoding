@@ -63,6 +63,14 @@ async function serveStatic(request, response) {
     response.end(`window.APP_CONFIG=${JSON.stringify({ tencentMapKey: mapKey, agentEnabled: true, model: "deepseek-v4-flash", version: buildVersion })};`);
     return;
   }
+  if (requestUrl.pathname === "/api/content") {
+    sendJson(response, 200, { ok: true, content: { schemaVersion: 1, featureOverrides: {}, workflowOverrides: {} }, updatedAt: null });
+    return;
+  }
+  if (requestUrl.pathname === "/api/admin/session") {
+    sendJson(response, 200, { configured: Boolean(process.env.ADMIN_ACCESS_TOKEN), authenticated: false });
+    return;
+  }
   let pathname = decodeURIComponent(requestUrl.pathname);
   if (pathname === "/") pathname = "/index.html";
   const sharedPath = pathname.startsWith("/data/") || pathname.startsWith("/原校区指南/");

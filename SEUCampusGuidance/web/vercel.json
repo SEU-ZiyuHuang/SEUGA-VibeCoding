@@ -12,6 +12,18 @@
   "functions": {
     "api/runtime-config.js": {
       "maxDuration": 10
+    },
+    "api/map/walking.js": {
+      "maxDuration": 10
+    },
+    "api/content.js": {
+      "maxDuration": 10
+    },
+    "api/admin/session.js": {
+      "maxDuration": 10
+    },
+    "api/admin/content.js": {
+      "maxDuration": 10
     }
   }
 }
