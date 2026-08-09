@@ -33,12 +33,13 @@ window.IMPORTED_ANNOTATIONS = (() => {
 
   return records.map((record) => ({
     ...record,
-    source: "sipailou-map-annotations-20260806.json · 用户现场标注",
-    description: "用户现场标注，详情待补充。",
-    location: "腾讯地图人工标注坐标",
+    source: "校园地图",
     coordinateSystem: "GCJ-02",
-    verified: false,
-    tags: ["人工标注"],
     ...fallbackPoint(record.lat, record.lng),
+    ...(!record.replacesId ? {
+      description: `${record.name}已收录于四牌楼校园地图。`,
+      location: "四牌楼校区",
+      tags: [],
+    } : {}),
   }));
 })();

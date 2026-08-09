@@ -247,7 +247,6 @@
 
   function statusLabel(feature) {
     if (feature?.knowledgeOnly) return "指南内容";
-    if (feature?.source === "user") return "现场标注";
     return "地图地点";
   }
 
@@ -311,11 +310,11 @@
       lat: annotation.lat,
       lng: annotation.lng,
       coordinateSystem: annotation.coordinateSystem,
-      location: formatAnnotationCoordinate(annotation),
-      hours: "用户标注",
+      location: "四牌楼校区",
+      hours: "",
       status: "unknown",
-      tags: ["人工标注"],
-      description: annotation.description || "这是一个用户新增的地点，详细信息待补充。",
+      tags: [],
+      description: annotation.description || `${annotation.name}已收录于四牌楼校园地图。`,
       knowledgeOnly: false,
       source: "user",
     };
@@ -454,7 +453,7 @@
       name: elements.annotationName.value.trim(),
       category: elements.annotationCategory.value || "all",
       icon: (themeById[elements.annotationCategory.value] || themeById.all).icon,
-      description: elements.annotationDescription.value.trim() || "用户现场标注，详情待补充。",
+      description: elements.annotationDescription.value.trim() || `${elements.annotationName.value.trim()}已收录于四牌楼校园地图。`,
       source: "user",
       updatedAt: now,
       createdAt: existing?.createdAt || now,
@@ -781,17 +780,17 @@
   function renderRelatedGuide(feature) {
     if (feature.record) {
       return `<section class="detail-guide-section">
-        <div class="detail-section-heading"><span>指南详情</span><small>${escapeHtml(feature.record.sheet)}</small></div>
+        <div class="detail-section-heading"><span>详细信息</span><small>${escapeHtml(feature.record.sheet)}</small></div>
         ${renderRecordFields(feature.record)}
       </section>`;
     }
     const records = linkedGuideRecords(feature);
     if (!records.length) return "";
     return `<section class="detail-guide-section">
-      <div class="detail-section-heading"><span>2025版指南关联信息</span><small>${records.length} 条</small></div>
+      <div class="detail-section-heading"><span>相关信息</span><small>${records.length} 项</small></div>
       <div class="detail-guide-records">${records.map((record, index) => `
         <details class="detail-guide-record" ${index === 0 ? "open" : ""}>
-          <summary><span>${escapeHtml(record.title)}</span><small>源页 ${escapeHtml(record.sourcePage || "—")}</small></summary>
+          <summary><span>${escapeHtml(record.title)}</span><span class="detail-guide-chevron" aria-hidden="true">⌄</span></summary>
           ${renderRecordFields(record)}
         </details>
       `).join("")}</div>
@@ -847,32 +846,33 @@
   }
 
   function renderDetail(feature) {
-    const tags = (feature.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
+    const tags = (feature.tags || [])
+      .filter((tag) => !["人工标注", "知识记录"].includes(tag))
+      .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
+      .join("");
     const hasEditableCoordinate = !feature.knowledgeOnly
       && Number.isFinite(Number(feature.lat))
       && Number.isFinite(Number(feature.lng));
     const linkedPlace = feature.knowledgeOnly ? mapFeatureForRecord(feature.record) : null;
     const hasGuideTime = !feature.record && feature.hours && !["待核验", "用户标注", "见指南详情"].includes(feature.hours);
-    const sourceVersion = feature.sourceVersion || window.GUIDE_DATA?.meta?.version || "2025.08";
-    const sourceText = feature.record
-      ? `${sourceVersion}版指南 · 源页 ${feature.record.sourcePage || "—"}`
-      : feature.source || `${sourceVersion}版指南与现有地图数据`;
+    const displayLocation = /人工标注|地图坐标|经纬度/.test(feature.location || "") ? "四牌楼校区" : feature.location;
+    const displayDescription = /用户现场标注|详情待补充/.test(feature.description || "")
+      ? `${feature.name}已收录于四牌楼校园地图。`
+      : feature.description;
     elements.detailContent.innerHTML = `
       <span class="detail-category" style="--category-color:${categoryColor(feature.category)}">${escapeHtml((themeById[feature.category] || themeById.all).label)}</span>
       <h2>${escapeHtml(feature.name)}</h2>
-      <div class="detail-location">⌖ ${escapeHtml(feature.location)}</div>
-      ${feature.record ? "" : `<p class="detail-description">${escapeHtml(feature.description)}</p>`}
-      ${hasGuideTime ? `<div class="detail-grid"><span>指南时间</span><strong>${escapeHtml(feature.hours)}</strong></div>` : ""}
+      <div class="detail-location">⌖ ${escapeHtml(displayLocation || "四牌楼校区")}</div>
+      ${feature.record ? "" : `<p class="detail-description">${escapeHtml(displayDescription || `${feature.name}校园地点信息。`)}</p>`}
+      ${hasGuideTime ? `<div class="detail-grid"><span>开放时间</span><strong>${escapeHtml(feature.hours)}</strong></div>` : ""}
       ${featureDistance(feature) !== null ? `<div class="detail-grid"><span>距你</span><strong>${formatDistance(featureDistance(feature))} · 直线距离</strong></div>` : ""}
-      ${tags ? `<div class="detail-grid"><span>相关标签</span><div class="tag-list">${tags}</div></div>` : ""}
-      ${hasEditableCoordinate ? `<div class="detail-grid"><span>地图坐标</span><strong>${escapeHtml(formatFeatureCoordinate(feature))}</strong></div>` : ""}
+      ${tags ? `<div class="detail-grid"><span>设施与服务</span><div class="tag-list">${tags}</div></div>` : ""}
       ${renderRelatedGuide(feature)}
       <div class="detail-actions">
         ${linkedPlace ? `<button class="route-button" data-detail-action="show-map" data-place-id="${escapeHtml(linkedPlace.id)}">地图上查看</button>` : `<button class="route-button" data-detail-action="route" ${feature.knowledgeOnly ? "disabled" : ""}>步行路线</button>`}
         <button class="ask-button" data-detail-action="ask">继续问 Agent</button>
-        ${hasEditableCoordinate ? `<button class="coordinate-button" data-detail-action="edit-coordinate">修改经纬度</button>` : ""}
+        ${hasEditableCoordinate && state.annotationMode ? `<button class="coordinate-button" data-detail-action="edit-coordinate">校正地图位置</button>` : ""}
       </div>
-      <div class="verification"><span>资料来源</span><strong>${escapeHtml(sourceText)}</strong></div>
     `;
     elements.detailPanel.classList.add("open");
   }
@@ -945,7 +945,7 @@
     elements.guideRecordList.innerHTML = records.map((record) => {
       const place = mapFeatureForRecord(record);
       return `<button class="guide-record-card" type="button" data-guide-record-id="${escapeHtml(record.id)}">
-        <span class="guide-record-topline"><strong>${escapeHtml(record.title)}</strong><em>${place ? "关联地图" : `源页 ${escapeHtml(record.sourcePage || "—")}`}</em></span>
+        <span class="guide-record-topline"><strong>${escapeHtml(record.title)}</strong><em>${place ? "地图可查看" : "指南内容"}</em></span>
         ${renderRecordPreview(record)}
         <span class="guide-record-more">查看完整信息 →</span>
       </button>`;
