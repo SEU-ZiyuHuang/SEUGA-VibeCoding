@@ -16,6 +16,7 @@ import { TOOLS, executeTool, safeParseArgs, renderSearchResult } from "./tools.m
 import { searchGuide, versionOf } from "./retrieve.mjs";
 import { campusName, detectCampus, isCampusSlug, DEFAULT_CAMPUS } from "./campus.mjs";
 import { buildSystemPrompt, isEmergency } from "./prompt.mjs";
+import { promptOverridesFrom } from "./agent-config.mjs";
 
 const MAX_TOOL_ROUNDS = 4;
 const MAX_TOOL_CHARS = 9000; // 全流程注入给模型的检索正文总预算
@@ -56,10 +57,19 @@ function* sliceForReplay(text) {
   for (let at = 0; at < text.length; at += REPLAY_SLICE) yield text.slice(at, at + REPLAY_SLICE);
 }
 
-export async function* runAgent({ message, campus: campusLock = null, history = [], signal } = {}) {
+/**
+ * config 是调试台发布的运行配置（lib/agent-config.mjs 的形状），传 null 就全用代码默认值。
+ * 生产从已发布版本读，调试台预览从请求体读——两条路径共用这一个函数，
+ * 否则「在调试台试通了、线上还是另一套行为」是迟早的事。
+ */
+export async function* runAgent({ message, campus: campusLock = null, history = [], signal, config = null } = {}) {
   const startedAt = Date.now();
   const locked = isCampusSlug(campusLock);
   let campus = locked ? campusLock : (detectCampus(message) || DEFAULT_CAMPUS);
+
+  const model = config?.model || undefined;
+  const temperature = typeof config?.temperature === "number" ? config.temperature : undefined;
+  const answerMaxTokens = Number.isFinite(config?.maxAnswerTokens) ? config.maxAnswerTokens : ANSWER_MAX_TOKENS;
 
   yield event("meta", {
     campus,
@@ -86,7 +96,15 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
   });
 
   const messages = [
-    { role: "system", content: buildSystemPrompt({ campus, campusLock: locked, emergency: isEmergency(message) }) },
+    {
+      role: "system",
+      content: buildSystemPrompt({
+        campus,
+        campusLock: locked,
+        emergency: isEmergency(message),
+        overrides: promptOverridesFrom(config),
+      }),
+    },
     ...clampHistory(history),
     { role: "user", content: `用户问题：${message}\n\n【系统预检索结果 · ${campusName(campus)}】\n${seedText}` },
   ];
@@ -108,6 +126,8 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
       tools: TOOLS,
       toolChoice: "auto",
       maxTokens: DECISION_MAX_TOKENS,
+      model,
+      temperature,
       signal,
     });
     const choice = reply.choices?.[0] || {};
@@ -161,7 +181,7 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
     }
     let streamed = false;
     try {
-      for await (const delta of streamText({ messages, maxTokens: ANSWER_MAX_TOKENS, signal })) {
+      for await (const delta of streamText({ messages, maxTokens: answerMaxTokens, model, temperature, signal })) {
         streamed = true;
         yield event("token", { t: delta });
       }
@@ -171,7 +191,7 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
     }
     if (!streamed) {
       // 降级：非流式补一次，按片回放，前端无感。
-      const reply = await complete({ messages, maxTokens: ANSWER_MAX_TOKENS, signal });
+      const reply = await complete({ messages, maxTokens: answerMaxTokens, model, temperature, signal });
       const content = String(reply.choices?.[0]?.message?.content || "").trim()
         || "抱歉，这次没能生成回答，请再试一次。";
       for (const piece of sliceForReplay(content)) yield event("token", { t: piece });

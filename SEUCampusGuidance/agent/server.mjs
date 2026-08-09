@@ -16,6 +16,10 @@ import { formatSse, errorEvent, SSE_HEADERS, HEARTBEAT_MS } from "./lib/sse.mjs"
 import { checkRateLimit, clientIp } from "./lib/ratelimit.mjs";
 import { validateChatInput } from "./lib/validate.mjs";
 import { KNOWLEDGE_BUILD, CAMPUSES } from "./data/knowledge.mjs";
+import { readActiveConfig } from "./api/_shared/config-store.js";
+import adminSession from "./api/admin/session.js";
+import adminConfig from "./api/admin/config.js";
+import adminPreview from "./api/admin/preview.js";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(rootDir, "public");
@@ -53,6 +57,61 @@ async function readJson(request) {
   return JSON.parse(body || "{}");
 }
 
+/**
+ * 把 Node 的 req/res 桥接到 api/ 下 Function 的 Web Request/Response 签名上。
+ *
+ * 管理端三个端点因此只有一份实现，本地跑的就是线上那份代码。上面的 handleChat
+ * 是另一码事——它比 api/chat.js 早，且刻意在日志里保留上游错误详情，先不动它。
+ */
+async function callFunction(handler, request, response) {
+  const url = `http://${request.headers.host || "localhost"}${request.url}`;
+  const headers = new Headers();
+  for (const [key, value] of Object.entries(request.headers)) {
+    if (value === undefined) continue;
+    for (const item of Array.isArray(value) ? value : [value]) headers.append(key, item);
+  }
+
+  let body;
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    const chunks = [];
+    for await (const chunk of request) {
+      chunks.push(chunk);
+      if (chunks.reduce((total, item) => total + item.length, 0) > 200_000) {
+        return sendJson(response, 413, { error: "请求内容过大。" });
+      }
+    }
+    body = Buffer.concat(chunks);
+  }
+
+  const abort = new AbortController();
+  request.on("close", () => abort.abort());
+
+  const webResponse = await handler.fetch(new Request(url, {
+    method: request.method,
+    headers,
+    body: body?.length ? body : undefined,
+    signal: abort.signal,
+  }));
+
+  const outgoing = {};
+  for (const [key, value] of webResponse.headers) {
+    if (key.toLowerCase() !== "set-cookie") outgoing[key] = value;
+  }
+  // Set-Cookie 可能有多条，必须以数组形式交给 writeHead，合并成一行浏览器只认第一条。
+  const cookies = webResponse.headers.getSetCookie?.() || [];
+  if (cookies.length) outgoing["Set-Cookie"] = cookies;
+
+  response.writeHead(webResponse.status, outgoing);
+  response.flushHeaders?.();
+  if (!webResponse.body) return response.end();
+  // 逐块转写而不是先 await 完整 body，否则 SSE 会攒到最后一次性刷屏。
+  for await (const chunk of webResponse.body) {
+    if (response.writableEnded) break;
+    response.write(Buffer.from(chunk));
+  }
+  response.end();
+}
+
 async function handleChat(request, response) {
   if (!isConfigured()) return sendJson(response, 503, { error: "DEEPSEEK_API_KEY is not configured" });
   // 频控放在解析 body 之前，畸形请求的刷量也一并挡住。
@@ -67,6 +126,9 @@ async function handleChat(request, response) {
   const checked = validateChatInput(input);
   if (!checked.ok) return sendJson(response, checked.status, { error: checked.error });
 
+  // 与 api/chat.js 一致：只读已发布配置，请求体里传什么都不作数（白名单已经滤掉了）。
+  const { config } = await readActiveConfig();
+
   response.writeHead(200, SSE_HEADERS);
   response.flushHeaders?.();
 
@@ -77,7 +139,7 @@ async function handleChat(request, response) {
   }, HEARTBEAT_MS);
 
   try {
-    for await (const item of runAgent({ ...checked.value, signal: abort.signal })) {
+    for await (const item of runAgent({ ...checked.value, config, signal: abort.signal })) {
       if (response.writableEnded) break;
       response.write(formatSse(item));
     }
@@ -135,6 +197,9 @@ const server = http.createServer(async (request, response) => {
         ? await handleChat(request, response)
         : await handleLegacyChat(request, response);
     }
+    if (pathname === "/api/admin/session") return await callFunction(adminSession, request, response);
+    if (pathname === "/api/admin/config") return await callFunction(adminConfig, request, response);
+    if (pathname === "/api/admin/preview") return await callFunction(adminPreview, request, response);
     if (pathname === "/api/health" || pathname === "/health") {
       return sendJson(response, 200, {
         status: "ok",

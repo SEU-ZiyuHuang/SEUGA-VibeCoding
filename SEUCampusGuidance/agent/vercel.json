@@ -4,6 +4,9 @@
   "functions": {
     "api/chat.js": { "maxDuration": 60 },
     "api/agent/chat.js": { "maxDuration": 30 },
-    "api/health.js": { "maxDuration": 10 }
+    "api/health.js": { "maxDuration": 10 },
+    "api/admin/session.js": { "maxDuration": 10 },
+    "api/admin/config.js": { "maxDuration": 15 },
+    "api/admin/preview.js": { "maxDuration": 60 }
   }
 }

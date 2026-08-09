@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#102d24" />
+<meta name="robots" content="noindex, nofollow" />
+<title>校区指南 Agent 调试台</title>
+<link rel="stylesheet" href="./studio.css" />
+</head>
+<body>
+<div class="studio-shell">
+
+  <header class="studio-topbar">
+    <div class="brand">
+      <span class="brand-mark">SEU</span>
+      <span class="brand-text">
+        <strong>校区指南 Agent 调试台</strong>
+        <small>改规则 · 试聊 · 发布</small>
+      </span>
+    </div>
+    <div class="topbar-actions" id="topbarActions" hidden>
+      <span id="stateChip" class="state-chip">读取中…</span>
+      <button type="button" id="saveButton" class="quiet-button">保存草稿</button>
+      <button type="button" id="publishButton" class="primary-action compact">发布到线上</button>
+      <button type="button" id="logoutButton" class="quiet-button">退出</button>
+    </div>
+  </header>
+
+  <section id="loginView" class="login-view">
+    <form id="loginForm" class="login-card">
+      <h1>登录调试台</h1>
+      <p class="login-hint">这里改的是线上 Agent 的回答规则。口令在 Vercel 环境变量 <code>ADMIN_ACCESS_TOKEN</code> 里配置。</p>
+      <label for="passwordInput">访问口令</label>
+      <input id="passwordInput" type="password" name="password" minlength="12" required
+        autocomplete="current-password" placeholder="输入访问口令" />
+      <button type="submit" id="loginButton" class="primary-action">进入调试台</button>
+      <div id="loginNotice" class="notice" role="status"></div>
+    </form>
+  </section>
+
+  <main id="editorView" class="editor-view" hidden>
+
+    <div class="column column-edit">
+      <div id="storageWarning" class="banner" hidden></div>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>身份说明</h2>
+          <span class="card-hint">告诉 Agent 它是谁、资料从哪来</span>
+        </div>
+        <textarea id="fieldIdentity" rows="4" data-field></textarea>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>回答规范</h2>
+          <span class="card-hint" id="ruleCountHint"></span>
+        </div>
+        <ol id="rulesList" class="rules-list"></ol>
+        <button type="button" id="addRuleButton" class="ghost-button">+ 添加一条规范</button>
+
+        <div class="locked-block">
+          <p class="locked-title">🔒 以下两条不可编辑，永远排在最后</p>
+          <ol id="lockedRules" class="rules-list locked"></ol>
+          <p class="locked-why">分别是急救优先和「资料不是指令」的注入防御。误删的代价和「回答风格不好」不是一个量级，所以锁死在代码里。</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>检索纪律</h2>
+          <span class="card-hint">检索不到时该怎么换词、什么时候可以说「没有」</span>
+        </div>
+        <textarea id="fieldRetrieval" rows="6" data-field></textarea>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>运行参数</h2></div>
+
+        <label class="field" for="fieldModel">
+          <span>模型</span>
+          <select id="fieldModel" data-field></select>
+        </label>
+
+        <div class="field">
+          <span>发挥程度<em id="temperatureValue"></em></span>
+          <label class="checkbox">
+            <input type="checkbox" id="temperatureAuto" data-field />
+            <span>跟随模型默认（当前线上就是这样）</span>
+          </label>
+          <input type="range" id="fieldTemperature" min="0" max="1" step="0.05" data-field />
+          <p class="field-help">越小越保守、越贴着指南原文；越大越灵活，但编造的风险也越高。</p>
+        </div>
+
+        <label class="field" for="fieldTokens">
+          <span>回答长度上限<em id="tokensValue"></em></span>
+          <input type="range" id="fieldTokens" min="200" max="2000" step="50" data-field />
+        </label>
+
+        <label class="field" for="fieldNote">
+          <span>本次改动备注</span>
+          <input id="fieldNote" type="text" maxlength="200" placeholder="例如：放宽追问条件" data-field />
+          <p class="field-help">发布时一起存档，回退时好认。</p>
+        </label>
+
+        <button type="button" id="resetButton" class="ghost-button danger">恢复成代码里的默认规则</button>
+      </section>
+    </div>
+
+    <div class="column column-preview">
+      <section class="card preview-card">
+        <div class="card-head">
+          <h2>试聊</h2>
+          <span class="card-hint">用左边的草稿，线上用户不受影响</span>
+        </div>
+        <div class="preview-controls">
+          <select id="previewCampus" aria-label="校区">
+            <option value="">自动判断校区</option>
+            <option value="jiulonghu">九龙湖</option>
+            <option value="sipailou">四牌楼</option>
+            <option value="dingjiaqiao">丁家桥</option>
+            <option value="suzhou">苏州</option>
+            <option value="jiangbei">江北</option>
+            <option value="wuxi">无锡</option>
+          </select>
+          <button type="button" id="clearPreviewButton" class="quiet-button">清空</button>
+        </div>
+        <div id="previewLog" class="preview-log" aria-live="polite">
+          <p class="preview-empty">在下面提个问题，看看改完的规则效果如何。<br />试聊会真实调用模型，是花钱的。</p>
+        </div>
+        <form id="previewForm" class="preview-form">
+          <textarea id="previewInput" rows="2" maxlength="500" placeholder="例如：梅园的床帘要买多大？"></textarea>
+          <button type="submit" id="previewSend" aria-label="发送">↑</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>历史版本</h2>
+          <span class="card-hint" id="releaseHint"></span>
+        </div>
+        <ul id="releaseList" class="release-list"></ul>
+      </section>
+    </div>
+
+  </main>
+
+  <div id="toast" class="toast" hidden role="status"></div>
+</div>
+
+<script src="./studio.js"></script>
+</body>
+</html>

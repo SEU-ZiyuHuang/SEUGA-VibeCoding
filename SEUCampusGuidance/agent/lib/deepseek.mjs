@@ -31,6 +31,8 @@ async function request(body, signal) {
     method: "POST",
     signal: mergeSignals(signal, timeoutMs),
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    // 展开顺序有意义：body.model 在后，调用方传了就盖掉环境变量里的默认模型。
+    // 调试台的模型下拉就是靠这一条生效的。
     body: JSON.stringify({ model, ...body }),
   });
   if (!response.ok) {
@@ -43,13 +45,14 @@ async function request(body, signal) {
 }
 
 /** 非流式补全。决策轮用它——工具调用一次性拿全，没有分片拼装的不确定性。 */
-export async function complete({ messages, tools, toolChoice, maxTokens, temperature, signal }) {
+export async function complete({ messages, tools, toolChoice, maxTokens, model, temperature, signal }) {
   const body = { messages, stream: false };
   if (tools?.length) {
     body.tools = tools;
     body.tool_choice = toolChoice || "auto";
   }
   if (maxTokens) body.max_tokens = maxTokens;
+  if (model) body.model = model;
   if (temperature !== undefined) body.temperature = temperature;
   const response = await request(body, signal);
   return response.json();
@@ -83,9 +86,10 @@ export async function* parseSseStream(response) {
 }
 
 /** 流式补全，yield 文本增量。生成轮用它，且不传 tools。 */
-export async function* streamText({ messages, maxTokens, temperature, signal }) {
+export async function* streamText({ messages, maxTokens, model, temperature, signal }) {
   const body = { messages, stream: true };
   if (maxTokens) body.max_tokens = maxTokens;
+  if (model) body.model = model;
   if (temperature !== undefined) body.temperature = temperature;
   const response = await request(body, signal);
   if (!response.body) throw new Error("DeepSeek 流式响应没有 body");

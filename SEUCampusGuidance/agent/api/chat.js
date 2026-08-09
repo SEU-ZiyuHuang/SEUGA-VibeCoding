@@ -2,12 +2,17 @@
 //
 // 状态码只在开流之前用（405/400/429/503）；一旦 Response 返回就改不了状态码，
 // 所以流中出现的错误一律以 error 事件下发，不能 throw。
+//
+// 运行配置只从「已发布版本」读，绝不接受请求体传入。validateChatInput 的白名单
+// （message / campus / history）就是这道闸——放行 prompt 字段等于把 agent 的全部
+// 安全规则和 API key 开放给任何人 curl。调试台要改配置走 /api/admin/*，那边要登录。
 
 import { runAgent } from "../lib/agent-loop.mjs";
 import { formatSse, errorEvent, SSE_HEADERS, HEARTBEAT_MS } from "../lib/sse.mjs";
 import { isConfigured } from "../lib/deepseek.mjs";
 import { checkRateLimit, clientIp } from "../lib/ratelimit.mjs";
 import { validateChatInput } from "../lib/validate.mjs";
+import { readActiveConfig } from "./_shared/config-store.js";
 
 function json(payload, status) {
   return Response.json(payload, { status, headers: { "Cache-Control": "no-store" } });
@@ -30,6 +35,9 @@ export default {
     const checked = validateChatInput(input);
     if (!checked.ok) return json({ error: checked.error }, checked.status);
 
+    // 永不抛错：存储没配置或读失败都会降级到代码里的默认配置。
+    const { config } = await readActiveConfig();
+
     const abort = new AbortController();
     request.signal?.addEventListener("abort", () => abort.abort());
 
@@ -45,7 +53,7 @@ export default {
         };
         const heartbeat = setInterval(() => send(":\n\n"), HEARTBEAT_MS);
         try {
-          for await (const item of runAgent({ ...checked.value, signal: abort.signal })) {
+          for await (const item of runAgent({ ...checked.value, config, signal: abort.signal })) {
             send(formatSse(item));
           }
         } catch (error) {
