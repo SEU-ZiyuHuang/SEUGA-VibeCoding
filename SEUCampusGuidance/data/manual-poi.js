@@ -15,7 +15,7 @@ window.MANUAL_POI = (() => {
   });
 
   const common = {
-    source: "一期人工标注任务表.xlsx · POI与设施标注",
+    source: "校园地图",
     coordinateSystem: "GCJ-02",
     verified: false,
     status: "unknown",
@@ -54,10 +54,26 @@ window.MANUAL_POI = (() => {
     { id: "manual-poi-04-002", taskId: "POI-04-002", replacesId: "finance", name: "财务处", category: "office", icon: "办", lat: 32.05538, lng: 118.795829, location: "人工标注坐标 · 服务/办公室", tags: ["人工标注", "财务"] },
   ];
 
+  const publicLocation = (record) => {
+    const location = String(record.location || "").replace(/^人工标注坐标\s*·\s*/, "").trim();
+    if (location === "建筑/宿舍") {
+      const area = String(record.name || "").split("·")[0].trim();
+      return area ? `${area}宿舍区` : "四牌楼校区";
+    }
+    if (location === "服务/办公室") return "四牌楼校区";
+    return location || "四牌楼校区";
+  };
+
   return records.map((record) => ({
     ...common,
     ...record,
     ...fallbackPoint(record.lat, record.lng),
-    description: record.description || `来自一期人工标注任务 ${record.taskId}；坐标系为 GCJ-02。`,
+    location: publicLocation(record),
+    tags: (record.tags || []).filter((tag) => tag !== "人工标注"),
+    ...(record.description
+      ? { description: record.description }
+      : !record.replacesId
+        ? { description: `${record.name}的位置与服务信息。` }
+        : {}),
   }));
 })();

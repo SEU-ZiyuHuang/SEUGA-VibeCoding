@@ -250,6 +250,30 @@
     return "地图地点";
   }
 
+  function publicLocation(feature) {
+    let location = String(feature?.location || "")
+      .replace(/^(?:腾讯地图)?人工标注坐标\s*·?\s*/, "")
+      .replace(/，?具体(?:楼层|入口|位置)[^，。；]*待核验/g, "")
+      .trim();
+    if (!location || ["建筑/宿舍", "服务/办公室", "地图坐标"].includes(location)) {
+      const area = String(feature?.name || "").split("·")[0].trim();
+      if (feature?.category === "dorm" && area) return `${area}宿舍区`;
+      if (feature?.category === "study" && String(feature?.name || "").includes("图书馆")) return "四牌楼校区图书馆";
+      return "四牌楼校区";
+    }
+    return location;
+  }
+
+  function publicDescription(feature) {
+    let description = String(feature?.description || "")
+      .replace(/用户现场标注，?详情待补充。?/g, "")
+      .replace(/精确点位需人工标注。?/g, "可根据地图定位前往。")
+      .replace(/具体入口与时间待核验。?/g, "具体安排请以现场公告为准。")
+      .replace(/待核验/g, "以现场公告为准")
+      .trim();
+    return description || `${feature?.name || "该地点"}的位置与服务信息。`;
+  }
+
   function renderThemes() {
     elements.themeList.innerHTML = window.MAP_THEMES.map((theme) => `
       <button class="theme-button ${state.theme === theme.id ? "active" : ""}" data-theme="${theme.id}" style="--theme-color:${theme.color}">
@@ -649,7 +673,7 @@
         <span class="result-icon" style="--category-color:${categoryColor(feature.category)}">${escapeHtml(feature.icon)}</span>
         <span>
           <strong>${escapeHtml(feature.name)}</strong>
-          <p>${featureDistance(feature) !== null ? `<b class="result-distance">${formatDistance(featureDistance(feature))}</b>` : ""}${escapeHtml(feature.location)}</p>
+          <p>${featureDistance(feature) !== null ? `<b class="result-distance">${formatDistance(featureDistance(feature))}</b>` : ""}${escapeHtml(publicLocation(feature))}</p>
         </span>
         <span class="result-status ${feature.knowledgeOnly ? "guide" : "mapped"}">${statusLabel(feature)}</span>
       </button>
@@ -855,15 +879,13 @@
       && Number.isFinite(Number(feature.lng));
     const linkedPlace = feature.knowledgeOnly ? mapFeatureForRecord(feature.record) : null;
     const hasGuideTime = !feature.record && feature.hours && !["待核验", "用户标注", "见指南详情"].includes(feature.hours);
-    const displayLocation = /人工标注|地图坐标|经纬度/.test(feature.location || "") ? "四牌楼校区" : feature.location;
-    const displayDescription = /用户现场标注|详情待补充/.test(feature.description || "")
-      ? `${feature.name}已收录于四牌楼校园地图。`
-      : feature.description;
+    const displayLocation = publicLocation(feature);
+    const displayDescription = publicDescription(feature);
     elements.detailContent.innerHTML = `
       <span class="detail-category" style="--category-color:${categoryColor(feature.category)}">${escapeHtml((themeById[feature.category] || themeById.all).label)}</span>
       <h2>${escapeHtml(feature.name)}</h2>
       <div class="detail-location">⌖ ${escapeHtml(displayLocation || "四牌楼校区")}</div>
-      ${feature.record ? "" : `<p class="detail-description">${escapeHtml(displayDescription || `${feature.name}校园地点信息。`)}</p>`}
+      ${feature.record ? "" : `<p class="detail-description">${escapeHtml(displayDescription)}</p>`}
       ${hasGuideTime ? `<div class="detail-grid"><span>开放时间</span><strong>${escapeHtml(feature.hours)}</strong></div>` : ""}
       ${featureDistance(feature) !== null ? `<div class="detail-grid"><span>距你</span><strong>${formatDistance(featureDistance(feature))} · 直线距离</strong></div>` : ""}
       ${tags ? `<div class="detail-grid"><span>设施与服务</span><div class="tag-list">${tags}</div></div>` : ""}
@@ -985,7 +1007,7 @@
       message = "图书馆适合预约座位和研讨空间；中山院、东南院可以通过数智东南查询空教室。我已高亮相关地点。";
     } else if (/医院|看病|急诊|aed|急救/.test(normalized)) {
       ids = ["campus-hospital", "aed-library"];
-      message = "校医院可处理基本门诊；指南建议紧急情况优先考虑鼓楼医院。图书馆等多处设有 AED，但精确楼层仍待标注。";
+      message = "校医院可处理基本门诊；指南建议紧急情况优先考虑鼓楼医院。图书馆等多处设有 AED，可按现场标识查找。";
     } else if (/宿舍|床|洗澡|门禁/.test(normalized)) {
       ids = ["shatang-dorm", "chengyuan-dorm", "west-dorm", "wenchang-dorm"];
       message = "四个主要宿舍区域已高亮。不同楼栋的床型、卫浴和门禁不同，请选择具体宿舍区查看。";
@@ -1362,7 +1384,7 @@
     bindEvents();
     elements.agentMode.textContent = window.APP_CONFIG.agentEnabled ? "校园知识模式" : "本地指南模式";
     elements.promptSuggestions.innerHTML = ["晚上哪里能打印？", "中午吃什么？", "哪里可以自习？", "校医院怎么走？"].map((prompt) => `<button class="prompt-suggestion" data-prompt="${prompt}">${prompt}</button>`).join("");
-    addMessage("assistant", "你好，我是四牌楼校园 Agent。当前是第一版 Demo，可以帮你查找学习、餐饮、宿舍、办事和交通信息。");
+    addMessage("assistant", "你好，我是四牌楼校园 Agent，可以帮你查找学习、餐饮、宿舍、办事和交通信息。");
     loadTencentMap();
   }
 
