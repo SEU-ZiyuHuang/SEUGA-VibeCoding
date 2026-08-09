@@ -11,12 +11,16 @@
     tmap: null,
     tmapMarkers: null,
     annotationMarkers: null,
+    userMarker: null,
+    userLocation: null,
     annotations: [],
     selectedAnnotationId: null,
     annotationMode: false,
     editingAnnotationId: null,
     pendingAnnotationCoordinate: null,
     editingCoordinateId: null,
+    guideView: "structured",
+    guideSheet: null,
   };
 
   const elements = {
@@ -65,6 +69,12 @@
     agentMode: document.querySelector("#agentMode"),
     guideModal: document.querySelector("#guideModal"),
     guideGallery: document.querySelector("#guideGallery"),
+    guideStructured: document.querySelector("#guideStructured"),
+    guideTopicList: document.querySelector("#guideTopicList"),
+    guideRecordEyebrow: document.querySelector("#guideRecordEyebrow"),
+    guideRecordTitle: document.querySelector("#guideRecordTitle"),
+    guideRecordCount: document.querySelector("#guideRecordCount"),
+    guideRecordList: document.querySelector("#guideRecordList"),
     sidebar: document.querySelector(".sidebar"),
     dataStatus: document.querySelector("#dataStatus"),
   };
@@ -119,6 +129,17 @@
     "宿舍信息": "dorm", "食堂信息": "dining", "图书馆与学习设施": "study",
     "行政窗口": "office", "交通信息": "transport", "周边餐饮": "nearby",
     "周边商业服务": "service", "运动设施": "sports", "一卡通与生活服务": "service",
+  };
+  const guideSheetMeta = {
+    "宿舍信息": { icon: "宿", summary: "楼栋房型、床铺、卫浴、门禁与生活设施" },
+    "食堂信息": { icon: "食", summary: "三处食堂的2025版供餐时间与设施" },
+    "图书馆与学习设施": { icon: "书", summary: "自习、借还书、研讨空间、空教室与打印" },
+    "行政窗口": { icon: "办", summary: "教务、财务、学生事务与研究生办事地点" },
+    "交通信息": { icon: "行", summary: "地铁、公交、步行与跨校区出行参考" },
+    "周边餐饮": { icon: "吃", summary: "校园周边餐饮街区、连锁餐饮与商业体" },
+    "周边商业服务": { icon: "店", summary: "超市、快递、打印、通信与电子维修" },
+    "运动设施": { icon: "体", summary: "运动场馆、开放时间、预约与收费信息" },
+    "一卡通与生活服务": { icon: "卡", summary: "一卡通、洗衣、外卖、医疗与AED" },
   };
   const annotationStorageKey = "seu-campus-map-annotations-v1";
 
@@ -185,6 +206,29 @@
     };
   }
 
+  function distanceMeters(from, to) {
+    if (!from || !to) return null;
+    const radius = 6371000;
+    const radians = (degrees) => degrees * Math.PI / 180;
+    const lat1 = radians(Number(from.latitude));
+    const lat2 = radians(Number(to.latitude));
+    const deltaLat = lat2 - lat1;
+    const deltaLng = radians(Number(to.longitude) - Number(from.longitude));
+    const haversine = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+    return radius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+  }
+
+  function featureDistance(feature) {
+    if (!state.userLocation || !Number.isFinite(Number(feature?.lat)) || !Number.isFinite(Number(feature?.lng))) return null;
+    return distanceMeters(state.userLocation, toTencentCoordinate(Number(feature.lat), Number(feature.lng), feature.coordinateSystem));
+  }
+
+  function formatDistance(distance) {
+    if (!Number.isFinite(distance)) return "";
+    if (distance < 1000) return `${Math.max(10, Math.round(distance / 10) * 10)} m`;
+    return `${(distance / 1000).toFixed(distance < 10000 ? 1 : 0)} km`;
+  }
+
   function setAnnotationNotice(message, isWarning = false) {
     if (!elements.annotationNotice) return;
     elements.annotationNotice.textContent = message;
@@ -201,10 +245,10 @@
     return "坐标待补充";
   }
 
-  function statusLabel(status) {
-    if (status === "open") return "预计开放";
-    if (status === "closed") return "预计关闭";
-    return "待核验";
+  function statusLabel(feature) {
+    if (feature?.knowledgeOnly) return "指南内容";
+    if (feature?.source === "user") return "现场标注";
+    return "地图地点";
   }
 
   function renderThemes() {
@@ -273,6 +317,7 @@
       tags: ["人工标注"],
       description: annotation.description || "这是一个用户新增的地点，详细信息待补充。",
       knowledgeOnly: false,
+      source: "user",
     };
   }
 
@@ -510,6 +555,16 @@
     elements.dataStatus.classList.add("warning");
   }
 
+  function restoreDataStatus() {
+    elements.dataStatus.textContent = state.userLocation
+      ? "已定位 · 2025.08指南"
+      : state.mapMode === "tencent"
+        ? "腾讯底图 · 2025.08指南"
+        : "指南版本 · 2025.08";
+    elements.dataStatus.classList.add("success");
+    elements.dataStatus.classList.remove("warning");
+  }
+
   function toggleAnnotationMode() {
     state.annotationMode = !state.annotationMode;
     if (!state.annotationMode) closeAnnotationEditor();
@@ -519,10 +574,15 @@
       updateAnnotationStatus();
       setAnnotationNotice("点击地图添加点位；点击列表中的 ✎ 可编辑。", false);
     } else {
-      elements.dataStatus.textContent = state.mapMode === "tencent" ? "腾讯底图 · 数据待核准" : "演示数据 · 待核准";
-      elements.dataStatus.classList.toggle("success", state.mapMode === "tencent");
-      elements.dataStatus.classList.toggle("warning", state.mapMode !== "tencent");
+      restoreDataStatus();
     }
+  }
+
+  function guideTimeSummary(values = {}) {
+    const timeFields = Object.entries(values)
+      .filter(([key, value]) => value !== null && value !== "" && value !== "-" && /(时间|时段|开放|营业|门禁|热水|首班|末班)/.test(key))
+      .map(([key, value]) => `${key}：${value}`);
+    return timeFields.length ? timeFields.join("；") : "见指南详情";
   }
 
   function recordAsKnowledge(record) {
@@ -535,21 +595,24 @@
       category: sheetCategory[record.sheet] || "all",
       icon: "文",
       location: `指南数据 · ${record.sheet}`,
-      hours: "以详情记录为准",
+      hours: guideTimeSummary(record.values),
       status: "unknown",
       verified: false,
       tags: [record.sheet, "知识记录"],
       description: raw.join("；"),
       knowledgeOnly: true,
+      record,
+      sourcePage: record.sourcePage,
+      sourceVersion: window.GUIDE_DATA?.meta?.version || "2025.08",
     };
   }
 
   function searchKnowledge() {
-    if (!state.query || !window.GUIDE_DATA?.records?.length) return [];
+    if (!window.GUIDE_DATA?.records?.length) return [];
     const query = normalize(state.query);
     return window.GUIDE_DATA.records
-      .filter((record) => normalize(JSON.stringify(record)).includes(query))
-      .slice(0, 20)
+      .filter((record) => !query || normalize(JSON.stringify(record)).includes(query))
+      .slice(0, state.filter === "guide" ? 200 : 20)
       .map(recordAsKnowledge);
   }
 
@@ -557,27 +620,39 @@
     const query = normalize(state.query);
     const spatial = window.MAP_FEATURES.filter((feature) => {
       const matchesTheme = state.theme === "all" || feature.category === state.theme;
-      const matchesFilter = state.filter === "all" || (state.filter === "open" && feature.status === "open") || (state.filter === "verified" && feature.verified);
       const matchesQuery = !query || normalize([feature.name, feature.location, feature.description, ...(feature.tags || [])].join(" ")).includes(query);
-      return matchesTheme && matchesFilter && matchesQuery;
+      return state.filter !== "guide" && matchesTheme && matchesQuery;
     });
-    const knowledge = searchKnowledge().filter((feature) => state.theme === "all" || feature.category === state.theme);
-    return [...spatial, ...knowledge];
+    const knowledge = (state.filter !== "mapped" && (query || state.filter === "guide"))
+      ? searchKnowledge().filter((feature) => state.theme === "all" || feature.category === state.theme)
+      : [];
+    const results = [...spatial, ...knowledge];
+    if (!state.userLocation) return results;
+    return results.sort((left, right) => {
+      const leftDistance = featureDistance(left);
+      const rightDistance = featureDistance(right);
+      if (leftDistance === null && rightDistance === null) return 0;
+      if (leftDistance === null) return 1;
+      if (rightDistance === null) return -1;
+      return leftDistance - rightDistance;
+    });
   }
 
   function renderResults() {
     const results = filteredFeatures();
     const activeTheme = themeById[state.theme] || themeById.all;
-    elements.resultTitle.textContent = state.query ? `“${state.query}”的结果` : activeTheme.label;
+    elements.resultTitle.textContent = state.query
+      ? `“${state.query}”的结果`
+      : state.filter === "guide" ? "指南内容" : state.filter === "mapped" ? "地图地点" : activeTheme.label;
     elements.resultCount.textContent = `${results.length} 项`;
     elements.resultList.innerHTML = results.length ? results.map((feature) => `
       <button class="result-card ${state.selectedId === feature.id ? "active" : ""}" data-feature-id="${feature.id}" data-knowledge="${feature.knowledgeOnly ? "true" : "false"}">
         <span class="result-icon" style="--category-color:${categoryColor(feature.category)}">${escapeHtml(feature.icon)}</span>
         <span>
           <strong>${escapeHtml(feature.name)}</strong>
-          <p>${escapeHtml(feature.location)}</p>
+          <p>${featureDistance(feature) !== null ? `<b class="result-distance">${formatDistance(featureDistance(feature))}</b>` : ""}${escapeHtml(feature.location)}</p>
         </span>
-        <span class="result-status ${feature.status}">${statusLabel(feature.status)}</span>
+        <span class="result-status ${feature.knowledgeOnly ? "guide" : "mapped"}">${statusLabel(feature)}</span>
       </button>
     `).join("") : `<div class="detail-description">没有找到匹配内容。可以换一个关键词，或让校园 Agent 帮你拆解需求。</div>`;
     renderMarkers();
@@ -595,7 +670,11 @@
         <span>标</span>
       </button>
     `).join("");
-    elements.markers.innerHTML = featureMarkers + annotationMarkers;
+    const userPosition = state.userLocation
+      ? fallbackPositionFromCoordinate(state.userLocation.latitude, state.userLocation.longitude, "GCJ-02")
+      : null;
+    const userMarker = userPosition ? `<div class="user-location-marker" aria-label="我的位置" style="left:${userPosition.x}%;top:${userPosition.y}%"><span></span></div>` : "";
+    elements.markers.innerHTML = featureMarkers + annotationMarkers + userMarker;
     state.annotations.forEach((annotation) => {
       const marker = elements.markers.querySelector(`[data-annotation-id="${CSS.escape(String(annotation.id))}"]`);
       marker?.style.setProperty("--category-color", categoryColor(annotation.category));
@@ -625,6 +704,138 @@
     }
   }
 
+  const featureGuideTerms = {
+    library: ["图书馆"],
+    stadium: ["田径场", "篮球场", "排球场"],
+    gym: ["羽毛球", "乒乓球", "健身房", "网球"],
+    "shatang-dorm": ["沙塘园"],
+    "chengyuan-dorm": ["成园"],
+    "west-dorm": ["校西"],
+    "wenchang-dorm": ["文昌桥"],
+    "campus-hospital": ["校医院"],
+    "fuzimiao-metro": ["浮桥站"],
+    "jimingsi-metro": ["鸡鸣寺站"],
+    zhenxiang: ["蓁巷"],
+    weixiang: ["卫巷", "新安里"],
+    "wenchang-food": ["文昌过街天桥"],
+    "library-print": ["打印"],
+    "shatang-express": ["近邻宝"],
+    "aed-library": ["AED"],
+  };
+
+  function canonicalGuideName(value) {
+    return normalize(value)
+      .replace(/[·—–\-（）()\/\\]/g, "")
+      .replace(/东南大学|四牌楼校区|校园|宿舍区|餐饮街区|餐饮区|人工标注坐标|腾讯地图/g, "");
+  }
+
+  function linkedGuideRecords(feature) {
+    if (!feature || !window.GUIDE_DATA?.records?.length) return [];
+    const terms = [feature.name, ...(featureGuideTerms[feature.id] || [])]
+      .map(canonicalGuideName)
+      .filter((term) => term.length >= 2);
+    return window.GUIDE_DATA.records.filter((record) => {
+      const title = canonicalGuideName(record.title);
+      return terms.some((term) => title.includes(term) || term.includes(title));
+    });
+  }
+
+  function mapFeatureForRecord(record) {
+    if (!record) return null;
+    return window.MAP_FEATURES.find((feature) => linkedGuideRecords(feature).some((item) => item.id === record.id)) || null;
+  }
+
+  function renderGuideValue(value) {
+    const text = String(value ?? "");
+    const escaped = escapeHtml(text);
+    if (/^https?:\/\/[^\s]+$/i.test(text)) {
+      return `<a href="${escaped}" target="_blank" rel="noreferrer">${escaped}</a>`;
+    }
+    if (/^[a-z0-9.-]+\.[a-z]{2,}(\/[^\s]*)?$/i.test(text)) {
+      return `<a href="https://${escaped}" target="_blank" rel="noreferrer">${escaped}</a>`;
+    }
+    if (/^(?:\+?86[- ]?)?0\d{2,3}[- ]?\d{7,8}$/.test(text)) {
+      return `<a href="tel:${escaped.replace(/[- ]/g, "")}">${escaped}</a>`;
+    }
+    return escaped;
+  }
+
+  function renderRecordFields(record, limit = Infinity) {
+    const entries = Object.entries(record?.values || {})
+      .filter(([, value]) => value !== null && value !== "" && value !== "-")
+      .slice(0, limit);
+    return `<dl class="guide-field-list">${entries.map(([key, value]) => `
+      <div><dt>${escapeHtml(key)}</dt><dd>${renderGuideValue(value)}</dd></div>
+    `).join("")}</dl>`;
+  }
+
+  function renderRecordPreview(record) {
+    const entries = Object.entries(record?.values || {})
+      .filter(([, value]) => value !== null && value !== "" && value !== "-")
+      .slice(0, 3);
+    return `<span class="guide-record-preview">${entries.map(([key, value]) => `
+      <span><b>${escapeHtml(key)}</b><i>${escapeHtml(value)}</i></span>
+    `).join("")}</span>`;
+  }
+
+  function renderRelatedGuide(feature) {
+    if (feature.record) {
+      return `<section class="detail-guide-section">
+        <div class="detail-section-heading"><span>指南详情</span><small>${escapeHtml(feature.record.sheet)}</small></div>
+        ${renderRecordFields(feature.record)}
+      </section>`;
+    }
+    const records = linkedGuideRecords(feature);
+    if (!records.length) return "";
+    return `<section class="detail-guide-section">
+      <div class="detail-section-heading"><span>2025版指南关联信息</span><small>${records.length} 条</small></div>
+      <div class="detail-guide-records">${records.map((record, index) => `
+        <details class="detail-guide-record" ${index === 0 ? "open" : ""}>
+          <summary><span>${escapeHtml(record.title)}</span><small>源页 ${escapeHtml(record.sourcePage || "—")}</small></summary>
+          ${renderRecordFields(record)}
+        </details>
+      `).join("")}</div>
+    </section>`;
+  }
+
+  function showToast(message, tone = "info") {
+    let toast = document.querySelector("#appToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "appToast";
+      toast.className = "app-toast";
+      toast.setAttribute("role", "status");
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.dataset.tone = tone;
+    toast.classList.add("show");
+    window.clearTimeout(showToast.timer);
+    showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 3200);
+  }
+
+  function openRouteForFeature(feature) {
+    if (!feature || !Number.isFinite(Number(feature.lat)) || !Number.isFinite(Number(feature.lng))) {
+      showToast("这个地点还没有可用于路线规划的坐标。", "warning");
+      return;
+    }
+    const key = window.APP_CONFIG.tencentMapKey;
+    if (!key) {
+      showToast("配置腾讯地图 Key 后即可打开步行路线。", "warning");
+      return;
+    }
+    const target = toTencentCoordinate(Number(feature.lat), Number(feature.lng), feature.coordinateSystem);
+    const params = new URLSearchParams({
+      type: "walk",
+      from: "我的位置",
+      fromcoord: state.userLocation ? `${state.userLocation.latitude},${state.userLocation.longitude}` : "CurrentLocation",
+      to: feature.name,
+      tocoord: `${target.latitude},${target.longitude}`,
+      referer: key,
+    });
+    window.open(`https://apis.map.qq.com/uri/v1/routeplan?${params.toString()}`, "_blank", "noopener,noreferrer");
+  }
+
   function focusAnnotation(annotation) {
     if (!state.tmap || !annotation) return;
     if (!Number.isFinite(Number(annotation.lat)) || !Number.isFinite(Number(annotation.lng))) return;
@@ -640,21 +851,28 @@
     const hasEditableCoordinate = !feature.knowledgeOnly
       && Number.isFinite(Number(feature.lat))
       && Number.isFinite(Number(feature.lng));
+    const linkedPlace = feature.knowledgeOnly ? mapFeatureForRecord(feature.record) : null;
+    const hasGuideTime = !feature.record && feature.hours && !["待核验", "用户标注", "见指南详情"].includes(feature.hours);
+    const sourceVersion = feature.sourceVersion || window.GUIDE_DATA?.meta?.version || "2025.08";
+    const sourceText = feature.record
+      ? `${sourceVersion}版指南 · 源页 ${feature.record.sourcePage || "—"}`
+      : feature.source || `${sourceVersion}版指南与现有地图数据`;
     elements.detailContent.innerHTML = `
       <span class="detail-category" style="--category-color:${categoryColor(feature.category)}">${escapeHtml((themeById[feature.category] || themeById.all).label)}</span>
       <h2>${escapeHtml(feature.name)}</h2>
       <div class="detail-location">⌖ ${escapeHtml(feature.location)}</div>
-      <p class="detail-description">${escapeHtml(feature.description)}</p>
-      <div class="detail-grid"><span>开放时间</span><strong>${escapeHtml(feature.hours)}</strong></div>
-      <div class="detail-grid"><span>状态</span><span>${statusLabel(feature.status)}（规则推测）</span></div>
-      <div class="detail-grid"><span>相关标签</span><div class="tag-list">${tags}</div></div>
+      ${feature.record ? "" : `<p class="detail-description">${escapeHtml(feature.description)}</p>`}
+      ${hasGuideTime ? `<div class="detail-grid"><span>指南时间</span><strong>${escapeHtml(feature.hours)}</strong></div>` : ""}
+      ${featureDistance(feature) !== null ? `<div class="detail-grid"><span>距你</span><strong>${formatDistance(featureDistance(feature))} · 直线距离</strong></div>` : ""}
+      ${tags ? `<div class="detail-grid"><span>相关标签</span><div class="tag-list">${tags}</div></div>` : ""}
       ${hasEditableCoordinate ? `<div class="detail-grid"><span>地图坐标</span><strong>${escapeHtml(formatFeatureCoordinate(feature))}</strong></div>` : ""}
+      ${renderRelatedGuide(feature)}
       <div class="detail-actions">
-        <button class="route-button" data-detail-action="route" ${feature.knowledgeOnly ? "disabled" : ""}>到这里去</button>
+        ${linkedPlace ? `<button class="route-button" data-detail-action="show-map" data-place-id="${escapeHtml(linkedPlace.id)}">地图上查看</button>` : `<button class="route-button" data-detail-action="route" ${feature.knowledgeOnly ? "disabled" : ""}>步行路线</button>`}
         <button class="ask-button" data-detail-action="ask">继续问 Agent</button>
         ${hasEditableCoordinate ? `<button class="coordinate-button" data-detail-action="edit-coordinate">修改经纬度</button>` : ""}
       </div>
-      <div class="verification">⚠ Demo 推测数据 · 坐标、入口和开放状态等待人工标注</div>
+      <div class="verification"><span>资料来源</span><strong>${escapeHtml(sourceText)}</strong></div>
     `;
     elements.detailPanel.classList.add("open");
   }
@@ -680,6 +898,61 @@
     `).join("");
   }
 
+  function openGuide() {
+    renderGuideBrowser();
+    elements.guideModal.removeAttribute("inert");
+    elements.guideModal.setAttribute("aria-hidden", "false");
+    elements.guideModal.classList.add("open");
+    window.setTimeout(() => document.querySelector("[data-guide-view].active")?.focus(), 0);
+  }
+
+  function closeGuide() {
+    if (!elements.guideModal.classList.contains("open")) return;
+    elements.guideModal.classList.remove("open");
+    elements.guideModal.setAttribute("aria-hidden", "true");
+    elements.guideModal.setAttribute("inert", "");
+    document.querySelector("#guideButton")?.focus();
+  }
+
+  function renderGuideView() {
+    const structured = state.guideView === "structured";
+    elements.guideStructured.hidden = !structured;
+    elements.guideGallery.hidden = structured;
+    document.querySelectorAll("[data-guide-view]").forEach((button) => {
+      const active = button.dataset.guideView === state.guideView;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+  }
+
+  function renderGuideBrowser() {
+    const sheets = window.GUIDE_DATA?.sheets || [];
+    if (!state.guideSheet || !sheets.includes(state.guideSheet)) state.guideSheet = sheets[0] || null;
+    elements.guideTopicList.innerHTML = sheets.map((sheet) => {
+      const meta = guideSheetMeta[sheet] || { icon: "文", summary: "校园指南内容" };
+      const count = window.GUIDE_DATA.records.filter((record) => record.sheet === sheet).length;
+      return `<button class="guide-topic-button ${state.guideSheet === sheet ? "active" : ""}" type="button" data-guide-sheet="${escapeHtml(sheet)}">
+        <span class="guide-topic-icon">${escapeHtml(meta.icon)}</span>
+        <span><strong>${escapeHtml(sheet)}</strong><small>${escapeHtml(meta.summary)}</small></span>
+        <em>${count}</em>
+      </button>`;
+    }).join("");
+    const records = window.GUIDE_DATA.records.filter((record) => record.sheet === state.guideSheet);
+    const meta = guideSheetMeta[state.guideSheet] || { summary: "GUIDE TOPIC" };
+    elements.guideRecordEyebrow.textContent = meta.summary;
+    elements.guideRecordTitle.textContent = state.guideSheet || "指南内容";
+    elements.guideRecordCount.textContent = `${records.length} 条`;
+    elements.guideRecordList.innerHTML = records.map((record) => {
+      const place = mapFeatureForRecord(record);
+      return `<button class="guide-record-card" type="button" data-guide-record-id="${escapeHtml(record.id)}">
+        <span class="guide-record-topline"><strong>${escapeHtml(record.title)}</strong><em>${place ? "关联地图" : `源页 ${escapeHtml(record.sourcePage || "—")}`}</em></span>
+        ${renderRecordPreview(record)}
+        <span class="guide-record-more">查看完整信息 →</span>
+      </button>`;
+    }).join("");
+    renderGuideView();
+  }
+
   function addMessage(role, content, loading = false) {
     const item = document.createElement("div");
     item.className = `message ${role}${loading ? " loading" : ""}`;
@@ -700,13 +973,13 @@
   function localAgent(question) {
     const normalized = normalize(question);
     let ids = [];
-    let message = "我会优先查询当前指南数据。这个 Demo 已经建立地图联动协议，但位置和开放时间仍需要人工核验。";
+    let message = "我会优先查询2025.08版四牌楼校园指南，并把相关地点同步显示在地图上。";
     if (/打印|复印/.test(normalized)) {
       ids = ["library-print", "zhongshan"];
-      message = "现有指南记录了图书馆大厅和中山院的自助打印设施。我已在地图上标出两个候选点。晚上使用前仍需核验设备是否正常，以及场所是否开放。";
+      message = "2025.08版指南记录了图书馆大厅和中山院的自助打印设施。我已在地图上标出两个候选点。";
     } else if (/吃|餐|午饭|晚饭|夜宵|好吃/.test(normalized)) {
       ids = ["shatang-canteen", "xiangyuan", "zhenxiang", "weixiang", "wenchang-food"];
-      message = "如果在校内，可以先看沙塘园或香园食堂；想吃夜宵可关注蓁巷。当前 Demo 只按指南标签推荐，尚未加入预算、实时营业和个人偏好。";
+      message = "如果在校内，可以先看沙塘园或香园食堂；想找夜宵可查看蓁巷。以下推荐依据2025.08版指南。";
     } else if (/自习|学习|图书馆|空教室/.test(normalized)) {
       ids = ["library", "zhongshan", "dongnan"];
       message = "图书馆适合预约座位和研讨空间；中山院、东南院可以通过数智东南查询空教室。我已高亮相关地点。";
@@ -718,7 +991,7 @@
       message = "四个主要宿舍区域已高亮。不同楼栋的床型、卫浴和门禁不同，请选择具体宿舍区查看。";
     } else if (/地铁|公交|南京南|南京站|机场|怎么走/.test(normalized)) {
       ids = ["fuzimiao-metro", "jimingsi-metro"];
-      message = "四牌楼附近可使用浮桥站和鸡鸣寺站。指南中已有大致耗时和首末班信息，但出行前应调用腾讯路线服务获取实时方案。";
+      message = "四牌楼附近可使用浮桥站和鸡鸣寺站。页面展示的是2025.08版指南记录的耗时和首末班信息。";
     }
     return { message, placeIds: ids };
   }
@@ -736,13 +1009,16 @@
         });
         if (!result.ok) throw new Error(`Agent request failed: ${result.status}`);
         response = await result.json();
+        elements.agentMode.textContent = "在线校园 Agent";
       } else {
         await new Promise((resolve) => setTimeout(resolve, 420));
         response = localAgent(question);
+        elements.agentMode.textContent = "本地指南模式";
       }
     } catch (error) {
       response = localAgent(question);
-      response.message += "\n\n外部模型暂时不可用，已切换至本地演示规则。";
+      response.message += "\n\n在线服务暂不可用，已切换为本地指南查询。";
+      elements.agentMode.textContent = "本地指南模式";
     }
     loading.remove();
     addMessage("assistant", response.message || "暂时没有找到答案。");
@@ -780,6 +1056,13 @@
           properties: { title: annotation.name },
         }));
       state.annotationMarkers.setGeometries(annotationGeometries);
+    }
+    if (state.userMarker) {
+      state.userMarker.setGeometries(state.userLocation ? [{
+        id: "current-user-location",
+        styleId: "user-location",
+        position: new TMap.LatLng(state.userLocation.latitude, state.userLocation.longitude),
+      }] : []);
     }
   }
 
@@ -828,6 +1111,14 @@
       styles: markerStyles,
       geometries: [],
     });
+    const userMarkerSvg = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="#3079d6" opacity=".2"/><circle cx="18" cy="18" r="8" fill="#3079d6" stroke="white" stroke-width="4"/></svg>`)}`;
+    state.userMarker = new TMap.MultiMarker({
+      map: state.tmap,
+      styles: {
+        "user-location": new TMap.MarkerStyle({ width: 36, height: 36, anchor: { x: 18, y: 18 }, src: userMarkerSvg }),
+      },
+      geometries: [],
+    });
     state.tmapMarkers.on("click", (event) => {
       const id = event?.geometry?.id;
       if (id) selectFeature(id);
@@ -845,9 +1136,7 @@
       if (coordinate) openAnnotationEditor(coordinate);
       else setAnnotationNotice("没有读取到腾讯地图坐标，请稍后再试。", true);
     });
-    elements.dataStatus.textContent = "腾讯底图 · 数据待核准";
-    elements.dataStatus.classList.remove("warning");
-    elements.dataStatus.classList.add("success");
+    restoreDataStatus();
     renderMarkers();
   }
 
@@ -871,6 +1160,24 @@
 
   function bindEvents() {
     document.addEventListener("click", (event) => {
+      const guideViewButton = event.target.closest("[data-guide-view]");
+      if (guideViewButton) {
+        state.guideView = guideViewButton.dataset.guideView === "original" ? "original" : "structured";
+        renderGuideView();
+        return;
+      }
+      const guideTopicButton = event.target.closest("[data-guide-sheet]");
+      if (guideTopicButton) {
+        state.guideSheet = guideTopicButton.dataset.guideSheet;
+        renderGuideBrowser();
+        return;
+      }
+      const guideRecordButton = event.target.closest("[data-guide-record-id]");
+      if (guideRecordButton) {
+        closeGuide();
+        selectFeature(guideRecordButton.dataset.guideRecordId, true);
+        return;
+      }
       const annotationEditButton = event.target.closest("[data-annotation-edit]");
       if (annotationEditButton) {
         event.stopPropagation();
@@ -913,7 +1220,7 @@
     });
     document.addEventListener("keydown", (event) => {
       if (event.key === "/" && document.activeElement !== elements.searchInput) { event.preventDefault(); elements.searchInput.focus(); }
-      if (event.key === "Escape") { closeDetail(); closeAnnotationEditor(); closeCoordinateEditor(); elements.agentDrawer.classList.remove("open"); elements.guideModal.classList.remove("open"); }
+      if (event.key === "Escape") { closeDetail(); closeAnnotationEditor(); closeCoordinateEditor(); elements.agentDrawer.classList.remove("open"); closeGuide(); }
     });
     document.querySelectorAll(".filter-chip").forEach((button) => button.addEventListener("click", () => {
       document.querySelectorAll(".filter-chip").forEach((item) => item.classList.remove("active"));
@@ -924,8 +1231,8 @@
     document.querySelector("#detailClose").addEventListener("click", closeDetail);
     document.querySelector("#agentButton").addEventListener("click", () => openAgent());
     document.querySelector("#agentClose").addEventListener("click", () => elements.agentDrawer.classList.remove("open"));
-    document.querySelector("#guideButton").addEventListener("click", () => elements.guideModal.classList.add("open"));
-    document.querySelector("#guideClose").addEventListener("click", () => elements.guideModal.classList.remove("open"));
+    document.querySelector("#guideButton").addEventListener("click", openGuide);
+    document.querySelector("#guideClose").addEventListener("click", closeGuide);
     elements.annotationButton.addEventListener("click", toggleAnnotationMode);
     elements.annotationForm.addEventListener("submit", saveAnnotation);
     elements.coordinateForm.addEventListener("submit", saveCoordinate);
@@ -951,7 +1258,7 @@
       setAnnotationNotice("标注已清空。", false);
       updateAnnotationStatus();
     });
-    elements.guideModal.addEventListener("click", (event) => { if (event.target === elements.guideModal) elements.guideModal.classList.remove("open"); });
+    elements.guideModal.addEventListener("click", (event) => { if (event.target === elements.guideModal) closeGuide(); });
     document.querySelector("#mobileCollapse").addEventListener("click", () => elements.sidebar.classList.toggle("collapsed"));
     elements.detailPanel.addEventListener("click", (event) => {
       if (!state.selectedAnnotationId) return;
@@ -965,16 +1272,18 @@
         return;
       }
       if (action === "ask") openAgent(`请介绍新增地点：${annotation.name}`);
-      if (action === "route") {
-        if (state.tmap && Number.isFinite(Number(annotation.lat)) && Number.isFinite(Number(annotation.lng))) focusAnnotation(annotation);
-        else openAgent(`如何前往新增地点：${annotation.name}`);
-      }
+      if (action === "route") openRouteForFeature(annotationAsFeature(annotation));
     });
     elements.detailPanel.addEventListener("click", (event) => {
       const action = event.target.closest("[data-detail-action]")?.dataset.detailAction;
+      if (action === "show-map") {
+        const placeId = event.target.closest("[data-place-id]")?.dataset.placeId;
+        if (placeId) selectFeature(placeId);
+        return;
+      }
       if (action === "edit-coordinate") openCoordinateEditor(state.selectedId);
       if (action === "ask") openAgent(`请介绍一下${resolveFeature(state.selectedId, !featureById[state.selectedId])?.name || "这个地点"}`);
-      if (action === "route") openAgent(`从我当前位置怎么去${featureById[state.selectedId]?.name || "这里"}？`);
+      if (action === "route") openRouteForFeature(featureById[state.selectedId]);
     });
     elements.chatForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -992,12 +1301,32 @@
       else { state.fallbackZoom = Math.max(.9, state.fallbackZoom - .08); elements.fallbackMap.style.transform = `scale(${state.fallbackZoom})`; }
     });
     document.querySelector("#locateButton").addEventListener("click", () => {
-      if (!navigator.geolocation) return openAgent("如何根据我的当前位置找附近服务？");
+      if (!navigator.geolocation) {
+        showToast("当前浏览器不支持定位，仍可继续浏览校园指南。", "warning");
+        return;
+      }
+      elements.dataStatus.textContent = "正在定位…";
+      elements.dataStatus.classList.remove("success");
+      elements.dataStatus.classList.add("warning");
       navigator.geolocation.getCurrentPosition((position) => {
         const coordinate = toTencentCoordinate(position.coords.latitude, position.coords.longitude);
+        state.userLocation = coordinate;
         if (state.tmap) state.tmap.easeTo({ center: new TMap.LatLng(coordinate.latitude, coordinate.longitude), zoom: 18 });
-        else openAgent("已获得我的当前位置，请推荐附近的校园服务");
-      }, () => openAgent("定位权限未开启，如何从南门开始校园导览？"));
+        renderResults();
+        if (state.selectedAnnotationId) {
+          const annotation = state.annotations.find((item) => item.id === state.selectedAnnotationId);
+          if (annotation) selectAnnotation(annotation);
+        } else if (state.selectedId) {
+          const selected = resolveFeature(state.selectedId, !featureById[state.selectedId]);
+          if (selected) renderDetail(selected);
+        }
+        restoreDataStatus();
+        showToast("已定位，地点列表已按直线距离排序。", "success");
+      }, () => {
+        state.userLocation = null;
+        restoreDataStatus();
+        showToast("未获得定位权限，仍可继续浏览校园指南。", "warning");
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
     });
     elements.fallbackMap.addEventListener("click", (event) => {
       if (!state.annotationMode || event.target.closest(".map-marker")) return;
@@ -1014,9 +1343,10 @@
   function initialize() {
     loadAnnotations();
     renderGuideGallery();
+    renderGuideBrowser();
     renderAll();
     bindEvents();
-    elements.agentMode.textContent = window.APP_CONFIG.agentEnabled ? "DeepSeek V4 Flash" : "本地演示模式";
+    elements.agentMode.textContent = window.APP_CONFIG.agentEnabled ? "校园知识模式" : "本地指南模式";
     elements.promptSuggestions.innerHTML = ["晚上哪里能打印？", "中午吃什么？", "哪里可以自习？", "校医院怎么走？"].map((prompt) => `<button class="prompt-suggestion" data-prompt="${prompt}">${prompt}</button>`).join("");
     addMessage("assistant", "你好，我是四牌楼校园 Agent。当前是第一版 Demo，可以帮你查找学习、餐饮、宿舍、办事和交通信息。");
     loadTencentMap();

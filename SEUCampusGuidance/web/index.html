@@ -24,9 +24,9 @@
           <kbd>/</kbd>
         </div>
         <div class="top-actions">
-          <span id="dataStatus" class="status-pill warning">演示数据 · 待核准</span>
+          <span id="dataStatus" class="status-pill success">指南版本 · 2025.08</span>
           <button id="annotationButton" class="ghost-button annotation-button" type="button">标注地图</button>
-          <button id="guideButton" class="ghost-button">原指南</button>
+          <button id="guideButton" class="ghost-button">校园指南</button>
           <button id="agentButton" class="primary-button">问校园 Agent</button>
         </div>
       </header>
@@ -45,8 +45,8 @@
 
           <div class="filter-row">
             <button class="filter-chip active" data-filter="all">全部</button>
-            <button class="filter-chip" data-filter="open">营业中</button>
-            <button class="filter-chip" data-filter="verified">已核验</button>
+            <button class="filter-chip" data-filter="mapped">地图地点</button>
+            <button class="filter-chip" data-filter="guide">指南内容</button>
           </div>
 
           <div class="result-summary">
@@ -124,8 +124,8 @@
             </svg>
             <div id="fallbackMarkers" class="fallback-markers"></div>
             <div class="map-watermark">
-              <strong>无腾讯地图 Key · 校园示意模式</strong>
-              <span>位置为 Demo 推测，等待人工核准</span>
+              <strong>2025.08 版校园指南 · 示意地图</strong>
+              <span>坐标来自现有数据与人工标注</span>
             </div>
           </div>
 
@@ -247,7 +247,7 @@
         <div>
           <span class="agent-orb">✦</span>
           <strong>校园 Agent</strong>
-          <small id="agentMode">本地演示模式</small>
+          <small id="agentMode">本地指南模式</small>
         </div>
         <button id="agentClose" class="icon-button">×</button>
       </div>
@@ -257,19 +257,36 @@
         <textarea id="chatInput" rows="1" placeholder="例如：晚上九点半哪里还能打印？"></textarea>
         <button type="submit" aria-label="发送">↑</button>
       </form>
-      <p class="agent-note">Agent 会调用校园数据，不应自行编造地点；当前坐标和状态仍待人工核准。</p>
+      <p class="agent-note">回答优先依据2025.08版校园指南；在线服务不可用时自动切换为本地指南查询。</p>
     </section>
 
-    <section id="guideModal" class="modal" aria-label="原始指南">
+    <section id="guideModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle" aria-hidden="true" inert>
       <div class="modal-card guide-modal-card">
         <div class="modal-header">
           <div>
-            <span class="eyebrow">SOURCE GUIDE</span>
-            <h2>十张原始校园指南</h2>
+            <span class="eyebrow">CAMPUS HANDBOOK</span>
+            <h2 id="guideModalTitle">四牌楼校园指南</h2>
           </div>
           <button id="guideClose" class="icon-button">×</button>
         </div>
-        <div id="guideGallery" class="guide-gallery"></div>
+        <div class="guide-view-switch" role="tablist" aria-label="指南查看方式">
+          <button class="guide-view-button active" type="button" role="tab" aria-selected="true" data-guide-view="structured">电子指南</button>
+          <button class="guide-view-button" type="button" role="tab" aria-selected="false" data-guide-view="original">原版图册</button>
+        </div>
+        <div id="guideStructured" class="guide-structured">
+          <nav id="guideTopicList" class="guide-topic-list" aria-label="指南主题"></nav>
+          <section class="guide-record-panel" aria-live="polite">
+            <div class="guide-record-heading">
+              <div>
+                <span id="guideRecordEyebrow" class="eyebrow">GUIDE TOPIC</span>
+                <h3 id="guideRecordTitle">指南内容</h3>
+              </div>
+              <span id="guideRecordCount" class="guide-record-count">0 条</span>
+            </div>
+            <div id="guideRecordList" class="guide-record-list"></div>
+          </section>
+        </div>
+        <div id="guideGallery" class="guide-gallery" hidden></div>
       </div>
     </section>
 
