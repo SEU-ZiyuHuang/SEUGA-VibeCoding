@@ -59,7 +59,9 @@ export default {
       const payload = await response.json();
       const route = payload?.result?.routes?.[0];
       if (!response.ok || payload?.status !== 0 || !route) {
-        console.error("Tencent walking route failed", { status: payload?.status, message: payload?.message });
+        const logDetails = { status: payload?.status, message: payload?.message };
+        if (payload?.status === 121) console.warn("Tencent walking route quota reached", logDetails);
+        else console.error("Tencent walking route failed", logDetails);
         const message = payload?.status === 121
           ? "今日站内路线额度已用完，请改用腾讯地图导航。"
           : "暂时无法规划步行路线，请稍后重试。";
