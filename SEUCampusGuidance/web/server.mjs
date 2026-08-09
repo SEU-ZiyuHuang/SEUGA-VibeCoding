@@ -64,7 +64,7 @@ async function serveStatic(request, response) {
     return;
   }
   if (requestUrl.pathname === "/api/content") {
-    sendJson(response, 200, { ok: true, content: { schemaVersion: 1, featureOverrides: {}, workflowOverrides: {} }, updatedAt: null });
+    sendJson(response, 200, { ok: true, content: { schemaVersion: 2, featureOverrides: {}, workflowOverrides: {}, customFeatures: [], customWorkflows: [] }, updatedAt: null });
     return;
   }
   if (requestUrl.pathname === "/api/admin/session") {

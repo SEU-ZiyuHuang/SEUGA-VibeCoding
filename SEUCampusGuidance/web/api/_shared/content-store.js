@@ -3,9 +3,11 @@ import { list, put } from "@vercel/blob";
 const releasePrefix = "campus-content/releases/";
 
 export const emptyContent = Object.freeze({
-  schemaVersion: 1,
+  schemaVersion: 2,
   featureOverrides: {},
   workflowOverrides: {},
+  customFeatures: [],
+  customWorkflows: [],
 });
 
 export function storageConfigured() {
@@ -15,9 +17,11 @@ export function storageConfigured() {
 function normalizeContent(value) {
   const content = value && typeof value === "object" ? value : {};
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     featureOverrides: content.featureOverrides && typeof content.featureOverrides === "object" ? content.featureOverrides : {},
     workflowOverrides: content.workflowOverrides && typeof content.workflowOverrides === "object" ? content.workflowOverrides : {},
+    customFeatures: Array.isArray(content.customFeatures) ? content.customFeatures : [],
+    customWorkflows: Array.isArray(content.customWorkflows) ? content.customWorkflows : [],
     updatedAt: typeof content.updatedAt === "string" ? content.updatedAt : null,
   };
 }

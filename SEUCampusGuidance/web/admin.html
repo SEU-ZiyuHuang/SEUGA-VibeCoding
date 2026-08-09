@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#102d24" />
     <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content="东南大学四牌楼校园指南的安全内容管理后台。" />
     <title>四牌楼校园指南 · 内容管理</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23173f32'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-size='22' font-family='Arial' font-weight='700' fill='%23e4eadb'%3ESEU%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./admin.css" />
@@ -12,7 +13,7 @@
   <body>
     <div class="admin-shell">
       <header class="admin-topbar">
-        <a class="admin-brand" href="/" aria-label="返回校园指南">
+        <a class="admin-brand" href="/" aria-label="SEU 内容管理，返回校园指南">
           <span>SEU</span>
           <div><strong>内容管理</strong><small>四牌楼校园指南</small></div>
         </a>
@@ -48,6 +49,10 @@
               <button class="content-tab active" type="button" data-content-kind="feature" role="tab" aria-selected="true">地点信息</button>
               <button class="content-tab" type="button" data-content-kind="workflow" role="tab" aria-selected="false">办事流程</button>
             </div>
+            <button id="addContentButton" class="add-content-button" type="button">
+              <span aria-hidden="true">＋</span>
+              <span id="addContentLabel">新增地点或信息条目</span>
+            </button>
             <label class="content-search">
               <span aria-hidden="true">⌕</span>
               <input id="contentSearch" type="search" placeholder="搜索内容条目" autocomplete="off" />
@@ -73,6 +78,16 @@
                 <textarea id="fieldSummary" name="summary" rows="5" maxlength="800"></textarea>
               </label>
               <div id="featureFields" class="field-group">
+                <div class="field-grid">
+                  <label>
+                    <span>内容分类</span>
+                    <select id="fieldCategory" name="category"></select>
+                  </label>
+                  <label>
+                    <span>标记图标</span>
+                    <input id="fieldIcon" name="icon" maxlength="8" placeholder="例如：食、书、医" />
+                  </label>
+                </div>
                 <label>
                   <span>位置</span>
                   <input id="fieldLocation" name="location" maxlength="200" />
@@ -81,8 +96,53 @@
                   <span>开放或服务时间</span>
                   <input id="fieldHours" name="hours" maxlength="160" />
                 </label>
+                <label>
+                  <span>搜索标签（使用逗号分隔）</span>
+                  <input id="fieldTags" name="tags" maxlength="500" placeholder="例如：打印, 自助, 24小时" />
+                </label>
+                <label class="check-row">
+                  <input id="fieldKnowledgeOnly" name="knowledgeOnly" type="checkbox" />
+                  <span><strong>仅作为信息条目</strong><small>仍可在列表和搜索中找到，但不在地图上显示大头针，也不参与附近距离计算。</small></span>
+                </label>
+                <div id="coordinateFields" class="coordinate-card">
+                  <div class="coordinate-heading">
+                    <div><strong>地图坐标</strong><small>地图点位必须填写；腾讯地图坐标请选择 GCJ-02。</small></div>
+                    <div class="coordinate-tools">
+                      <button id="useCurrentLocation" class="secondary-action compact" type="button">使用我的当前位置</button>
+                      <a href="https://lbs.qq.com/getPoint/" target="_blank" rel="noreferrer">打开坐标拾取器 ↗</a>
+                    </div>
+                  </div>
+                  <div class="field-grid three-columns">
+                    <label>
+                      <span>坐标类型</span>
+                      <select id="fieldCoordinateSystem" name="coordinateSystem">
+                        <option value="GCJ-02">GCJ-02（腾讯地图）</option>
+                        <option value="WGS84">WGS84（GPS）</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>纬度 Latitude</span>
+                      <input id="fieldLatitude" name="latitude" type="number" min="31.95" max="32.16" step="0.000001" inputmode="decimal" placeholder="32.055380" />
+                    </label>
+                    <label>
+                      <span>经度 Longitude</span>
+                      <input id="fieldLongitude" name="longitude" type="number" min="118.65" max="118.95" step="0.000001" inputmode="decimal" placeholder="118.795829" />
+                    </label>
+                  </div>
+                  <p id="coordinateNotice" class="field-help">建议保留小数点后 6 位；新增后可在公开地图检查大头针位置。</p>
+                </div>
               </div>
               <div id="workflowFields" class="field-group" hidden>
+                <div class="field-grid">
+                  <label>
+                    <span>服务分类</span>
+                    <input id="fieldWorkflowCategory" name="workflowCategory" maxlength="40" placeholder="例如：校园卡、行政办事" />
+                  </label>
+                  <label>
+                    <span>入口图标</span>
+                    <input id="fieldWorkflowIcon" name="workflowIcon" maxlength="8" placeholder="例如：卡、办、印" />
+                  </label>
+                </div>
                 <label>
                   <span>办理前准备（每行一项）</span>
                   <textarea id="fieldPreparation" name="preparation" rows="4"></textarea>
@@ -95,10 +155,22 @@
                   <span>重要提醒</span>
                   <textarea id="fieldNotice" name="notice" rows="3" maxlength="500"></textarea>
                 </label>
+                <label>
+                  <span>关联地图地点（可多选）</span>
+                  <select id="fieldMapFeatureIds" name="mapFeatureIds" multiple size="6"></select>
+                  <small class="field-help">电脑端按 Ctrl/⌘ 可多选；关联后，流程详情会提供一键查看地点入口。</small>
+                </label>
+                <label>
+                  <span>推荐提问</span>
+                  <input id="fieldAgentPrompt" name="agentPrompt" maxlength="300" placeholder="例如：请告诉我校园卡补办需要准备什么？" />
+                </label>
               </div>
+              <section id="entryPreview" class="entry-preview" aria-live="polite"></section>
+              <div id="entryNotice" class="form-notice" role="status"></div>
               <div class="editor-actions">
                 <button class="primary-action" type="submit">保存到发布草稿</button>
                 <button id="restoreEntry" class="secondary-action" type="button">恢复指南原文</button>
+                <button id="deleteEntry" class="danger-action" type="button" hidden>删除这条新增内容</button>
               </div>
             </form>
           </section>
@@ -111,7 +183,9 @@
             </div>
             <dl class="publish-meta">
               <div><dt>地点改动</dt><dd id="featureChangeCount">0</dd></div>
+              <div><dt>新增地点</dt><dd id="featureAddCount">0</dd></div>
               <div><dt>流程改动</dt><dd id="workflowChangeCount">0</dd></div>
+              <div><dt>新增流程</dt><dd id="workflowAddCount">0</dd></div>
               <div><dt>上次发布</dt><dd id="lastPublishedAt">尚未发布</dd></div>
             </dl>
             <button id="publishButton" class="publish-button" type="button">发布到网站</button>

@@ -167,21 +167,43 @@
   const annotationStorageKey = "seu-campus-map-annotations-v1";
 
   function applyPublishedContent(content) {
-    const featureFields = ["name", "description", "location", "hours"];
-    const workflowFields = ["title", "summary", "notice", "preparation", "steps"];
+    (Array.isArray(content?.customFeatures) ? content.customFeatures : []).forEach((feature) => {
+      if (!feature?.id || !feature?.name || featureById[feature.id]) return;
+      const managedFeature = { ...feature };
+      if (!managedFeature.knowledgeOnly && Number.isFinite(Number(managedFeature.lat)) && Number.isFinite(Number(managedFeature.lng))) {
+        const fallback = fallbackPositionFromCoordinate(Number(managedFeature.lat), Number(managedFeature.lng), managedFeature.coordinateSystem);
+        managedFeature.x = fallback.x;
+        managedFeature.y = fallback.y;
+      }
+      window.MAP_FEATURES.push(managedFeature);
+      featureById[managedFeature.id] = managedFeature;
+    });
+    (Array.isArray(content?.customWorkflows) ? content.customWorkflows : []).forEach((workflow) => {
+      if (!workflow?.id || !workflow?.title || workflowById[workflow.id]) return;
+      serviceWorkflows.push(workflow);
+      workflowById[workflow.id] = workflow;
+    });
+    const featureFields = ["name", "description", "location", "hours", "category", "icon", "lat", "lng", "coordinateSystem", "tags", "knowledgeOnly"];
+    const workflowFields = ["title", "summary", "notice", "preparation", "steps", "category", "icon", "mapFeatureIds", "agentPrompt"];
     Object.entries(content?.featureOverrides || {}).forEach(([id, override]) => {
       const feature = featureById[id];
       if (!feature || !override || typeof override !== "object") return;
       featureFields.forEach((field) => {
         if (typeof override[field] === "string") feature[field] = override[field];
+        if ((field === "lat" || field === "lng") && Number.isFinite(Number(override[field]))) feature[field] = Number(override[field]);
+        if (field === "knowledgeOnly" && typeof override[field] === "boolean") feature[field] = override[field];
+        if (field === "tags" && Array.isArray(override[field])) feature[field] = override[field].filter((item) => typeof item === "string" && item.trim());
       });
+      if (!feature.knowledgeOnly && Number.isFinite(Number(feature.lat)) && Number.isFinite(Number(feature.lng))) {
+        Object.assign(feature, fallbackPositionFromCoordinate(Number(feature.lat), Number(feature.lng), feature.coordinateSystem));
+      }
     });
     Object.entries(content?.workflowOverrides || {}).forEach(([id, override]) => {
       const workflow = workflowById[id];
       if (!workflow || !override || typeof override !== "object") return;
       workflowFields.forEach((field) => {
         if (typeof override[field] === "string") workflow[field] = override[field];
-        if ((field === "preparation" || field === "steps") && Array.isArray(override[field])) {
+        if ((field === "preparation" || field === "steps" || field === "mapFeatureIds") && Array.isArray(override[field])) {
           workflow[field] = override[field].filter((item) => typeof item === "string" && item.trim());
         }
       });
@@ -809,7 +831,8 @@
     const spatial = window.MAP_FEATURES.filter((feature) => {
       const matchesTheme = state.theme === "all" || feature.category === state.theme;
       const matchesQuery = !query || normalize([feature.name, feature.location, feature.description, ...(feature.tags || [])].join(" ")).includes(query);
-      return state.filter !== "guide" && matchesTheme && matchesQuery;
+      const matchesFilter = state.filter === "guide" ? feature.knowledgeOnly : state.filter === "mapped" ? !feature.knowledgeOnly : true;
+      return matchesFilter && matchesTheme && matchesQuery;
     });
     const knowledge = (state.filter !== "mapped" && (query || state.filter === "guide"))
       ? searchKnowledge().filter((feature) => state.theme === "all" || feature.category === state.theme)
