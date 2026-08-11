@@ -432,6 +432,7 @@ async function preview(question) {
   const trace = addTrace();
   const bubble = addBubble("agent", "");
   let answer = "";
+  let stream = null;
 
   state.abort = new AbortController();
   const watchdog = setTimeout(() => state.abort?.abort(), 70_000);
@@ -472,8 +473,12 @@ async function preview(question) {
           : ` · ${label}未命中`;
       } else if (event === "token") {
         answer += data.t;
-        bubble.textContent = answer;
-        elements.previewLog.scrollTop = elements.previewLog.scrollHeight;
+        // 和线上 chat.js 用同一个渲染器：调试台看到的排版必须就是用户看到的排版
+        if (!stream) {
+          stream = window.SEUMarkdown.createStream(bubble);
+          stream.onPaint(() => { elements.previewLog.scrollTop = elements.previewLog.scrollHeight; });
+        }
+        stream.push(data.t);
       } else if (event === "error") {
         addBubble("error", data.message);
       }
@@ -490,6 +495,7 @@ async function preview(question) {
     bubble.remove();
     addBubble("error", state.abort?.signal.aborted ? "试聊超时或被中断。" : `试聊失败：${error.message}`);
   } finally {
+    if (stream) stream.finish();
     clearTimeout(watchdog);
     setPreviewBusy(false);
     elements.previewInput.focus();

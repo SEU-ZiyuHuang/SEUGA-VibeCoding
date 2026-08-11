@@ -5,7 +5,8 @@
 // 这个项目没有测试框架，这是唯一能回归测试多轮循环的手段：改 agent-loop.mjs
 // 或 tools.mjs 之后应当先跑它，再用 loop-demo.mjs 打真实 API。
 //
-// 覆盖：换词重检、预检索快路径、轮数上限、重复调用检测、跨校区切换、流式降级。
+// 覆盖：换词重检、预检索够用、轮数上限、重复调用检测、跨校区切换、流式降级、
+//      跳过决策轮的快路径及其止血开关。
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -60,6 +61,8 @@ async function collect(input) {
     else if (item.event === "sources") events.sources = item.data.sources;
     else if (item.event === "done") events.done = item.data;
     else if (item.event === "tool_call") (events.toolCalls ??= []).push(item.data);
+    else if (item.event === "tool_result" && item.data.auto) events.autoResult = item.data;
+    else if (item.event === "phase") (events.phases ??= []).push(item.data.phase);
   }
   return { events, answer };
 }
@@ -80,7 +83,12 @@ scenario = [
 ];
 let r = await collect({ message: "哪里能剪头发", campus: "jiulonghu" });
 check("事件序列以 meta 开头", r.events[0] === "meta");
-check("有预检索 tool_result", r.events[1] === "tool_result");
+// 按语义断言而不是按下标：新增 phase 这类事件不该让这条测试失败
+check("有预检索 tool_result", Boolean(r.events.autoResult));
+check("预检索发生在任何工具调用之前",
+  r.events.indexOf("tool_result") < (r.events.indexOf("tool_call") + 1 || Infinity));
+check("phase 覆盖检索/思考/作答", ["retrieving", "thinking", "writing"].every((p) => r.events.phases?.includes(p)),
+  JSON.stringify(r.events.phases));
 check("发生了 2 次工具调用", r.events.toolCalls?.length === 2, `实际 ${r.events.toolCalls?.length}`);
 check("第二次改写成了「理发」", r.events.toolCalls?.[1]?.args?.query === "理发");
 check("回答被流式吐出", r.answer.includes("理发"), JSON.stringify(r.answer));
@@ -155,5 +163,36 @@ globalThis.fetch = async (url, options) => {
 r = await collect({ message: "测试降级", campus: "jiulonghu" });
 check("降级后仍然有答案", r.answer.includes("降级后"), JSON.stringify(r.answer));
 globalThis.fetch = realFetch;
+
+// ── 场景 7：预检索高置信 → 跳过整个决策轮 ──────────────────────
+// 判定阈值本身由 scripts/fastpath-mock.mjs 守着，这里只验证「跳过」这个动作
+// 在循环里确实发生了：省掉一次 API 往返才是首字延迟的收益来源。
+console.log("\n【场景 7】预检索高置信 → 跳过决策轮，直接流式生成");
+callLog = [];
+scenario = [
+  { type: "stream", text: "2025 版指南显示，无人小巴首班 07:30。" },
+];
+r = await collect({ message: "无人小巴几点发车", campus: "wuxi" });
+check("只调 1 次 API（省掉决策轮）", callLog.length === 1, `实际 ${callLog.length}`);
+check("唯一一次调用是流式、且不带 tools", callLog[0]?.stream === true && !callLog[0]?.hasTools);
+check("没有工具调用事件", !r.events.toolCalls);
+check("done.fastPath = true", r.events.done?.fastPath === true);
+check("phase 不含 thinking", !r.events.phases?.includes("thinking"), JSON.stringify(r.events.phases));
+check("仍然有答案", r.answer.includes("无人小巴"), JSON.stringify(r.answer));
+check("sources 仍由预检索产出", (r.events.sources?.length ?? 0) > 0, `${r.events.sources?.length} 条`);
+
+// ── 场景 8：快路径的止血开关 ──────────────────────────────────
+console.log("\n【场景 8】AGENT_FAST_PATH=0 → 回到多轮决策");
+process.env.AGENT_FAST_PATH = "0";
+callLog = [];
+scenario = [
+  { type: "json", payload: textReply("READY", "stop") },
+  { type: "stream", text: "关掉快路径之后的回答。" },
+];
+r = await collect({ message: "无人小巴几点发车", campus: "wuxi" });
+check("恢复成决策轮 + 生成轮", callLog.length === 2, `实际 ${callLog.length}`);
+check("done.fastPath = false", r.events.done?.fastPath === false);
+check("phase 含 thinking", r.events.phases?.includes("thinking"), JSON.stringify(r.events.phases));
+delete process.env.AGENT_FAST_PATH;
 
 console.log(process.exitCode ? "\n有失败项" : "\n全部通过");

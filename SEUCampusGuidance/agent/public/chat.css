@@ -122,7 +122,6 @@ html, body {
   padding: 12px 15px;
   font-size: 14px;
   line-height: 1.75;
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
   border-radius: 15px;
 }
@@ -132,6 +131,7 @@ html, body {
   margin: 0 0 16px auto;
   color: #fff;
   background: var(--forest-800);
+  white-space: pre-wrap; /* 用户输入是纯文本，靠它保住换行 */
   border-bottom-right-radius: 4px;
 }
 
@@ -175,6 +175,8 @@ html, body {
   border-radius: 5px;
 }
 
+.trace-steps li { animation: step-in 0.35s ease both; }
+
 .spinner {
   display: inline-block;
   width: 8px;
@@ -189,8 +191,97 @@ html, body {
   0%, 100% { opacity: 0.3; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1.15); }
 }
+
+/* 等待期的三件事：计时器证明没卡死、副标题说明当前在干什么、
+   骨架屏让人看到「有东西正在长出来」。 */
+.trace-timer {
+  margin-left: 6px;
+  font-variant-numeric: tabular-nums; /* 数字等宽，跳秒时标题不会左右抖 */
+  opacity: 0.7;
+}
+.trace-timer:empty { display: none; }
+
+.trace-hint {
+  margin: 5px 0 0 3px;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  opacity: 0.85;
+  animation: hint-in 0.4s ease;
+}
+.trace-hint:empty { display: none; }
+
+.answer-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 88%;
+  padding: 14px 15px;
+  background: #edf2e7;
+  border-radius: 15px;
+  border-bottom-left-radius: 4px;
+}
+.answer-skeleton[hidden] { display: none; }
+.answer-skeleton span {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg,
+    rgba(23, 63, 50, 0.08) 25%, rgba(23, 63, 50, 0.17) 37%, rgba(23, 63, 50, 0.08) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+.answer-skeleton span:nth-child(1) { width: 92%; }
+.answer-skeleton span:nth-child(2) { width: 76%; }
+.answer-skeleton span:nth-child(3) { width: 54%; }
+
+/* 打字光标。挂在 .md-tail 上——它就是「还没写完」的那一段。 */
+.turn-body.streaming .md-tail::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 2px;
+  vertical-align: -0.14em;
+  background: var(--forest-700);
+  animation: caret 1.05s steps(2, jump-none) infinite;
+}
+
+@keyframes step-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hint-in {
+  from { opacity: 0; }
+  to { opacity: 0.85; }
+}
+@keyframes shimmer {
+  from { background-position: 100% 50%; }
+  to { background-position: 0 50%; }
+}
+@keyframes caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spinner { animation: none; opacity: 0.7; }
+  .trace-steps li,
+  .trace-hint { animation: none; }
+  .answer-skeleton span { animation: none; background: rgba(23, 63, 50, 0.1); }
+  .turn-body.streaming .md-tail::after { animation: none; }
+}
+
+/* 屏幕阅读器专用播报区。视觉上不可见，但不能用 display:none——那样就不播报了。 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* 来源 */

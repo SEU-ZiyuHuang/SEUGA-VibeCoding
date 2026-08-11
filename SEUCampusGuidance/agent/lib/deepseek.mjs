@@ -25,11 +25,11 @@ function mergeSignals(signal, timeoutMs) {
   return AbortSignal.any ? AbortSignal.any([signal, timeout]) : timeout;
 }
 
-async function request(body, signal) {
+async function request(body, signal, overrideTimeoutMs) {
   const { apiKey, baseUrl, model, timeoutMs } = config();
   const response = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",
-    signal: mergeSignals(signal, timeoutMs),
+    signal: mergeSignals(signal, overrideTimeoutMs || timeoutMs),
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     // 展开顺序有意义：body.model 在后，调用方传了就盖掉环境变量里的默认模型。
     // 调试台的模型下拉就是靠这一条生效的。
@@ -44,8 +44,13 @@ async function request(body, signal) {
   return response;
 }
 
-/** 非流式补全。决策轮用它——工具调用一次性拿全，没有分片拼装的不确定性。 */
-export async function complete({ messages, tools, toolChoice, maxTokens, model, temperature, signal }) {
+/**
+ * 非流式补全。决策轮用它——工具调用一次性拿全，没有分片拼装的不确定性。
+ *
+ * timeoutMs 用于给决策轮单独收紧超时：那一轮只产出几十个 token 的工具调用，
+ * 拖到全局的 35s 说明上游已经不健康了，与其干等不如早点失败进生成轮。
+ */
+export async function complete({ messages, tools, toolChoice, maxTokens, model, temperature, signal, timeoutMs, responseFormat }) {
   const body = { messages, stream: false };
   if (tools?.length) {
     body.tools = tools;
@@ -54,7 +59,9 @@ export async function complete({ messages, tools, toolChoice, maxTokens, model, 
   if (maxTokens) body.max_tokens = maxTokens;
   if (model) body.model = model;
   if (temperature !== undefined) body.temperature = temperature;
-  const response = await request(body, signal);
+  // 只有离线构建脚本用得上（要求模型吐 JSON）。线上路径不传，行为完全不变。
+  if (responseFormat) body.response_format = responseFormat;
+  const response = await request(body, signal, timeoutMs);
   return response.json();
 }
 

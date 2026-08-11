@@ -17,8 +17,29 @@ const SUGGESTIONS = {
   wuxi: ["榴园宿舍是几人间？", "食堂供餐时间？", "无人小巴几点发车？", "怎么去长广溪地铁站？", "图书馆研讨室怎么预约？", "菜鸟驿站几点关？"],
 };
 
+// 后端 phase 事件 → 标题。data.phase 是未知值时回落成通用文案，
+// 这样后端加新阶段不会让前端显示空白。
+const PHASE_TITLES = {
+  retrieving: (campusName) => `正在翻${campusName || ""}指南`,
+  thinking: () => "正在判断要查哪几节",
+  reading: () => "正在读检索到的章节",
+  writing: () => "正在组织答案",
+};
+
+// 等待期轮播的副标题。写的都是该阶段系统确实在做的事——不编造具体发现
+// （不写「已找到梅园的数据」），出错时才不会变成误导。
+const PHASE_HINTS = {
+  retrieving: ["在全部章节里做关键词匹配…"],
+  thinking: ["在判断哪些章节真的相关…", "在确认问题指向哪个校区…", "在决定要不要换个说法再查一次…"],
+  reading: ["在读章节原文…", "在对照原图页码…", "在核对指南的时效提醒…"],
+  writing: ["在按指南原文组织措辞…", "在标注版本口径…", "在把时刻和票价整理成表格…"],
+};
+
+const HINT_INTERVAL_MS = 2200;
+
 const elements = {
   list: document.getElementById("messageList"),
+  announcer: document.getElementById("srAnnouncer"),
   form: document.getElementById("chatForm"),
   input: document.getElementById("chatInput"),
   send: document.getElementById("sendButton"),
@@ -38,8 +59,15 @@ const state = {
   history: [],
 };
 
-function scrollToBottom() {
-  elements.list.scrollTop = elements.list.scrollHeight;
+/**
+ * 默认「粘底」，但用户已经翻上去看历史时就别拽他回来——
+ * 流式答案每帧都会触发一次滚动，不加这道判断就没法边生成边往回读。
+ * force 用于用户自己发消息这种确实该跳到底的时刻。
+ */
+function scrollToBottom(force) {
+  const list = elements.list;
+  if (!force && list.scrollHeight - list.scrollTop - list.clientHeight > 120) return;
+  list.scrollTop = list.scrollHeight;
 }
 
 function dropIntro() {
@@ -53,7 +81,7 @@ function appendUser(text) {
   node.className = "message user";
   node.textContent = text;
   elements.list.append(node);
-  scrollToBottom();
+  scrollToBottom(true); // 自己刚发的消息，一定跳到底
 }
 
 function appendTurn() {
@@ -61,17 +89,92 @@ function appendTurn() {
   const fragment = elements.template.content.cloneNode(true);
   const turn = fragment.querySelector(".turn");
   elements.list.append(fragment);
-  scrollToBottom();
+  scrollToBottom(true);
   return {
     root: turn,
     trace: turn.querySelector(".turn-trace"),
     toggle: turn.querySelector(".trace-toggle"),
     title: turn.querySelector(".trace-title"),
+    timer: turn.querySelector(".trace-timer"),
+    hint: turn.querySelector(".trace-hint"),
     spinner: turn.querySelector(".spinner"),
     steps: turn.querySelector(".trace-steps"),
+    skeleton: turn.querySelector(".answer-skeleton"),
     body: turn.querySelector(".turn-body"),
     sources: turn.querySelector(".turn-sources"),
   };
+}
+
+/**
+ * 等待期的状态机。驱动标题、副标题轮播、计时器和骨架屏。
+ *
+ * 存在的理由：决策轮是非流式的，首个 token 之前可能要静默好几秒。这段时间里
+ * 只有一个不动的圆点，体感就是卡死了。阶段来自后端真实的 phase 事件，
+ * 副标题只是把该阶段在做的事说得具体一点。
+ */
+function createStatus(turn) {
+  const startedAt = Date.now();
+  let phase = null;
+  let hintAt = 0;
+  let hintTimer = 0;
+  let campusName = "";
+
+  const ticker = setInterval(() => {
+    const seconds = (Date.now() - startedAt) / 1000;
+    turn.timer.textContent = seconds >= 1 ? `已用 ${seconds.toFixed(1)}s` : "";
+  }, 100);
+
+  function showHint() {
+    const hints = PHASE_HINTS[phase];
+    if (!hints || !hints.length) {
+      turn.hint.textContent = "";
+      return;
+    }
+    turn.hint.textContent = hints[hintAt % hints.length];
+    hintAt += 1;
+    // 重启入场动画：改 textContent 不会自动重放 CSS animation
+    turn.hint.style.animation = "none";
+    void turn.hint.offsetWidth;
+    turn.hint.style.animation = "";
+  }
+
+  const status = {
+    setCampus(name) {
+      campusName = name;
+      if (phase) status.title();
+    },
+    title() {
+      const build = PHASE_TITLES[phase];
+      turn.title.textContent = build ? build(campusName) : "正在查询…";
+    },
+    set(next) {
+      turn.trace.hidden = false;
+      if (next === phase) return;
+      phase = next;
+      hintAt = 0;
+      status.title();
+      showHint();
+      clearInterval(hintTimer);
+      hintTimer = setInterval(showHint, HINT_INTERVAL_MS);
+    },
+    /** 第一个 token 到了：撤掉骨架屏，停掉安抚文案，剩下的交给流式正文。 */
+    answering() {
+      turn.skeleton.hidden = true;
+      clearInterval(hintTimer);
+      hintTimer = 0;
+      turn.hint.textContent = "";
+      turn.body.classList.add("streaming");
+    },
+    stop() {
+      clearInterval(hintTimer);
+      clearInterval(ticker);
+      turn.skeleton.hidden = true;
+      turn.hint.textContent = "";
+      turn.timer.textContent = "";
+      turn.body.classList.remove("streaming");
+    },
+  };
+  return status;
 }
 
 function setTraceTitle(turn, text) {
@@ -117,8 +220,23 @@ function renderSources(turn, sources) {
   }
 }
 
+/**
+ * 往屏幕阅读器播报区写一次。先清空再写，是为了让内容相同的两次回答也能被重新播报。
+ * 这里刻意用 setTimeout 而不是 requestAnimationFrame：标签页在后台时 rAF 不会触发，
+ * 那样播报就永远丢了。
+ */
+function announce(text) {
+  if (!elements.announcer) return;
+  elements.announcer.textContent = "";
+  setTimeout(() => { elements.announcer.textContent = text; }, 50);
+}
+
 function showError(turn, message, retryable, retry) {
   turn.spinner.hidden = true;
+  turn.skeleton.hidden = true;
+  turn.hint.textContent = "";
+  turn.timer.textContent = "";
+  announce(message);
   if (!turn.steps.children.length) turn.trace.hidden = true;
   const banner = document.createElement("div");
   banner.className = "error-banner";
@@ -167,6 +285,24 @@ async function* readSse(response) {
   }
 }
 
+/**
+ * 建立答案区的流式 Markdown 渲染器。
+ * markdown.js 没加载成功时退回纯文本——渲染器挂了不该连答案都看不到。
+ */
+function startAnswer(turn) {
+  if (!window.SEUMarkdown) {
+    let text = "";
+    turn.body.style.whiteSpace = "pre-wrap";
+    return {
+      push(delta) { text += delta; turn.body.textContent = text; scrollToBottom(); },
+      finish() {},
+    };
+  }
+  const stream = window.SEUMarkdown.createStream(turn.body);
+  stream.onPaint(() => scrollToBottom());
+  return stream;
+}
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => (
     { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
@@ -184,11 +320,14 @@ async function ask(question) {
   setBusy(true);
   appendUser(question);
   const turn = appendTurn();
+  const status = createStatus(turn);
   setTraceTitle(turn, "正在查询…");
+  turn.skeleton.hidden = false;
 
   state.abort = new AbortController();
   const watchdog = setTimeout(() => state.abort?.abort(), 60_000);
   let answer = "";
+  let stream = null;
 
   try {
     const response = await fetch("/api/chat", {
@@ -217,8 +356,10 @@ async function ask(question) {
 
     for await (const { event, data } of readSse(response)) {
       if (event === "meta") {
-        setTraceTitle(turn, `正在查${data.campusName}（${data.version}指南）`);
+        status.setCampus(`${data.campusName}（${data.version}指南）`);
         if (state.campus === "auto") markAutoCampus(data.campus);
+      } else if (event === "phase") {
+        status.set(data.phase);
       } else if (event === "tool_call") {
         const keyword = data.args?.query || data.args?.section_id || "";
         addStep(turn, `检索 <code>${escapeHtml(keyword)}</code>`);
@@ -229,8 +370,12 @@ async function ask(question) {
           : `${label}未命中，换个说法再试…`);
       } else if (event === "token") {
         answer += data.t;
-        turn.body.textContent = answer;
-        scrollToBottom();
+        // 首个 token 才建流：在此之前 .turn-body 保持 :empty，气泡不显示
+        if (!stream) {
+          status.answering();
+          stream = startAnswer(turn);
+        }
+        stream.push(data.t);
       } else if (event === "sources") {
         renderSources(turn, data.sources);
       } else if (event === "error") {
@@ -243,6 +388,9 @@ async function ask(question) {
     if (!answer) {
       showError(turn, "没有收到回答，请重试。", true, () => ask(question));
     } else {
+      // 先给渲染器收尾，再从 DOM 取纯文本播报：直接播 answer 会把 ** 和 | 念出来
+      if (stream) stream.finish();
+      announce(turn.body.textContent || answer);
       state.history.push({ role: "user", content: question }, { role: "assistant", content: answer });
       state.history = state.history.slice(-6);
     }
@@ -251,6 +399,9 @@ async function ask(question) {
     showError(turn, aborted ? "这次查询超时了，请再试一次。" : "网络异常，请检查连接后重试。",
       true, () => ask(question));
   } finally {
+    // 中途报错/中断也要收尾：否则最后一块内容会停在 .md-tail 里当纯文本显示
+    if (stream) stream.finish();
+    status.stop();
     clearTimeout(watchdog);
     state.abort = null;
     setBusy(false);

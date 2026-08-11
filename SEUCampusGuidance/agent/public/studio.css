@@ -272,9 +272,10 @@ input[type="range"] { width: 100%; accent-color: var(--forest-700); }
   font-size: 13.5px;
   line-height: 1.7;
   border-radius: var(--radius-md);
-  white-space: pre-wrap;
   word-break: break-word;
 }
+/* agent 气泡走 markdown.css 的块级排版，只有纯文本气泡需要 pre-wrap */
+.bubble.user, .bubble.error { white-space: pre-wrap; }
 .bubble.user { align-self: flex-end; color: var(--cream); background: var(--forest-800); }
 .bubble.agent { align-self: flex-start; background: var(--paper); border: 1px solid var(--line); }
 .bubble.error { align-self: stretch; max-width: 100%; color: var(--red); background: #fbeceb; border: 1px solid rgba(166, 66, 60, 0.25); }

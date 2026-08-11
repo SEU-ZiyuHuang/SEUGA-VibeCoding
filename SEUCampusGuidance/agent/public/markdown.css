@@ -1,0 +1,88 @@
+/* public/markdown.js 渲染结果的样式。对话页和调试台共用同一份——
+   调试台预览的排版必须逐像素等于用户看到的排版，否则「在调试台试通了、
+   线上是另一个样子」是迟早的事。
+
+   依赖 chat.css / studio.css 里那套同名设计令牌（--forest-800 等）。 */
+
+/* 还没写完、暂时按纯文本显示的那一块需要保留换行；
+   已定稿的块级元素自己管间距，不要整体 pre-wrap。 */
+.md-tail { white-space: pre-wrap; }
+
+.md-body > :first-child { margin-top: 0; }
+.md-body > :last-child { margin-bottom: 0; }
+
+.md-p { margin: 0 0 9px; }
+
+.md-h {
+  margin: 13px 0 6px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--forest-800);
+}
+
+.md-list { margin: 0 0 9px; padding-left: 20px; }
+.md-list .md-list { margin: 4px 0 0; }
+.md-list li { margin: 3px 0; }
+
+.md-quote {
+  margin: 0 0 9px;
+  padding: 2px 0 2px 11px;
+  color: var(--muted);
+  border-left: 3px solid var(--sage-300);
+}
+.md-quote > :last-child { margin-bottom: 0; }
+
+.md-hr { margin: 12px 0; border: none; border-top: 1px solid var(--line); }
+
+.md-code {
+  padding: 1px 5px;
+  font-size: 0.88em;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.md-pre {
+  margin: 0 0 9px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.md-pre code { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+.md-body a { color: var(--forest-700); text-underline-offset: 2px; }
+
+/* 表格。指南里最宽的表有 5 列（目的地/路线/耗时/票价/备注），
+   375px 下必须能横向滚，否则会把整个聊天布局撑横。
+   单元格限宽而不是 nowrap：短列（耗时、票价）仍单行，长备注才折行。 */
+.md-table-wrap {
+  margin: 0 0 9px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.md-table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.6; }
+.md-table th,
+.md-table td {
+  padding: 7px 10px;
+  max-width: 24ch;
+  text-align: left;
+  /* 覆盖气泡上的 overflow-wrap: anywhere，别把英文站名拦腰截断 */
+  overflow-wrap: break-word;
+  border-bottom: 1px solid var(--line);
+}
+.md-table th {
+  white-space: nowrap;
+  color: var(--forest-800);
+  background: var(--sage-150);
+  font-weight: 600;
+}
+.md-table tbody tr:last-child td { border-bottom: none; }

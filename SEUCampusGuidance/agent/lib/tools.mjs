@@ -1,10 +1,15 @@
 // 工具定义与执行。
 //
-// 工具描述里必须写清「检索是字面匹配、没有同义扩展」并给出改写示例——这是模型学会
-// 自我纠偏的关键。实测「哪里能剪头发」在六份指南里字面 0 命中，但「理发」能命中；
-// 没有这段描述，模型会直接回答「指南里没有」，多轮循环的价值就没了。
+// 知识库现在是 wiki 结构：一个页面一个主题，带摘要、关键词和相关页链接。
+//
+// 检索层已经内置了别名兜底（字面 0 命中时自动把口语词补成指南用词），所以工具描述里
+// 不再说「没有同义扩展」——那是假话了。但改写引导仍然保留：别名表覆盖不了所有说法，
+// 模型自己会换词依然是最后一道保险。
+//
+// list_sections 现在返回标题 + 摘要，等于把整个校区的 wiki 索引一次性给模型看，
+// 它不用再拿光秃秃的标题猜哪一节可能有答案。
 
-import { searchGuide, listSections, getChunk, countChunks } from "./retrieve.mjs";
+import { searchGuide, listSections, getChunk, countChunks, relatedOf } from "./retrieve.mjs";
 import { CAMPUS_SLUGS, campusName, isCampusSlug } from "./campus.mjs";
 
 const CAMPUS_DESCRIPTION = `校区 slug，可选值：${CAMPUS_SLUGS.join("、")}。`;
@@ -17,8 +22,9 @@ export const TOOLS = [
       description: [
         "在东南大学六校区《新生实用信息简明指南》知识库中检索章节原文（含源图页码）。",
         "这是你获取一切校园事实的唯一途径：宿舍、食堂、图书馆、体育场馆、快递外卖、医疗、接驳车、地铁公交、周边商业，全部必须先检索再回答。",
-        "【重要】检索是字面子串匹配，没有同义词扩展。返回为空或不相关时不要放弃，换成指南里更可能出现的书面词再检一次，例如：",
-        "「剪头发」→「理发」；「洗澡」→「浴室 热水」；「网速」→「校园网 宽带」；「床帘多大」→「床铺 尺寸」；「怎么去机场」→「机场 禄口」。",
+        "检索以字面子串匹配为主，另有一层口语词兜底（字面查不到时会自动把「剪头发」这类说法补成「理发」）。",
+        "但兜底覆盖不全，返回为空或不相关时不要放弃，换成指南里更可能出现的书面词再检一次，例如：",
+        "「洗澡」→「浴室 热水」；「网速」→「校园网 宽带」；「床帘多大」→「床铺 尺寸」；「怎么去机场」→「机场 禄口」。",
         "一次只能检索一个校区。跨校区问题请分别检索。",
       ].join("\n"),
       parameters: {
@@ -39,7 +45,7 @@ export const TOOLS = [
     type: "function",
     function: {
       name: "list_sections",
-      description: "列出某校区指南的全部章节标题（不含正文）。用于两种场景：① 连续检索未命中，需要确认该校区覆盖了哪些主题；② 用户问题很宽泛（「这个校区有什么」）。拿到目录后仍需用 search_guide 或 read_section 取正文。",
+      description: "列出某校区 wiki 的全部页面：标题 + 一句话摘要（不含正文）。摘要里写了该页最关键的具体事实，据此就能判断该翻哪一页。用于两种场景：① 连续检索未命中，需要确认该校区覆盖了哪些主题；② 用户问题很宽泛（「这个校区有什么」）。拿到索引后用 read_section 按 id 取正文。",
       parameters: {
         type: "object",
         properties: { campus: { type: "string", enum: CAMPUS_SLUGS, description: CAMPUS_DESCRIPTION } },
@@ -51,11 +57,11 @@ export const TOOLS = [
     type: "function",
     function: {
       name: "read_section",
-      description: "按章节 id 读取整节原文。用于 list_sections 之后精确取用，或 search_guide 的结果需要补全时。",
+      description: "按页面 id 读取整页原文，返回值末尾会附上该页的「相关页面」。用于 list_sections 之后精确取用、search_guide 结果需要补全，或顺着相关页面补充上下文。",
       parameters: {
         type: "object",
         properties: {
-          section_id: { type: "string", description: "形如 jiulonghu/09/2 的章节 id，来自 search_guide 或 list_sections 的返回。" },
+          section_id: { type: "string", description: "形如 jiulonghu/shuttle-lantai-line 的页面 id，来自 search_guide、list_sections 或某页的「相关页面」。" },
         },
         required: ["section_id"],
       },
@@ -92,13 +98,15 @@ export function renderSearchResult(hits, { campus, query, seen }) {
   if (!hits.length) {
     return [
       `未命中：检索词「${query}」在${campusName(campus)}指南中没有匹配到任何章节。`,
-      `该校区共 ${total} 个章节，标题如下：`,
-      ...listSections(campus).map((section) => `  - ${section.sectionPath}`),
+      `该校区共 ${total} 个页面：`,
+      ...listSections(campus).map((section) =>
+        `  - ${section.sectionPath}（id=${section.id}）${section.summary ? `：${section.summary}` : ""}`),
       "请换用指南更可能使用的书面词再检一次（把口语换成正式名称），或改检其他校区。",
     ].join("\n");
   }
   const blocks = hits.map((hit, index) => {
-    const head = `【${index + 1}】${hit.campusName} · ${hit.version} · ${hit.sectionPath} · 源图 ${hit.pages.join("、") || "无标注"} · id=${hit.id}`;
+    const head = `【${index + 1}】${hit.campusName} · ${hit.version} · ${hit.sectionPath} · 源图 ${hit.pages.join("、") || "无标注"} · id=${hit.id}`
+      + (hit.summary ? `\n摘要：${hit.summary}` : "");
     if (seen.has(hit.id)) return `${head}\n（此节正文已在前一次检索中提供，不再重复）`;
     seen.set(hit.id, hit);
     return `${head}\n${hit.text}`;
@@ -134,9 +142,10 @@ export function executeTool(name, args, context) {
   if (name === "list_sections") {
     const sections = listSections(args.campus);
     const text = [
-      `${campusName(args.campus)}指南共 ${sections.length} 个章节：`,
-      ...sections.map((section) => `  - ${section.sectionPath}（id=${section.id}，源图 ${section.pages.join("、") || "无标注"}）`),
-      "用 search_guide 或 read_section 取正文。",
+      `${campusName(args.campus)}指南共 ${sections.length} 个页面：`,
+      ...sections.map((section) =>
+        `  - ${section.sectionPath}（id=${section.id}）${section.summary ? `\n      ${section.summary}` : ""}`),
+      "按 id 用 read_section 取整页正文，或用 search_guide 检索关键词。",
     ].join("\n");
     budget.remaining -= text.length;
     return { text, hits: [] };
@@ -148,7 +157,11 @@ export function executeTool(name, args, context) {
       return { text: `没有 id 为「${args.section_id}」的章节。请先用 list_sections 或 search_guide 获取合法 id。`, hits: [] };
     }
     seen.set(chunk.id, chunk);
-    const text = `${chunk.campusName} · ${chunk.version} · ${chunk.sectionPath} · 源图 ${chunk.pages.join("、") || "无标注"}\n${chunk.text}`;
+    const related = relatedOf(chunk.id);
+    const footer = related.length
+      ? `\n\n相关页面（需要时用 read_section 打开）：\n${related.map((item) => `  - ${item.sectionPath}（id=${item.id}）`).join("\n")}`
+      : "";
+    const text = `${chunk.campusName} · ${chunk.version} · ${chunk.sectionPath} · 源图 ${chunk.pages.join("、") || "无标注"}\n${chunk.text}${footer}`;
     budget.remaining -= text.length;
     return { text, hits: [chunk] };
   }

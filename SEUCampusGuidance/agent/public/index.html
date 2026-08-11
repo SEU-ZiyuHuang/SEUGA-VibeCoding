@@ -7,6 +7,7 @@
 <meta name="description" content="东南大学六校区新生生活指南问答，基于地理协会 2025 版《新生实用信息简明指南》。" />
 <title>东南大学校区指南 Agent</title>
 <link rel="stylesheet" href="./chat.css" />
+<link rel="stylesheet" href="./markdown.css" />
 </head>
 <body>
 <div class="chat-shell">
@@ -34,7 +35,9 @@
     <button type="button" class="icon-button locate-button" id="locateButton" title="用定位判断校区" hidden>◎</button>
   </nav>
 
-  <main id="messageList" class="message-list" aria-live="polite" aria-busy="false">
+  <!-- 注意 aria-live 不能挂在这里：流式回答每帧都改 DOM，屏幕阅读器会把同一段话
+       重复播报上百遍。改成答案写完后往 #srAnnouncer 里放一次完整文本。 -->
+  <main id="messageList" class="message-list" aria-busy="false">
     <section class="intro">
       <h1>想知道校园里的什么？</h1>
       <p>覆盖九龙湖、四牌楼、丁家桥、苏州、江北、无锡六个校区的宿舍、食堂、图书馆、快递、体育场馆、接驳车与周边生活信息。</p>
@@ -45,10 +48,13 @@
     <article class="turn">
       <div class="turn-trace" hidden>
         <button type="button" class="trace-toggle" aria-expanded="false">
-          <span class="spinner"></span><span class="trace-title">正在检索…</span>
+          <span class="spinner"></span><span class="trace-title">正在检索…</span><span class="trace-timer"></span>
         </button>
+        <p class="trace-hint"></p>
         <ol class="trace-steps" hidden></ol>
       </div>
+      <!-- 首个 token 之前的占位。纯装饰，对屏幕阅读器隐藏。 -->
+      <div class="answer-skeleton" hidden aria-hidden="true"><span></span><span></span><span></span></div>
       <div class="message assistant turn-body"></div>
       <details class="turn-sources" hidden>
         <summary>来源 · <span class="sources-count"></span></summary>
@@ -73,6 +79,8 @@
 
 </div>
 
+<div id="srAnnouncer" class="sr-only" role="status" aria-live="polite"></div>
+
 <div id="aboutModal" class="modal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
     <div class="modal-header">
@@ -83,6 +91,7 @@
   </div>
 </div>
 
+<script src="./markdown.js"></script>
 <script src="./chat.js"></script>
 </body>
 </html>
