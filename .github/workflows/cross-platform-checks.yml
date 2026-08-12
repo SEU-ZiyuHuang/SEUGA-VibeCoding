@@ -52,6 +52,9 @@ jobs:
       - name: Test prompt configuration safety
         run: npm run test:config
 
+      - name: Test private Blob storage
+        run: npm run test:storage
+
       - name: Test fast path
         run: npm run test:fastpath
 

@@ -16,7 +16,7 @@ import { formatSse, errorEvent, SSE_HEADERS, HEARTBEAT_MS } from "./lib/sse.mjs"
 import { checkRateLimit, clientIp } from "./lib/ratelimit.mjs";
 import { validateChatInput } from "./lib/validate.mjs";
 import { KNOWLEDGE_BUILD, CAMPUSES } from "./data/knowledge.mjs";
-import { readActiveConfig } from "./api/_shared/config-store.js";
+import { readActiveConfig, storageConfigured } from "./api/_shared/config-store.js";
 import adminSession from "./api/admin/session.js";
 import adminConfig from "./api/admin/config.js";
 import adminPreview from "./api/admin/preview.js";
@@ -204,6 +204,7 @@ const server = http.createServer(async (request, response) => {
       return sendJson(response, 200, {
         status: "ok",
         agentEnabled: isConfigured(),
+        configStorageConfigured: storageConfigured(),
         model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
         knowledge: {
           generatedAt: KNOWLEDGE_BUILD.generatedAt,

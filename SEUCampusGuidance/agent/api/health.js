@@ -2,6 +2,7 @@
 
 import { isConfigured } from "../lib/deepseek.mjs";
 import { KNOWLEDGE_BUILD, CAMPUSES } from "../data/knowledge.mjs";
+import { storageConfigured } from "./_shared/config-store.js";
 
 export default {
   async fetch(request) {
@@ -11,6 +12,7 @@ export default {
     return Response.json({
       status: "ok",
       agentEnabled: isConfigured(),
+      configStorageConfigured: storageConfigured(),
       model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
       knowledge: {
         generatedAt: KNOWLEDGE_BUILD.generatedAt,

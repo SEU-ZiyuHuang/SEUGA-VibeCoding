@@ -1,7 +1,7 @@
-// 运行配置的 Blob 存储。
+// 运行配置的私有 Blob 存储。
 //
 // Vercel 的函数文件系统只读，配置改不回 lib/prompt.mjs，只能放外部存储。
-// 这里复用 web/ 那套 Vercel Blob 的做法，靠路径前缀和地图后台的内容互不干扰：
+// 使用项目专属的 Vercel Blob，并用路径前缀区分草稿与历史版本：
 //
 //   agent-config/draft.json                    草稿，固定路径反复覆盖
 //   agent-config/releases/<时间戳>-<uuid>.json  每次发布追加一份，天然是版本历史
@@ -12,11 +12,29 @@
 // 读取路径必须能降级：Blob 没配置、读失败、内容坏掉，一律回落到代码里的默认
 // 配置让 agent 照常回答。云存储挂掉不能把 /api/chat 一起拖下水。
 
-import { list, put } from "@vercel/blob";
+import { get, list, put } from "@vercel/blob";
 import { defaultConfig, sanitizeConfig } from "../../lib/agent-config.mjs";
 
 const DRAFT_PATH = "agent-config/draft.json";
 const RELEASE_PREFIX = "agent-config/releases/";
+export const BLOB_ACCESS = "private";
+
+// Blob 的 cacheControlMaxAge 最小值是 60 秒。读取草稿时用 get(useCache:false)
+// 直达源站，所以覆盖后仍能立即读到新内容，不必等待 CDN 缓存失效。
+export const DRAFT_WRITE_OPTIONS = Object.freeze({
+  access: BLOB_ACCESS,
+  addRandomSuffix: false,
+  allowOverwrite: true,
+  contentType: "application/json; charset=utf-8",
+  cacheControlMaxAge: 60,
+});
+
+export const RELEASE_WRITE_OPTIONS = Object.freeze({
+  access: BLOB_ACCESS,
+  addRandomSuffix: false,
+  contentType: "application/json; charset=utf-8",
+  cacheControlMaxAge: 31_536_000,
+});
 
 // /api/chat 是流式接口，走不了 CDN 缓存。每次提问都拉一趟 Blob 会平白多
 // 100~300ms，所以在实例内存里缓存一分钟——发布后最长一分钟全量生效。
@@ -27,8 +45,10 @@ const CACHE_RETRY_MS = 5_000;
 const MAX_RELEASES_SCANNED = 1000;
 export const MAX_RELEASES_LISTED = 30;
 
-export function storageConfigured() {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+export function storageConfigured(env = process.env) {
+  // 新连接默认由 BLOB_STORE_ID + Vercel 自动注入的短期 OIDC token 鉴权；
+  // BLOB_READ_WRITE_TOKEN 只作为本地开发或旧项目的兼容路径保留。
+  return Boolean(env.BLOB_STORE_ID || env.BLOB_READ_WRITE_TOKEN);
 }
 
 /** 回退接口收到的 pathname 来自请求体，先确认它指向发布目录再拿去查。 */
@@ -36,10 +56,12 @@ export function isReleasePath(pathname) {
   return typeof pathname === "string" && pathname.startsWith(RELEASE_PREFIX);
 }
 
-async function fetchJson(url, etag) {
-  const response = await fetch(`${url}?etag=${encodeURIComponent(etag || "latest")}`, { cache: "no-store" });
-  if (!response.ok) throw new Error(`Blob read failed: ${response.status}`);
-  return response.json();
+export async function readBlobJson(pathname, getter = get) {
+  const result = await getter(pathname, { access: BLOB_ACCESS, useCache: false });
+  if (!result || result.statusCode !== 200 || !result.stream) {
+    throw new Error(`Blob read failed: ${result?.statusCode || 404}`);
+  }
+  return new Response(result.stream).json();
 }
 
 function releaseOf(blob) {
@@ -64,7 +86,7 @@ export async function readPublished() {
   const [latest] = await listReleaseBlobs();
   if (!latest) return { config: defaultConfig(), release: null, configured: true };
   return {
-    config: sanitizeConfig(await fetchJson(latest.url, latest.etag)),
+    config: sanitizeConfig(await readBlobJson(latest.pathname)),
     release: releaseOf(latest),
     configured: true,
   };
@@ -75,7 +97,7 @@ export async function readRelease(pathname) {
   const blobs = await listReleaseBlobs();
   const target = blobs.find((blob) => blob.pathname === pathname);
   if (!target) return null;
-  return sanitizeConfig(await fetchJson(target.url, target.etag));
+  return sanitizeConfig(await readBlobJson(target.pathname));
 }
 
 /** 草稿不存在时回落到已发布版本——第一次打开调试台就能看到线上正在用的配置。 */
@@ -87,33 +109,24 @@ export async function readDraft() {
     const published = await readPublished();
     return { config: published.config, exists: false, configured: true };
   }
-  return { config: sanitizeConfig(await fetchJson(draft.url, draft.etag)), exists: true, configured: true };
+  return { config: sanitizeConfig(await readBlobJson(draft.pathname)), exists: true, configured: true };
 }
 
 export async function writeDraft(value) {
   if (!storageConfigured()) throw new Error("CONFIG_STORAGE_NOT_CONFIGURED");
   const config = sanitizeConfig({ ...value, updatedAt: new Date().toISOString() });
-  await put(DRAFT_PATH, JSON.stringify(config), {
-    access: "public",
-    addRandomSuffix: false,
-    // 固定路径反复覆盖必须显式开这个开关，否则 @vercel/blob v2 会直接抛错。
-    // web/ 那边每次都是新文件名，所以没踩到这一条。
-    allowOverwrite: true,
-    contentType: "application/json; charset=utf-8",
-    cacheControlMaxAge: 0,
-  });
+  await put(DRAFT_PATH, JSON.stringify(config), { ...DRAFT_WRITE_OPTIONS });
   return config;
 }
 
 export async function publish(value) {
   if (!storageConfigured()) throw new Error("CONFIG_STORAGE_NOT_CONFIGURED");
   const config = sanitizeConfig({ ...value, updatedAt: new Date().toISOString() });
-  const blob = await put(`${RELEASE_PREFIX}${Date.now()}-${crypto.randomUUID()}.json`, JSON.stringify(config), {
-    access: "public",
-    addRandomSuffix: false,
-    contentType: "application/json; charset=utf-8",
-    cacheControlMaxAge: 31_536_000,
-  });
+  const blob = await put(
+    `${RELEASE_PREFIX}${Date.now()}-${crypto.randomUUID()}.json`,
+    JSON.stringify(config),
+    { ...RELEASE_WRITE_OPTIONS },
+  );
   // 发布后草稿跟随，避免页面上「草稿」和「已发布」显示成两份不同内容。
   await writeDraft(config);
   invalidateConfigCache();

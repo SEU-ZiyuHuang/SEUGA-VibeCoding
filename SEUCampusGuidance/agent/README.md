@@ -29,7 +29,8 @@ npm start
 打开 http://127.0.0.1:5174 。没有 Key 也能启动，页面正常但提问返回 503。
 
 调试台在 http://127.0.0.1:5174/studio.html ，需要额外 `export ADMIN_ACCESS_TOKEN=...`（≥12 位）；
-不配 `BLOB_READ_WRITE_TOKEN` 也能进去看和试聊，只是存不了草稿、发不了版本。
+本地未配置 Blob 读写 Token 时仍能看和试聊，只是存不了草稿、发不了版本。Vercel 线上连接
+私有 Blob 后使用自动注入的 `BLOB_STORE_ID` 与短期 OIDC token，不需要长期 Token。
 
 ## 目录
 
@@ -133,7 +134,7 @@ DEEPSEEK_API_KEY=xxx npm run migrate:wiki -- --metadata-only # 只重算摘要/�
 
 ## 自检
 
-没有测试框架，靠这九个命令。**前八个不需要 API key，不花钱**：
+没有测试框架，靠这十个命令。**前九个不需要 API key，不花钱**：
 
 ```bash
 npm run check                 # 全部文件 node --check 语法检查
@@ -143,6 +144,7 @@ npm run test:config           # 验证调试台配置的应用与隔离，5 个�
 npm run test:fastpath         # 快路径判定，22 条标注样本 + 止血开关
 npm run test:markdown         # 答案渲染器，46 项断言（含 XSS 转义）
 npm run test:newlines         # LF / CRLF / CR 跨平台换行归一化
+npm run test:storage          # 私有 Blob / OIDC 配置与读取约束
 npm run verify:wiki           # 知识库与原始 md 逐字一致，236 项断言
 DEEPSEEK_API_KEY=xxx npm run loop -- --suite     # 打真实 API，四条必测行为，人工判读
 ```
@@ -246,11 +248,13 @@ node scripts/query.mjs --sections wuxi
 | --- | :---: | --- |
 | `DEEPSEEK_API_KEY` | ✓ | 模型调用 |
 | `ADMIN_ACCESS_TOKEN` | | 调试台口令，≥12 位。不配则调试台进不去，Agent 不受影响 |
-| `BLOB_READ_WRITE_TOKEN` | | 配置存储。不配则调试台只能看和试聊，Agent 用代码默认规则 |
+| `BLOB_STORE_ID` | 自动 | 连接私有 Blob 后由 Vercel 注入，配合短期 OIDC token 鉴权，请勿手填 |
+| `BLOB_READ_WRITE_TOKEN` | | 仅供本地开发或旧式 Blob 连接；新部署不需要长期 Token |
 | `AGENT_FAST_PATH` | | 设为 `0` 关闭快路径（见「成本与延迟」）。默认开启 |
 
 `ADMIN_ACCESS_TOKEN` 建议 20 位以上随机串，且**与 `web/` 地图后台的口令不同**——两边各自泄露时影响面小一半。
-Blob store 可以和 `web/` 共用，路径前缀 `agent-config/` 与地图内容互不干扰。
+配置存储使用私有 Blob；路径前缀为 `agent-config/`。生产环境优先使用项目专属 Store，避免与
+其他应用共享权限。代码仍兼容旧式 `BLOB_READ_WRITE_TOKEN`，但线上默认走 OIDC。
 
 部署后验证：
 
@@ -259,6 +263,9 @@ curl -s https://<你的域名>/api/health
 curl -sI https://<你的域名>/lib/prompt.mjs        # 必须 404
 curl -N -X POST https://<你的域名>/api/chat -H 'Content-Type: application/json' -d '{"message":"梅园床帘多大"}'
 ```
+
+`/api/health` 中的 `configStorageConfigured` 应为 `true`；它只表示 Blob 凭据已注入，
+不会返回 Store ID、OIDC token 或其他秘密。
 
 第二条是安全检查：Vercel 零配置下如果没有 `public/` 目录，会把 Root Directory 下**所有文件**当静态资源暴露，`lib/` 和 `data/` 会被公网直接下载。本项目静态文件全在 `public/`，所以其余目录应当 404。
 
