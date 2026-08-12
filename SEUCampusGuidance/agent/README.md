@@ -133,7 +133,7 @@ DEEPSEEK_API_KEY=xxx npm run migrate:wiki -- --metadata-only # 只重算摘要/�
 
 ## 自检
 
-没有测试框架，靠这八个命令。**前七个不需要 API key，不花钱**：
+没有测试框架，靠这九个命令。**前八个不需要 API key，不花钱**：
 
 ```bash
 npm run check                 # 全部文件 node --check 语法检查
@@ -142,9 +142,21 @@ npm run test:loop             # 用假 DeepSeek 响应验证多轮循环的控�
 npm run test:config           # 验证调试台配置的应用与隔离，5 个场景
 npm run test:fastpath         # 快路径判定，22 条标注样本 + 止血开关
 npm run test:markdown         # 答案渲染器，46 项断言（含 XSS 转义）
+npm run test:newlines         # LF / CRLF / CR 跨平台换行归一化
 npm run verify:wiki           # 知识库与原始 md 逐字一致，236 项断言
 DEEPSEEK_API_KEY=xxx npm run loop -- --suite     # 打真实 API，四条必测行为，人工判读
 ```
+
+### Mac / Windows 换行约定
+
+仓库根目录的 `.gitattributes` 统一要求文本文件使用 LF。LF 是 macOS / Linux 的原生格式，
+Node.js 和常见 Windows 编辑器也能直接处理。知识构建、迁移和逐字校验在读取文本时还会把
+CRLF 或旧式 CR 归一化为 LF，因此旧的 Windows 工作副本不会产生“正文缺失”误报。
+
+如果旧工作副本在更新 `.gitattributes` 后显示大量只涉及换行的修改，先确认没有真实内容改动，
+再重新克隆仓库最稳妥；不要把换行整理与校园知识修改放在同一个提交里。
+
+GitHub Actions 会在 Windows、macOS 和 Linux 上运行全部无 API 测试，不需要配置 DeepSeek Key。
 
 改动 `lib/agent-loop.mjs` 或 `lib/tools.mjs` 后应当先跑 `npm run test:loop`——它覆盖换词重检、
 预检索够用、轮数上限、重复调用检测、跨校区切换、流式降级，以及跳过决策轮的快路径及其开关。

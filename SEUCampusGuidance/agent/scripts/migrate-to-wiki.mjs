@@ -20,7 +20,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { complete } from "../lib/deepseek.mjs";
-import { listLegacyGuides, wikiDir, keyToSlug, extractPages } from "./guide-source.mjs";
+import { listLegacyGuides, wikiDir, keyToSlug, extractPages, normalizeNewlines } from "./guide-source.mjs";
 
 const dryRun = process.argv.includes("--dry-run");
 const modelArg = process.argv.find((a) => a.startsWith("--model="))?.split("=")[1];
@@ -329,7 +329,7 @@ async function metadataOnly() {
     const names = (await fs.readdir(dir)).filter((n) => n.endsWith(".md") && n !== "_campus.md").sort();
     const pages = [];
     for (const name of names) {
-      const raw = await fs.readFile(path.join(dir, name), "utf8");
+      const raw = normalizeNewlines(await fs.readFile(path.join(dir, name), "utf8"));
       const matched = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw);
       if (!matched) throw new Error(`${guide.campus.slug}/${name}: 缺少 front-matter`);
       const keyLine = /^chunk_key:\s*(.+)$/m.exec(matched[1]);

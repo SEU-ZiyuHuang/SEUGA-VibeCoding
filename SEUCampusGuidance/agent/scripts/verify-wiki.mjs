@@ -10,7 +10,7 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
-import { listLegacyGuides, wikiDir, extractPages } from "./guide-source.mjs";
+import { listLegacyGuides, wikiDir, extractPages, normalizeNewlines } from "./guide-source.mjs";
 
 const problems = [];
 const notes = [];
@@ -70,7 +70,7 @@ async function readWikiPages() {
     for (const name of (await fs.readdir(dir)).sort()) {
       if (!name.endsWith(".md")) continue;
       const file = path.join(entry.name, name);
-      const source = await fs.readFile(path.join(dir, name), "utf8");
+      const source = normalizeNewlines(await fs.readFile(path.join(dir, name), "utf8"));
       const [meta, body] = parseFront(source, file);
       if (!meta) {
         fail(`${file}: 缺少 front-matter`);

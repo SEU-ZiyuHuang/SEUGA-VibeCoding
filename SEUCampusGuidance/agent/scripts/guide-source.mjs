@@ -16,6 +16,14 @@ export const repoDir = path.resolve(agentDir, "..");
 export const legacySourceDir = path.join(repoDir, "原校区指南-md文档整理");
 export const wikiDir = path.join(repoDir, "原校区指南-wiki");
 
+/**
+ * Git 工作区在 Windows 上可能使用 CRLF，而 macOS / Linux 通常使用 LF。
+ * 所有需要逐字比较或进入构建产物的文本都先走这里，保证结果与操作系统无关。
+ */
+export function normalizeNewlines(value) {
+  return String(value ?? "").replace(/\r\n?/g, "\n");
+}
+
 export const CAMPUS_TABLE = [
   { slug: "jiulonghu", key: "九龙湖", name: "九龙湖校区", aliases: ["九龙湖", "江宁校区"] },
   { slug: "sipailou", key: "四牌楼", name: "四牌楼校区", aliases: ["四牌楼", "本部", "老校区"] },
@@ -175,7 +183,7 @@ export function extractUnits(sections) {
 
 /** 读一份源指南，返回校区元数据 + 内容单元。 */
 export async function readLegacyGuide(file) {
-  const raw = await fs.readFile(path.join(legacySourceDir, file), "utf8");
+  const raw = normalizeNewlines(await fs.readFile(path.join(legacySourceDir, file), "utf8"));
   const [meta, body] = parseFrontmatter(raw, file);
   const campus = CAMPUS_TABLE.find((entry) => String(meta.campus).includes(entry.key));
   if (!campus) throw new Error(`${file}: 无法从 campus="${meta.campus}" 识别校区`);

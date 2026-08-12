@@ -8,12 +8,7 @@
 // 覆盖：换词重检、预检索够用、轮数上限、重复调用检测、跨校区切换、流式降级、
 //      跳过决策轮的快路径及其止血开关。
 
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
 process.env.DEEPSEEK_API_KEY = "sk-mock";
-
-const AGENT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 let scenario = [];
 let callLog = [];
@@ -50,7 +45,7 @@ globalThis.fetch = async (url, options) => {
   return new Response(JSON.stringify(next.payload), { status: 200, headers: { "Content-Type": "application/json" } });
 };
 
-const { runAgent } = await import(`${AGENT}/lib/agent-loop.mjs`);
+const { runAgent } = await import(new URL("../lib/agent-loop.mjs", import.meta.url).href);
 
 async function collect(input) {
   const events = [];

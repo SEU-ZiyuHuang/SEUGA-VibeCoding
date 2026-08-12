@@ -17,7 +17,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import vm from "node:vm";
-import { agentDir, repoDir, wikiDir, CAMPUS_TABLE } from "./guide-source.mjs";
+import { agentDir, repoDir, wikiDir, CAMPUS_TABLE, normalizeNewlines } from "./guide-source.mjs";
 
 const outputDir = path.join(agentDir, "data");
 
@@ -73,7 +73,7 @@ async function readCampus(slug) {
   const dir = path.join(wikiDir, slug);
   const names = (await fs.readdir(dir)).filter((name) => name.endsWith(".md")).sort();
 
-  const homeRaw = await fs.readFile(path.join(dir, "_campus.md"), "utf8");
+  const homeRaw = normalizeNewlines(await fs.readFile(path.join(dir, "_campus.md"), "utf8"));
   const [homeMeta, homeBody] = parseFront(homeRaw, `${slug}/_campus.md`);
   const home = parseCampusHome(homeBody);
 
@@ -81,7 +81,8 @@ async function readCampus(slug) {
   for (const name of names) {
     if (name === "_campus.md") continue;
     const file = `${slug}/${name}`;
-    const [meta, body] = parseFront(await fs.readFile(path.join(dir, name), "utf8"), file);
+    const raw = normalizeNewlines(await fs.readFile(path.join(dir, name), "utf8"));
+    const [meta, body] = parseFront(raw, file);
     if (!body) throw new Error(`${file}: 正文为空`);
     chunks.push({
       id: meta.id,

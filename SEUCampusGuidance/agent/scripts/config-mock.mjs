@@ -10,13 +10,8 @@
 //   ② 配置能生效，但 LOCKED_RULES 在任何输入下都拼得进去
 //   ③ /api/chat 的入参白名单挡得住伪造的 prompt 字段 ←← 安全关键
 
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
 process.env.DEEPSEEK_API_KEY = "sk-mock";
 delete process.env.DEEPSEEK_MODEL;
-
-const AGENT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 let sent = [];
 
@@ -33,10 +28,10 @@ globalThis.fetch = async (url, options) => {
   });
 };
 
-const { runAgent } = await import(`${AGENT}/lib/agent-loop.mjs`);
-const { buildSystemPrompt, LOCKED_RULES, DEFAULT_RULES } = await import(`${AGENT}/lib/prompt.mjs`);
-const { defaultConfig, sanitizeConfig, validateConfig } = await import(`${AGENT}/lib/agent-config.mjs`);
-const { validateChatInput } = await import(`${AGENT}/lib/validate.mjs`);
+const { runAgent } = await import(new URL("../lib/agent-loop.mjs", import.meta.url).href);
+const { buildSystemPrompt, LOCKED_RULES, DEFAULT_RULES } = await import(new URL("../lib/prompt.mjs", import.meta.url).href);
+const { defaultConfig, sanitizeConfig, validateConfig } = await import(new URL("../lib/agent-config.mjs", import.meta.url).href);
+const { validateChatInput } = await import(new URL("../lib/validate.mjs", import.meta.url).href);
 
 function check(label, condition, detail = "") {
   console.log(`${condition ? "✓" : "✗"} ${label}${detail ? `  ${detail}` : ""}`);
