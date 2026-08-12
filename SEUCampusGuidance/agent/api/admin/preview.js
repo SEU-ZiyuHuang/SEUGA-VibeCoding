@@ -13,6 +13,7 @@ import { isConfigured } from "../../lib/deepseek.mjs";
 import { validateChatInput } from "../../lib/validate.mjs";
 import { sanitizeConfig, validateConfig } from "../../lib/agent-config.mjs";
 import { hasValidOrigin, isAdminRequest, json } from "../_shared/admin-auth.js";
+import { mergeKnowledgeOverlay, validateKnowledgeOverlay } from "../../lib/knowledge-overlay.mjs";
 
 export default {
   async fetch(request) {
@@ -34,6 +35,9 @@ export default {
     const problem = validateConfig(input?.config);
     if (problem) return json({ error: problem }, 400);
     const config = sanitizeConfig(input.config);
+    const knowledgeCheck = validateKnowledgeOverlay(input?.knowledgeOverlay);
+    if (!knowledgeCheck.ok) return json({ error: "知识草稿校验未通过。", problems: knowledgeCheck.problems }, 400);
+    const knowledge = mergeKnowledgeOverlay(knowledgeCheck.overlay);
 
     const abort = new AbortController();
     request.signal?.addEventListener("abort", () => abort.abort());
@@ -50,7 +54,7 @@ export default {
         };
         const heartbeat = setInterval(() => send(":\n\n"), HEARTBEAT_MS);
         try {
-          for await (const item of runAgent({ ...checked.value, config, signal: abort.signal })) {
+          for await (const item of runAgent({ ...checked.value, config, knowledge, signal: abort.signal })) {
             send(formatSse(item));
           }
         } catch (error) {

@@ -13,7 +13,7 @@
 
 import { complete, streamText } from "./deepseek.mjs";
 import { TOOLS, executeTool, safeParseArgs, renderSearchResult } from "./tools.mjs";
-import { searchGuide, versionOf } from "./retrieve.mjs";
+import { createRetriever } from "./retrieve.mjs";
 import { campusName, detectCampus, detectAllCampuses, isCampusSlug, DEFAULT_CAMPUS } from "./campus.mjs";
 import { buildSystemPrompt, isEmergency } from "./prompt.mjs";
 import { promptOverridesFrom } from "./agent-config.mjs";
@@ -64,6 +64,10 @@ function buildSources(seen) {
       section: chunk.sectionPath,
       pages: chunk.pages,
       version: chunk.version,
+      managed: Boolean(chunk.managed),
+      sourceLabel: chunk.sourceLabel || "",
+      sourceUrl: chunk.sourceUrl || "",
+      verifiedAt: chunk.verifiedAt || "",
     }));
 }
 
@@ -100,10 +104,11 @@ export function shouldFastPath({ message, seed, emergency }) {
  * 生产从已发布版本读，调试台预览从请求体读——两条路径共用这一个函数，
  * 否则「在调试台试通了、线上还是另一套行为」是迟早的事。
  */
-export async function* runAgent({ message, campus: campusLock = null, history = [], signal, config = null } = {}) {
+export async function* runAgent({ message, campus: campusLock = null, history = [], signal, config = null, knowledge = null } = {}) {
   const startedAt = Date.now();
   const locked = isCampusSlug(campusLock);
   let campus = locked ? campusLock : (detectCampus(message) || DEFAULT_CAMPUS);
+  const retriever = createRetriever(knowledge || undefined);
 
   const model = config?.model || undefined;
   const temperature = typeof config?.temperature === "number" ? config.temperature : undefined;
@@ -112,7 +117,7 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
   yield event("meta", {
     campus,
     campusName: campusName(campus),
-    version: versionOf(campus),
+    version: retriever.versionOf(campus),
     locked,
   });
 
@@ -122,8 +127,8 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
 
   // ① 确定性预检索
   yield event("phase", { phase: "retrieving" });
-  const seed = searchGuide({ campus, query: message, topK: 3 });
-  const seedText = renderSearchResult(seed, { campus, query: message, seen });
+  const seed = retriever.searchGuide({ campus, query: message, topK: 3 });
+  const seedText = renderSearchResult(seed, { campus, query: message, seen, retriever });
   budget.remaining -= seedText.length;
   for (const hit of seed) seen.set(hit.id, { ...hit, round: 0 });
   yield event("tool_result", {
@@ -143,6 +148,7 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
         campusLock: locked,
         emergency,
         overrides: promptOverridesFrom(config),
+        campusMeta: retriever.getCampus(campus),
       }),
     },
     ...clampHistory(history),
@@ -198,7 +204,7 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
       yield event("tool_call", { round, name, args });
 
       const at = Date.now();
-      const { text, hits } = executeTool(name, args, { seen, calls, budget });
+      const { text, hits } = executeTool(name, args, { seen, calls, budget, retriever });
       for (const hit of hits) seen.set(hit.id, { ...hit, round });
 
       // 模型改判了校区（跨校区问题的第二次检索），跟着走，除非用户锁定了校区。

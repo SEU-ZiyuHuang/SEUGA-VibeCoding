@@ -6,6 +6,7 @@
 
 import { searchGuide, listSections, countChunks } from "../lib/retrieve.mjs";
 import { CAMPUS_SLUGS, campusName, detectCampus, DEFAULT_CAMPUS } from "../lib/campus.mjs";
+import { RETRIEVAL_CASES } from "../lib/retrieval-regression.mjs";
 
 // expect 为正则时断言 top1 的 **chunk id** 必须匹配；为 null 时断言应当 0 命中。
 //
@@ -14,27 +15,7 @@ import { CAMPUS_SLUGS, campusName, detectCampus, DEFAULT_CAMPUS } from "../lib/c
 // 从前「剪头发」这类口语查询是故意断言 0 命中的——单轮检索答不了，只能靠模型换词重检。
 // wiki 化之后检索层有了别名兜底（字面 0 命中才启用），这类查询现在应当直接命中，
 // 所以断言从「0 命中」翻成了「命中正确页面」。这是 lib/retrieve.mjs 里那条兜底路径的回归基线。
-const SUITE = [
-  { campus: "jiulonghu", query: "现在橘园有车去无线谷吗", expect: /shuttle-wireless-valley-line/ },
-  { campus: "jiulonghu", query: "梅园的床帘要买多大", expect: /dormitor|source-differences/ },
-  { campus: "jiulonghu", query: "兰台线节假日几点有车", expect: /shuttle-lantai-line/ },
-  { campus: "jiulonghu", query: "图书馆的插座多不多", expect: /library/ },
-  { campus: "jiulonghu", query: "理发", expect: /dormitor|commercial|services/ },
-  { campus: "jiulonghu", query: "哪里能剪头发", expect: /dormitor|commercial|services/ },
-  { campus: "jiulonghu", query: "网速怎么样", expect: /campus-map|library|dormitor/ },
-  { campus: "sipailou", query: "在哪洗澡", expect: /dorm/ },
-  { campus: "wuxi", query: "校园卡丢了", expect: /card/ },
-  { campus: "sipailou", query: "沙塘园的快递寄到哪", expect: /delivery/ },
-  { campus: "sipailou", query: "图书馆几点关门", expect: /library/ },
-  { campus: "sipailou", query: "文昌11舍是几人间", expect: /dorm/ },
-  { campus: "dingjiaqiao", query: "从丁家桥去九龙湖怎么走", expect: /intercampus|metro/ },
-  { campus: "dingjiaqiao", query: "求恩4舍有独立卫浴吗", expect: /dormitor/ },
-  { campus: "wuxi", query: "无人小巴几点发车", expect: /autonomous|shuttle/ },
-  { campus: "wuxi", query: "榴园食堂供餐时间", expect: /canteen/ },
-  { campus: "suzhou", query: "水电费怎么交", expect: /dorm-and-utilities/ },
-  { campus: "jiangbei", query: "桃园宿舍床多大", expect: /dormitory/ },
-  { campus: "jiangbei", query: "怎么去禄口机场", expect: /stations-airport/ },
-];
+const SUITE = RETRIEVAL_CASES;
 
 const args = process.argv.slice(2);
 

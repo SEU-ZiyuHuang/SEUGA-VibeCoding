@@ -48,13 +48,15 @@ agent/
 
 ## 调试台 `/studio.html`
 
-回答规则原本写死在 `lib/prompt.mjs`，改一个字要走一遍部署。调试台把这部分挪到了
-Vercel Blob 上：网页里改规则、当场试聊、点发布才生效，改坏了从历史版本一键回退。
+调试台分为「提示词」和「知识库」两个页签。提示词配置与线上知识修订都存入私有
+Vercel Blob：网页里编辑、当场试聊、点发布才生效，改坏了可从各自的历史版本回退。
 
 ```
 lib/prompt.mjs 的常量        = 默认值，也是存储挂掉时的兜底
 Blob agent-config/draft.json = 草稿，只影响试聊
 Blob agent-config/releases/  = 每次发布追加一份，就是版本历史
+Blob agent-knowledge/draft.json = 线上知识修订草稿
+Blob agent-knowledge/releases/  = 知识修订发布历史
 ```
 
 三条设计约束，改这块之前先读：
@@ -69,8 +71,18 @@ Blob agent-config/releases/  = 每次发布追加一份，就是版本历史
 配置读取有 60 秒的实例内缓存，所以发布后**最长一分钟**全量生效。Blob 没配置、读失败、
 内容坏掉都会降级到 `lib/prompt.mjs` 的默认值，agent 照常回答。
 
-校区专属规则（`answerRules`）和指南正文不在调试台范围内——它们是 `build:knowledge`
-的构建产物，线上读不到源 md。
+校区专属规则（`answerRules`）仍锁在构建产物中。知识页签维护的是静态知识之上的修订层：
+可以覆盖、补充或停用主题页，也可更新校区版本与时效提醒，但不会改写仓库外的源 md。
+
+### 线上知识修订
+
+`data/knowledge.mjs` 永远是经过逐字校验的只读基线。生产问答把最新发布的
+`KnowledgeOverlay v1` 合并到基线后建立检索索引；没有发布修订、Blob 读取失败或发布内容损坏时，
+自动回落基线。发布后最长一分钟生效，`/api/chat` 与冻结的 `/api/agent/chat` 使用同一版本。
+
+每项事实修订必须填写来源说明、核验日期、核验人和变更备注；来源链接可选但只能是 HTTP(S)。
+核验人只用于后台审计，不进入公开回答。发布前会检查字段、别名、相关页和 19 条检索回归；
+合理的检索变化可以在填写发布备注后由管理员确认放行。
 
 ## 知识库
 
@@ -134,7 +146,7 @@ DEEPSEEK_API_KEY=xxx npm run migrate:wiki -- --metadata-only # 只重算摘要/�
 
 ## 自检
 
-没有测试框架，靠这十个命令。**前九个不需要 API key，不花钱**：
+没有测试框架，靠这些命令。除最后一个真实 API 套件外都不需要 API key、不花钱：
 
 ```bash
 npm run check                 # 全部文件 node --check 语法检查
@@ -145,6 +157,7 @@ npm run test:fastpath         # 快路径判定，22 条标注样本 + 止血开
 npm run test:markdown         # 答案渲染器，46 项断言（含 XSS 转义）
 npm run test:newlines         # LF / CRLF / CR 跨平台换行归一化
 npm run test:storage          # 私有 Blob / OIDC 配置与读取约束
+npm run test:knowledge        # 线上知识修订、合并、校验、来源与动态检索
 npm run verify:wiki           # 知识库与原始 md 逐字一致，236 项断言
 DEEPSEEK_API_KEY=xxx npm run loop -- --suite     # 打真实 API，四条必测行为，人工判读
 ```
@@ -233,8 +246,9 @@ node scripts/query.mjs --sections wuxi
 
 ### `/api/admin/*` — 调试台，全部要登录
 
-`session`（GET 状态 / POST 登录 / DELETE 退出）、`config`（GET 读 / PUT 存草稿 / POST 发布或回退）、
-`preview`（POST，SSE，用请求体里的草稿试聊）。会话是 HMAC 签名的 HttpOnly Cookie，有效期 8 小时。
+`session`（GET 状态 / POST 登录 / DELETE 退出）、`config`（提示词草稿/发布/回退）、
+`knowledge`（知识修订草稿/发布/回退）、`knowledge-meta`（AI 元数据候选）和
+`preview`（POST，SSE，用提示词与知识草稿试聊）。会话是 HMAC 签名的 HttpOnly Cookie，有效期 8 小时。
 
 `preview` 没有接频控——它在登录之后，而 `lib/ratelimit.mjs` 是给公开端点挡刷量的。
 
@@ -253,7 +267,7 @@ node scripts/query.mjs --sections wuxi
 | `AGENT_FAST_PATH` | | 设为 `0` 关闭快路径（见「成本与延迟」）。默认开启 |
 
 `ADMIN_ACCESS_TOKEN` 建议 20 位以上随机串，且**与 `web/` 地图后台的口令不同**——两边各自泄露时影响面小一半。
-配置存储使用私有 Blob；路径前缀为 `agent-config/`。生产环境优先使用项目专属 Store，避免与
+配置与知识修订均使用私有 Blob；路径前缀分别为 `agent-config/`、`agent-knowledge/`。生产环境优先使用项目专属 Store，避免与
 其他应用共享权限。代码仍兼容旧式 `BLOB_READ_WRITE_TOKEN`，但线上默认走 OIDC。
 
 部署后验证：
@@ -264,7 +278,7 @@ curl -sI https://<你的域名>/lib/prompt.mjs        # 必须 404
 curl -N -X POST https://<你的域名>/api/chat -H 'Content-Type: application/json' -d '{"message":"梅园床帘多大"}'
 ```
 
-`/api/health` 中的 `configStorageConfigured` 应为 `true`；它只表示 Blob 凭据已注入，
+`/api/health` 中的 `configStorageConfigured` 和 `knowledgeStorageConfigured` 应为 `true`；它们只表示 Blob 凭据已注入，
 不会返回 Store ID、OIDC token 或其他秘密。
 
 第二条是安全检查：Vercel 零配置下如果没有 `public/` 目录，会把 Root Directory 下**所有文件**当静态资源暴露，`lib/` 和 `data/` 会被公网直接下载。本项目静态文件全在 `public/`，所以其余目录应当 404。

@@ -9,7 +9,7 @@
 // list_sections 现在返回标题 + 摘要，等于把整个校区的 wiki 索引一次性给模型看，
 // 它不用再拿光秃秃的标题猜哪一节可能有答案。
 
-import { searchGuide, listSections, getChunk, countChunks, relatedOf } from "./retrieve.mjs";
+import { createRetriever } from "./retrieve.mjs";
 import { CAMPUS_SLUGS, campusName, isCampusSlug } from "./campus.mjs";
 
 const CAMPUS_DESCRIPTION = `校区 slug，可选值：${CAMPUS_SLUGS.join("、")}。`;
@@ -93,13 +93,13 @@ export function safeParseArgs(raw, { campus, message }) {
 }
 
 /** 把检索结果渲染成给模型看的纯文本。已给过的章节只回标题，省掉重复的输入 token。 */
-export function renderSearchResult(hits, { campus, query, seen }) {
-  const total = countChunks(campus);
+export function renderSearchResult(hits, { campus, query, seen, retriever = createRetriever() }) {
+  const total = retriever.countChunks(campus);
   if (!hits.length) {
     return [
       `未命中：检索词「${query}」在${campusName(campus)}指南中没有匹配到任何章节。`,
       `该校区共 ${total} 个页面：`,
-      ...listSections(campus).map((section) =>
+      ...retriever.listSections(campus).map((section) =>
         `  - ${section.sectionPath}（id=${section.id}）${section.summary ? `：${section.summary}` : ""}`),
       "请换用指南更可能使用的书面词再检一次（把口语换成正式名称），或改检其他校区。",
     ].join("\n");
@@ -119,7 +119,7 @@ export function renderSearchResult(hits, { campus, query, seen }) {
  * 返回 { text, hits }：text 给模型，hits 用于服务端确定性生成 sources。
  */
 export function executeTool(name, args, context) {
-  const { seen, calls, budget } = context;
+  const { seen, calls, budget, retriever = createRetriever() } = context;
 
   // 同参数重复调用是死循环的前兆，直接劝退。
   const signature = `${name}:${JSON.stringify(args)}`;
@@ -133,14 +133,14 @@ export function executeTool(name, args, context) {
   }
 
   if (name === "search_guide") {
-    const hits = searchGuide({ campus: args.campus, query: args.query, topK: args.top_k });
-    const text = renderSearchResult(hits, { campus: args.campus, query: args.query, seen });
+    const hits = retriever.searchGuide({ campus: args.campus, query: args.query, topK: args.top_k });
+    const text = renderSearchResult(hits, { campus: args.campus, query: args.query, seen, retriever });
     budget.remaining -= text.length;
     return { text, hits };
   }
 
   if (name === "list_sections") {
-    const sections = listSections(args.campus);
+    const sections = retriever.listSections(args.campus);
     const text = [
       `${campusName(args.campus)}指南共 ${sections.length} 个页面：`,
       ...sections.map((section) =>
@@ -152,12 +152,12 @@ export function executeTool(name, args, context) {
   }
 
   if (name === "read_section") {
-    const chunk = getChunk(String(args.section_id || ""));
+    const chunk = retriever.getChunk(String(args.section_id || ""));
     if (!chunk) {
       return { text: `没有 id 为「${args.section_id}」的章节。请先用 list_sections 或 search_guide 获取合法 id。`, hits: [] };
     }
     seen.set(chunk.id, chunk);
-    const related = relatedOf(chunk.id);
+    const related = retriever.relatedOf(chunk.id);
     const footer = related.length
       ? `\n\n相关页面（需要时用 read_section 打开）：\n${related.map((item) => `  - ${item.sectionPath}（id=${item.id}）`).join("\n")}`
       : "";

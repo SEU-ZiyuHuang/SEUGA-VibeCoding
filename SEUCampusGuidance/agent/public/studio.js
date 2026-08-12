@@ -447,6 +447,7 @@ async function preview(question) {
         campus: elements.previewCampus.value || null,
         history: state.previewHistory.slice(-6),
         config: readEditor(),
+        knowledgeOverlay: window.KnowledgeStudio?.readOverlay?.(),
       }),
     });
 
@@ -508,6 +509,8 @@ function showEditor() {
   elements.loginView.hidden = true;
   elements.editorView.hidden = false;
   elements.topbarActions.hidden = false;
+  document.getElementById("studioTabs").hidden = false;
+  window.KnowledgeStudio?.authenticated?.();
 }
 
 async function boot() {
@@ -611,9 +614,11 @@ elements.clearPreviewButton.addEventListener("click", () => {
 // 有未发布改动时刷新或关页面给个提醒——草稿存在浏览器里，不点保存就没了。
 window.addEventListener("beforeunload", (event) => {
   if (elements.editorView.hidden) return;
-  if (comparable(readEditor()) === comparable(state.published)) return;
+  if (comparable(readEditor()) === comparable(state.published) && !window.KnowledgeStudio?.isDirty?.()) return;
   event.preventDefault();
   event.returnValue = "";
 });
 
 boot();
+
+window.PromptStudio = { readEditor, preview };

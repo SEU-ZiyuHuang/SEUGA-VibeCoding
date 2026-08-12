@@ -7,6 +7,8 @@
     "api/health.js": { "maxDuration": 10 },
     "api/admin/session.js": { "maxDuration": 10 },
     "api/admin/config.js": { "maxDuration": 15 },
-    "api/admin/preview.js": { "maxDuration": 60 }
+    "api/admin/preview.js": { "maxDuration": 60 },
+    "api/admin/knowledge.js": { "maxDuration": 30 },
+    "api/admin/knowledge-meta.js": { "maxDuration": 60 }
   }
 }

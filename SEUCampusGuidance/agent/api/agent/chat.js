@@ -5,6 +5,7 @@
 
 import { answerLegacy } from "../../lib/legacy.mjs";
 import { isConfigured } from "../../lib/deepseek.mjs";
+import { readActiveKnowledge } from "../_shared/knowledge-store.js";
 
 function json(payload, status = 200) {
   return Response.json(payload, { status, headers: { "Cache-Control": "no-store" } });
@@ -18,7 +19,8 @@ export default {
       const input = await request.json();
       const message = String(input.message || "").trim();
       if (!message) return json({ error: "message is required" }, 400);
-      return json(await answerLegacy(message, { signal: request.signal }));
+      const { knowledge } = await readActiveKnowledge();
+      return json(await answerLegacy(message, { signal: request.signal, knowledge }));
     } catch (error) {
       console.error(error);
       return json({ error: "Agent service temporarily unavailable" }, 500);

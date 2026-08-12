@@ -216,6 +216,17 @@ function renderSources(turn, sources) {
       tag.textContent = `源图 ${source.pages.join("、")}`;
       item.append(tag);
     }
+    if (source.managed && source.sourceLabel) {
+      const label = document.createElement(source.sourceUrl ? "a" : "span");
+      label.className = "page-tag managed-source";
+      label.textContent = `线上核验：${source.sourceLabel}${source.verifiedAt ? `（${source.verifiedAt}）` : ""}`;
+      if (source.sourceUrl) {
+        label.href = source.sourceUrl;
+        label.target = "_blank";
+        label.rel = "noopener noreferrer";
+      }
+      item.append(label);
+    }
     list.append(item);
   }
 }

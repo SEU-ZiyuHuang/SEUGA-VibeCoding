@@ -24,6 +24,11 @@
       <span id="stateChip" class="state-chip">读取中…</span>
       <button type="button" id="saveButton" class="quiet-button">保存草稿</button>
       <button type="button" id="publishButton" class="primary-action compact">发布到线上</button>
+      <span id="knowledgeTopActions" class="topbar-actions" hidden>
+        <span id="knowledgeStateChip" class="state-chip">读取中…</span>
+        <button type="button" id="knowledgeSaveButton" class="quiet-button">保存知识草稿</button>
+        <button type="button" id="knowledgePublishButton" class="primary-action compact">发布知识</button>
+      </span>
       <button type="button" id="logoutButton" class="quiet-button">退出</button>
     </div>
   </header>
@@ -39,6 +44,11 @@
       <div id="loginNotice" class="notice" role="status"></div>
     </form>
   </section>
+
+  <nav id="studioTabs" class="studio-tabs" hidden aria-label="调试台栏目">
+    <button type="button" class="active" data-studio-tab="prompt">提示词</button>
+    <button type="button" data-studio-tab="knowledge">知识库</button>
+  </nav>
 
   <main id="editorView" class="editor-view" hidden>
 
@@ -147,10 +157,93 @@
 
   </main>
 
+  <main id="knowledgeView" class="knowledge-view" hidden>
+    <aside class="card knowledge-index">
+      <div class="card-head"><h2>知识页面</h2><button id="knowledgeAdd" class="ghost-button" type="button">+ 新增</button></div>
+      <div id="knowledgeWarning" class="banner" hidden></div>
+      <div class="knowledge-filters">
+        <select id="knowledgeCampus" aria-label="筛选校区"></select>
+        <select id="knowledgeStatus" aria-label="筛选状态">
+          <option value="">全部状态</option><option value="original">原始</option><option value="revised">已修订</option>
+          <option value="added">新增</option><option value="disabled">已停用</option>
+        </select>
+        <input id="knowledgeSearch" type="search" placeholder="搜索标题或正文" />
+      </div>
+      <div id="knowledgeList" class="knowledge-list"></div>
+    </aside>
+
+    <section class="column knowledge-editor-column">
+      <section class="card">
+        <div class="card-head"><h2>校区版本与时效提醒</h2><span class="card-hint">只影响当前筛选校区</span></div>
+        <label class="field"><span>版本口径</span><input id="campusVersion" maxlength="80" /></label>
+        <label class="field"><span>时效提醒</span><textarea id="campusNotice" rows="5" maxlength="4000"></textarea></label>
+        <div class="knowledge-grid">
+          <label class="field"><span>来源说明</span><input id="campusSourceLabel" maxlength="300" /></label>
+          <label class="field"><span>来源链接（可选）</span><input id="campusSourceUrl" type="url" maxlength="800" /></label>
+          <label class="field"><span>核验日期</span><input id="campusVerifiedAt" type="date" /></label>
+          <label class="field"><span>核验人</span><input id="campusVerifiedBy" maxlength="100" /></label>
+        </div>
+        <label class="field"><span>变更备注</span><input id="campusAuditNote" maxlength="500" /></label>
+        <div class="inline-actions"><button id="saveCampusChange" type="button" class="ghost-button">保存校区修订</button><button id="restoreCampus" type="button" class="quiet-button">恢复基线</button></div>
+      </section>
+
+      <section id="knowledgeEmpty" class="card"><p class="preview-empty">从左侧选择一个页面，或新增知识页面。</p></section>
+      <section id="knowledgeEditor" class="card" hidden>
+        <div class="card-head"><h2 id="knowledgeEditorTitle">编辑知识</h2><span id="knowledgeEditorStatus" class="state-chip"></span></div>
+        <div class="knowledge-grid">
+          <label class="field"><span>页面 ID</span><input id="chunkId" readonly /></label>
+          <label class="field"><span>所属校区</span><select id="chunkCampus"></select></label>
+          <label class="field"><span>标题</span><input id="chunkTitle" maxlength="120" /></label>
+          <label class="field"><span>版本</span><input id="chunkVersion" maxlength="80" /></label>
+        </div>
+        <label class="field"><span>摘要（20—200 字）</span><textarea id="chunkSummary" rows="3" maxlength="200"></textarea></label>
+        <label class="field"><span>关键词（每行一个，必须在正文出现）</span><textarea id="chunkKeywords" rows="4"></textarea></label>
+        <label class="field"><span>口语别名（每行：口语 => 正文书面词）</span><textarea id="chunkAliases" rows="4"></textarea></label>
+        <label class="field"><span>相关页 ID（每行一个，同校区）</span><textarea id="chunkRelated" rows="4"></textarea></label>
+        <label class="field"><span>源图页码（每行一个，可空）</span><textarea id="chunkPages" rows="3"></textarea></label>
+        <label class="field"><span>Markdown 正文</span><textarea id="chunkText" class="knowledge-body" rows="18" maxlength="12000"></textarea></label>
+        <div class="inline-actions"><button id="generateMetadata" type="button" class="ghost-button">AI 生成元数据候选</button><button id="previewMarkdown" type="button" class="quiet-button">预览正文</button></div>
+        <div id="knowledgeMarkdownPreview" class="markdown-preview" hidden></div>
+
+        <h3>强制溯源</h3>
+        <div class="knowledge-grid">
+          <label class="field"><span>来源说明</span><input id="auditSourceLabel" maxlength="300" /></label>
+          <label class="field"><span>来源链接（可选）</span><input id="auditSourceUrl" type="url" maxlength="800" /></label>
+          <label class="field"><span>核验日期</span><input id="auditVerifiedAt" type="date" /></label>
+          <label class="field"><span>核验人</span><input id="auditVerifiedBy" maxlength="100" /></label>
+        </div>
+        <label class="field"><span>变更备注</span><textarea id="auditNote" rows="3" maxlength="500"></textarea></label>
+        <div class="inline-actions">
+          <button id="saveChunkChange" type="button" class="primary-action compact">加入知识草稿</button>
+          <button id="disableChunk" type="button" class="danger-button">停用页面</button>
+          <button id="restoreChunk" type="button" class="quiet-button">恢复基线</button>
+        </div>
+      </section>
+    </section>
+
+    <aside class="column knowledge-publish-column">
+      <section class="card preview-card">
+        <div class="card-head"><h2>知识草稿试聊</h2><span class="card-hint">沿用左侧提示词草稿</span></div>
+        <p class="field-help">切回“提示词”页签，在原有试聊框提问；系统会自动带上这里尚未发布的知识草稿。</p>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>发布说明</h2><span id="knowledgeChangeCount" class="card-hint"></span></div>
+        <label class="field"><span>本次发布备注</span><textarea id="knowledgeReleaseNote" rows="3" maxlength="500"></textarea></label>
+        <div id="knowledgeDiff" class="knowledge-diff"></div>
+        <div id="knowledgeProblems" class="notice"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>知识历史版本</h2><span id="knowledgeReleaseHint" class="card-hint"></span></div>
+        <ul id="knowledgeReleaseList" class="release-list"></ul>
+      </section>
+    </aside>
+  </main>
+
   <div id="toast" class="toast" hidden role="status"></div>
 </div>
 
 <script src="./markdown.js"></script>
 <script src="./studio.js"></script>
+<script src="./knowledge-studio.js"></script>
 </body>
 </html>
