@@ -1185,9 +1185,12 @@
     const displayLocation = publicLocation(feature);
     const displayDescription = publicDescription(feature);
     elements.detailContent.innerHTML = `
+      <div class="detail-header">
       <span class="detail-category" style="--category-color:${categoryColor(feature.category)}">${escapeHtml((themeById[feature.category] || themeById.all).label)}</span>
       <h2>${escapeHtml(feature.name)}</h2>
       <div class="detail-location">⌖ ${escapeHtml(displayLocation || "四牌楼校区")}</div>
+      </div>
+      <div class="detail-body">
       ${feature.record ? "" : `<p class="detail-description">${escapeHtml(displayDescription)}</p>`}
       ${hasGuideTime ? `<div class="detail-grid"><span>开放时间</span><strong>${escapeHtml(feature.hours)}</strong></div>` : ""}
       ${featureDistance(feature) !== null ? `<div class="detail-grid"><span>距你</span><strong>${formatDistance(featureDistance(feature))} · 直线距离</strong></div>` : ""}
@@ -1198,6 +1201,7 @@
         ${linkedPlace ? `<button class="route-button" data-detail-action="show-map" data-place-id="${escapeHtml(linkedPlace.id)}">地图上查看</button>` : `<button class="route-button" data-detail-action="route" ${feature.knowledgeOnly || state.routeLoading ? "disabled" : ""}>${state.routeFeatureId === feature.id && state.routeData ? "重新规划" : state.routeLoading ? "规划中…" : "步行路线"}</button>`}
         <button class="ask-button" data-detail-action="ask">继续问 Agent</button>
         ${hasEditableCoordinate && state.annotationMode ? `<button class="coordinate-button" data-detail-action="edit-coordinate">校正地图位置</button>` : ""}
+      </div>
       </div>
     `;
     elements.detailPanel.classList.add("open");
