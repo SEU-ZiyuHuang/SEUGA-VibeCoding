@@ -20,6 +20,9 @@ import { readActiveConfig, storageConfigured } from "./api/_shared/config-store.
 import adminSession from "./api/admin/session.js";
 import adminConfig from "./api/admin/config.js";
 import adminPreview from "./api/admin/preview.js";
+import adminKnowledge from "./api/admin/knowledge.js";
+import adminKnowledgeMeta from "./api/admin/knowledge-meta.js";
+import { readActiveKnowledge, knowledgeStorageConfigured } from "./api/_shared/knowledge-store.js";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(rootDir, "public");
@@ -76,7 +79,7 @@ async function callFunction(handler, request, response) {
     const chunks = [];
     for await (const chunk of request) {
       chunks.push(chunk);
-      if (chunks.reduce((total, item) => total + item.length, 0) > 200_000) {
+      if (chunks.reduce((total, item) => total + item.length, 0) > 450_000) {
         return sendJson(response, 413, { error: "请求内容过大。" });
       }
     }
@@ -127,7 +130,7 @@ async function handleChat(request, response) {
   if (!checked.ok) return sendJson(response, checked.status, { error: checked.error });
 
   // 与 api/chat.js 一致：只读已发布配置，请求体里传什么都不作数（白名单已经滤掉了）。
-  const { config } = await readActiveConfig();
+  const [{ config }, { knowledge }] = await Promise.all([readActiveConfig(), readActiveKnowledge()]);
 
   response.writeHead(200, SSE_HEADERS);
   response.flushHeaders?.();
@@ -139,7 +142,7 @@ async function handleChat(request, response) {
   }, HEARTBEAT_MS);
 
   try {
-    for await (const item of runAgent({ ...checked.value, config, signal: abort.signal })) {
+    for await (const item of runAgent({ ...checked.value, config, knowledge, signal: abort.signal })) {
       if (response.writableEnded) break;
       response.write(formatSse(item));
     }
@@ -168,7 +171,8 @@ async function handleLegacyChat(request, response) {
   const input = await readJson(request);
   const message = String(input.message || "").trim();
   if (!message) return sendJson(response, 400, { error: "message is required" });
-  sendJson(response, 200, await answerLegacy(message));
+  const { knowledge } = await readActiveKnowledge();
+  sendJson(response, 200, await answerLegacy(message, { knowledge }));
 }
 
 async function serveStatic(request, response, pathname) {
@@ -200,16 +204,24 @@ const server = http.createServer(async (request, response) => {
     if (pathname === "/api/admin/session") return await callFunction(adminSession, request, response);
     if (pathname === "/api/admin/config") return await callFunction(adminConfig, request, response);
     if (pathname === "/api/admin/preview") return await callFunction(adminPreview, request, response);
+    if (pathname === "/api/admin/knowledge") return await callFunction(adminKnowledge, request, response);
+    if (pathname === "/api/admin/knowledge-meta") return await callFunction(adminKnowledgeMeta, request, response);
     if (pathname === "/api/health" || pathname === "/health") {
+      const activeKnowledge = await readActiveKnowledge();
       return sendJson(response, 200, {
         status: "ok",
         agentEnabled: isConfigured(),
         configStorageConfigured: storageConfigured(),
+        knowledgeStorageConfigured: knowledgeStorageConfigured(),
         model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
         knowledge: {
           generatedAt: KNOWLEDGE_BUILD.generatedAt,
-          chunks: KNOWLEDGE_BUILD.chunkCount,
-          campuses: CAMPUSES.map((campus) => ({ slug: campus.slug, name: campus.name, version: campus.version })),
+          chunks: activeKnowledge.knowledge.build.chunkCount,
+          campuses: activeKnowledge.knowledge.campuses.map((campus) => ({ slug: campus.slug, name: campus.name, version: campus.version })),
+          release: activeKnowledge.release?.pathname || null,
+          usingBaseline: activeKnowledge.usingBaseline,
+          degraded: activeKnowledge.degraded,
+          warnings: activeKnowledge.warnings,
         },
       });
     }

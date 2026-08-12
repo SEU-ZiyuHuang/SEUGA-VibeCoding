@@ -88,8 +88,8 @@ function buildBaseRules(overrides) {
   ].join("\n");
 }
 
-export function buildSystemPrompt({ campus, campusLock = false, emergency = false, overrides = null } = {}) {
-  const meta = getCampus(campus);
+export function buildSystemPrompt({ campus, campusLock = false, emergency = false, overrides = null, campusMeta = null } = {}) {
+  const meta = campusMeta || getCampus(campus);
   const parts = [];
 
   if (emergency) {
@@ -127,8 +127,8 @@ export function buildSystemPrompt({ campus, campusLock = false, emergency = fals
 }
 
 /** 供旧 /api/agent/chat 契约使用的精简 prompt：要求输出 JSON，不带工具纪律那一段。 */
-export function buildLegacySystemPrompt({ campus }) {
-  const meta = getCampus(campus);
+export function buildLegacySystemPrompt({ campus, campusMeta = null }) {
+  const meta = campusMeta || getCampus(campus);
   return [
     "你是东南大学校区指南 Agent（学生社团作品，非官方服务）。",
     `本次问题按${meta.name}回答，知识版本 ${meta.version}。`,

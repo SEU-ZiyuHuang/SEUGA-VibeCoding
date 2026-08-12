@@ -306,6 +306,7 @@ html, body {
   border: 1px solid var(--line);
   border-radius: 5px;
 }
+.managed-source { color: var(--forest-800); background: #e4f1dd; text-decoration: none; }
 
 .error-banner {
   margin-top: 8px;

@@ -13,6 +13,7 @@ import { isConfigured } from "../lib/deepseek.mjs";
 import { checkRateLimit, clientIp } from "../lib/ratelimit.mjs";
 import { validateChatInput } from "../lib/validate.mjs";
 import { readActiveConfig } from "./_shared/config-store.js";
+import { readActiveKnowledge } from "./_shared/knowledge-store.js";
 
 function json(payload, status) {
   return Response.json(payload, { status, headers: { "Cache-Control": "no-store" } });
@@ -36,7 +37,7 @@ export default {
     if (!checked.ok) return json({ error: checked.error }, checked.status);
 
     // 永不抛错：存储没配置或读失败都会降级到代码里的默认配置。
-    const { config } = await readActiveConfig();
+    const [{ config }, { knowledge }] = await Promise.all([readActiveConfig(), readActiveKnowledge()]);
 
     const abort = new AbortController();
     request.signal?.addEventListener("abort", () => abort.abort());
@@ -53,7 +54,7 @@ export default {
         };
         const heartbeat = setInterval(() => send(":\n\n"), HEARTBEAT_MS);
         try {
-          for await (const item of runAgent({ ...checked.value, config, signal: abort.signal })) {
+          for await (const item of runAgent({ ...checked.value, config, knowledge, signal: abort.signal })) {
             send(formatSse(item));
           }
         } catch (error) {

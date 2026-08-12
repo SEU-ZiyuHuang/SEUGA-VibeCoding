@@ -6,7 +6,7 @@
 // 与新版的区别：单轮、非流式、由模型返回 JSON（因为要给出地图点位 id）。
 
 import { MAP_FEATURES } from "../data/map-features.mjs";
-import { searchGuide, tokenize } from "./retrieve.mjs";
+import { createRetriever, tokenize } from "./retrieve.mjs";
 import { detectCampus } from "./campus.mjs";
 import { buildLegacySystemPrompt } from "./prompt.mjs";
 import { complete } from "./deepseek.mjs";
@@ -19,7 +19,7 @@ function scoreFeature(feature, terms) {
   return terms.reduce((score, term) => score + (haystack.includes(term) ? Math.min(term.length, 4) : 0), 0);
 }
 
-function findRelevantContext(message, campus) {
+function findRelevantContext(message, campus, retriever) {
   const terms = tokenize(message);
   const features = MAP_FEATURES
     .map((feature) => ({ feature, score: scoreFeature(feature, terms) }))
@@ -27,7 +27,7 @@ function findRelevantContext(message, campus) {
     .sort((a, b) => b.score - a.score)
     .slice(0, 10)
     .map((entry) => entry.feature);
-  const guideSections = searchGuide({ campus, query: message, topK: 4 }).map((chunk) => ({
+  const guideSections = retriever.searchGuide({ campus, query: message, topK: 4 }).map((chunk) => ({
     section: chunk.sectionPath,
     version: chunk.version,
     pages: chunk.pages,
@@ -36,12 +36,13 @@ function findRelevantContext(message, campus) {
   return { mapFeatures: features, guideSections };
 }
 
-export async function answerLegacy(message, { signal } = {}) {
+export async function answerLegacy(message, { signal, knowledge = null } = {}) {
   const campus = detectCampus(message) || LEGACY_CAMPUS;
-  const context = findRelevantContext(message, campus);
+  const retriever = createRetriever(knowledge || undefined);
+  const context = findRelevantContext(message, campus, retriever);
   const payload = await complete({
     messages: [
-      { role: "system", content: buildLegacySystemPrompt({ campus }) },
+      { role: "system", content: buildLegacySystemPrompt({ campus, campusMeta: retriever.getCampus(campus) }) },
       { role: "user", content: `用户问题：${message}\n\n可用校园数据：${JSON.stringify(context)}` },
     ],
     maxTokens: 900,

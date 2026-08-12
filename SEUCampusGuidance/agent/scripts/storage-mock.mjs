@@ -6,6 +6,13 @@ import {
   readBlobJson,
   storageConfigured,
 } from "../api/_shared/config-store.js";
+import {
+  KNOWLEDGE_BLOB_ACCESS,
+  KNOWLEDGE_DRAFT_WRITE_OPTIONS,
+  KNOWLEDGE_RELEASE_WRITE_OPTIONS,
+  knowledgeStorageConfigured,
+  readKnowledgeBlobJson,
+} from "../api/_shared/knowledge-store.js";
 
 assert.equal(storageConfigured({}), false, "没有 Blob 连接信息时应回落默认配置");
 assert.equal(storageConfigured({ BLOB_READ_WRITE_TOKEN: "legacy-token" }), true, "应兼容旧式读写 Token");
@@ -17,6 +24,10 @@ assert.equal(DRAFT_WRITE_OPTIONS.allowOverwrite, true, "草稿固定路径必须
 assert.ok(DRAFT_WRITE_OPTIONS.cacheControlMaxAge >= 60, "Blob 缓存时间不能低于平台下限");
 assert.equal(RELEASE_WRITE_OPTIONS.access, "private");
 assert.equal(RELEASE_WRITE_OPTIONS.allowOverwrite, undefined, "历史版本必须保持不可覆盖");
+assert.equal(knowledgeStorageConfigured({ BLOB_STORE_ID: "store_oidc" }), true);
+assert.equal(KNOWLEDGE_BLOB_ACCESS, "private", "知识修订必须使用私有 Blob");
+assert.equal(KNOWLEDGE_DRAFT_WRITE_OPTIONS.allowOverwrite, true, "知识草稿固定路径必须允许覆盖");
+assert.equal(KNOWLEDGE_RELEASE_WRITE_OPTIONS.allowOverwrite, undefined, "知识历史版本不可覆盖");
 
 let observed = null;
 const expected = { identity: "测试配置", rules: ["只依据指南回答"] };
@@ -45,5 +56,11 @@ await assert.rejects(
   /Blob read failed: 404/,
   "不存在的 Blob 应明确失败",
 );
+
+const knowledgeActual = await readKnowledgeBlobJson("agent-knowledge/draft.json", async () => {
+  const encoded = new TextEncoder().encode(JSON.stringify({ schemaVersion: 1, campusChanges: {}, chunkChanges: {} }));
+  return { statusCode: 200, stream: new ReadableStream({ start(controller) { controller.enqueue(encoded); controller.close(); } }) };
+});
+assert.equal(knowledgeActual.schemaVersion, 1, "应从私有 Blob 解析知识草稿");
 
 console.log("✓ Vercel 私有 Blob / OIDC 配置测试全部通过");
