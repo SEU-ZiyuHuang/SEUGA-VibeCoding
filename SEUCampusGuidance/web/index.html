@@ -27,6 +27,7 @@
         <div class="top-actions">
           <span id="dataStatus" class="status-pill success">指南版本 · 2025.08</span>
           <button id="serviceButton" class="ghost-button service-button" type="button">办事服务</button>
+          <button id="knowledgeButton" class="ghost-button knowledge-button" type="button">知识中心</button>
           <button id="annotationButton" class="ghost-button annotation-button" type="button" hidden aria-hidden="true" tabindex="-1">标注地图</button>
           <button id="guideButton" class="ghost-button">校园指南</button>
           <button id="agentButton" class="primary-button">问校园 Agent</button>
@@ -276,6 +277,71 @@
       <p class="agent-note">回答优先依据2025.08版校园指南；在线服务不可用时自动切换为本地指南查询。</p>
     </section>
 
+    <section id="knowledgeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="knowledgeModalTitle" aria-hidden="true" inert>
+      <div class="modal-card knowledge-modal-card">
+        <div class="modal-header knowledge-header">
+          <div>
+            <span class="eyebrow">SEU KNOWLEDGE HUB · PREVIEW</span>
+            <h2 id="knowledgeModalTitle">校园知识中心</h2>
+          </div>
+          <div class="knowledge-header-meta">
+            <span id="knowledgeVerifiedAt" class="knowledge-verified">官网资料 · 已核验</span>
+            <button id="knowledgeClose" class="icon-button" type="button" aria-label="关闭知识中心">×</button>
+          </div>
+        </div>
+
+        <section class="knowledge-hero" aria-label="知识中心概览">
+          <div>
+            <span class="knowledge-kicker">不是链接收藏夹，而是可检索、可引用的校园知识库</span>
+            <h3>从“我要办什么”出发，找到可信原文</h3>
+            <p>首批汇总迎新网、教务处、研究生院、学生处、保卫处、校医院、网络与信息中心、图书馆等官方来源。</p>
+          </div>
+          <dl class="knowledge-stats">
+            <div><dt id="knowledgeDocumentCount">0</dt><dd>份官方资料</dd></div>
+            <div><dt id="knowledgeDepartmentCount">0</dt><dd>个来源部门</dd></div>
+            <div><dt id="knowledgeCurrentCount">0</dt><dd>项当前通知</dd></div>
+          </dl>
+        </section>
+
+        <div class="knowledge-quick-paths" aria-label="常用资料组合">
+          <button type="button" data-knowledge-path="newcomer"><span>01</span><strong>2026 新生报到</strong><small>报到、体检、户籍、缴费</small></button>
+          <button type="button" data-knowledge-path="daily"><span>02</span><strong>入校后第一周</strong><small>校园卡、校园网、图书馆</small></button>
+          <button type="button" data-knowledge-path="graduate"><span>03</span><strong>研究生办事</strong><small>注册、培养、证明、休复学</small></button>
+          <button type="button" data-knowledge-path="security"><span>04</span><strong>证件与户政</strong><small>户口、居住证、证件补办</small></button>
+        </div>
+
+        <div class="knowledge-toolbar">
+          <label class="knowledge-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="knowledgeSearch" type="search" placeholder="搜索文件、部门或关键词，例如“居住证”" autocomplete="off" />
+          </label>
+          <label class="knowledge-audience-field">
+            <span>适用人群</span>
+            <select id="knowledgeAudience">
+              <option value="all">全部人群</option>
+              <option value="newcomer">新生</option>
+              <option value="undergraduate">本科生</option>
+              <option value="graduate">研究生</option>
+              <option value="alumni">毕业生 / 校友</option>
+            </select>
+          </label>
+        </div>
+
+        <nav id="knowledgeCategories" class="knowledge-categories" aria-label="知识分类"></nav>
+
+        <div class="knowledge-layout">
+          <section class="knowledge-results" aria-label="资料检索结果">
+            <div class="knowledge-results-heading">
+              <span id="knowledgeResultTitle">全部资料</span>
+              <small id="knowledgeResultCount">0 份</small>
+            </div>
+            <div id="knowledgeList" class="knowledge-list"></div>
+          </section>
+          <article id="knowledgeDetail" class="knowledge-detail" aria-live="polite"></article>
+        </div>
+      </div>
+    </section>
+
     <section id="guideModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle" aria-hidden="true" inert>
       <div class="modal-card guide-modal-card">
         <div class="modal-header">
@@ -330,6 +396,7 @@
     <script src="../data/annotation-import-20260806.js"></script>
     <script src="../data/guide-pages.js"></script>
     <script src="../data/service-workflows.js"></script>
+    <script src="../data/knowledge-documents.js"></script>
     <script src="./coordinates.js"></script>
     <script src="./app.js"></script>
   </body>

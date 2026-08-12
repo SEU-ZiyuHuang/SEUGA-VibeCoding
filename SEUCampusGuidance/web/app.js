@@ -31,6 +31,10 @@
     editingCoordinateId: null,
     guideView: "structured",
     guideSheet: null,
+    knowledgeCategory: "all",
+    knowledgeAudience: "all",
+    knowledgeQuery: "",
+    knowledgeDocumentId: null,
   };
 
   const elements = {
@@ -91,6 +95,20 @@
     guideRecordTitle: document.querySelector("#guideRecordTitle"),
     guideRecordCount: document.querySelector("#guideRecordCount"),
     guideRecordList: document.querySelector("#guideRecordList"),
+    knowledgeButton: document.querySelector("#knowledgeButton"),
+    knowledgeModal: document.querySelector("#knowledgeModal"),
+    knowledgeClose: document.querySelector("#knowledgeClose"),
+    knowledgeVerifiedAt: document.querySelector("#knowledgeVerifiedAt"),
+    knowledgeDocumentCount: document.querySelector("#knowledgeDocumentCount"),
+    knowledgeDepartmentCount: document.querySelector("#knowledgeDepartmentCount"),
+    knowledgeCurrentCount: document.querySelector("#knowledgeCurrentCount"),
+    knowledgeSearch: document.querySelector("#knowledgeSearch"),
+    knowledgeAudience: document.querySelector("#knowledgeAudience"),
+    knowledgeCategories: document.querySelector("#knowledgeCategories"),
+    knowledgeResultTitle: document.querySelector("#knowledgeResultTitle"),
+    knowledgeResultCount: document.querySelector("#knowledgeResultCount"),
+    knowledgeList: document.querySelector("#knowledgeList"),
+    knowledgeDetail: document.querySelector("#knowledgeDetail"),
     serviceButton: document.querySelector("#serviceButton"),
     serviceModal: document.querySelector("#serviceModal"),
     serviceClose: document.querySelector("#serviceClose"),
@@ -103,6 +121,11 @@
   const manualPoi = Array.isArray(window.MANUAL_POI) ? window.MANUAL_POI : [];
   const importedAnnotations = Array.isArray(window.IMPORTED_ANNOTATIONS) ? window.IMPORTED_ANNOTATIONS : [];
   const serviceWorkflows = Array.isArray(window.SERVICE_WORKFLOWS) ? window.SERVICE_WORKFLOWS : [];
+  const knowledgeLibrary = window.KNOWLEDGE_LIBRARY && typeof window.KNOWLEDGE_LIBRARY === "object"
+    ? window.KNOWLEDGE_LIBRARY
+    : { categories: [], documents: [], verifiedAt: "" };
+  const knowledgeDocuments = Array.isArray(knowledgeLibrary.documents) ? knowledgeLibrary.documents : [];
+  const knowledgeCategories = Array.isArray(knowledgeLibrary.categories) ? knowledgeLibrary.categories : [];
   const featureCoordinateStorageKey = "seu-campus-map-coordinate-overrides-v1";
 
   function readFeatureCoordinateOverrides() {
@@ -143,6 +166,8 @@
   const themeById = Object.fromEntries(window.MAP_THEMES.map((theme) => [theme.id, theme]));
   const featureById = Object.fromEntries(window.MAP_FEATURES.map((feature) => [feature.id, feature]));
   const workflowById = Object.fromEntries(serviceWorkflows.map((workflow) => [workflow.id, workflow]));
+  const knowledgeById = Object.fromEntries(knowledgeDocuments.map((document) => [document.id, document]));
+  const knowledgeCategoryById = Object.fromEntries(knowledgeCategories.map((category) => [category.id, category]));
   const toTencentCoordinate = (latitude, longitude, coordinateSystem = "WGS84") => (
     coordinateSystem === "GCJ-02"
       ? { latitude, longitude }
@@ -1304,6 +1329,192 @@
     elements.serviceButton.focus();
   }
 
+  const knowledgeStatusMeta = {
+    current: { label: "2026 当前", tone: "current" },
+    stable: { label: "长期指南", tone: "stable" },
+    reference: { label: "历史参考", tone: "reference" },
+  };
+
+  const knowledgeAudienceLabels = {
+    newcomer: "新生",
+    undergraduate: "本科生",
+    graduate: "研究生",
+    alumni: "毕业生 / 校友",
+  };
+
+  function filteredKnowledgeDocuments() {
+    const query = normalize(state.knowledgeQuery);
+    return knowledgeDocuments.filter((document) => {
+      if (state.knowledgeCategory !== "all" && document.category !== state.knowledgeCategory) return false;
+      if (state.knowledgeAudience !== "all" && !(document.audience || []).includes(state.knowledgeAudience)) return false;
+      if (!query) return true;
+      const searchable = normalize([
+        document.title,
+        document.department,
+        document.summary,
+        document.format,
+        ...(document.highlights || []),
+        ...(document.tags || []),
+        ...(document.campuses || []),
+    ].join(" "));
+      return searchable.includes(query);
+    }).sort((left, right) => {
+      if (left.priority === "primary" && right.priority !== "primary") return -1;
+      if (right.priority === "primary" && left.priority !== "primary") return 1;
+      if (left.priority === "featured" && right.priority !== "featured") return -1;
+      if (right.priority === "featured" && left.priority !== "featured") return 1;
+      const statusRank = { current: 0, stable: 1, reference: 2 };
+      const statusDifference = (statusRank[left.status] ?? 3) - (statusRank[right.status] ?? 3);
+      if (statusDifference) return statusDifference;
+      return String(right.publishedAt).localeCompare(String(left.publishedAt), "zh-CN");
+    });
+  }
+
+  function knowledgeAgentPrompt(document) {
+    const highlights = (document.highlights || []).join("；");
+    return `请依据以下东南大学官方资料回答我的问题：\n《${document.title}》\n来源：${document.department}\n发布日期：${document.publishedAt}\n资料摘要：${document.summary}\n要点：${highlights}\n请明确区分资料原文信息和你的推断；如果内容可能已更新，请提醒我打开官方原文核对。`;
+  }
+
+  function renderKnowledgeDetail(document) {
+    if (!elements.knowledgeDetail) return;
+    if (!document) {
+      elements.knowledgeDetail.innerHTML = `
+        <div class="knowledge-empty-detail">
+          <span>⌕</span>
+          <h3>没有匹配的资料</h3>
+          <p>试试缩短关键词，或切换到“全部资料”。</p>
+          <button type="button" data-knowledge-reset>清除筛选</button>
+        </div>
+      `;
+      return;
+    }
+    const category = knowledgeCategoryById[document.category] || { label: "校园资料", icon: "文" };
+    const status = knowledgeStatusMeta[document.status] || knowledgeStatusMeta.stable;
+    const audiences = (document.audience || []).map((item) => knowledgeAudienceLabels[item] || item);
+    elements.knowledgeDetail.innerHTML = `
+      <div class="knowledge-detail-scroll">
+        <div class="knowledge-detail-topline">
+          <span class="knowledge-detail-category"><b>${escapeHtml(category.icon)}</b>${escapeHtml(category.label)}</span>
+          <span class="knowledge-status ${escapeHtml(status.tone)}">${escapeHtml(status.label)}</span>
+        </div>
+        <h3>${escapeHtml(document.title)}</h3>
+        <p class="knowledge-detail-summary">${escapeHtml(document.summary)}</p>
+        <dl class="knowledge-meta-grid">
+          <div><dt>发布部门</dt><dd>${escapeHtml(document.department)}</dd></div>
+          <div><dt>发布日期</dt><dd>${escapeHtml(document.publishedAt || "未标注")}</dd></div>
+          <div><dt>适用人群</dt><dd>${escapeHtml(audiences.join(" · ") || "全体师生")}</dd></div>
+          <div><dt>适用校区</dt><dd>${escapeHtml((document.campuses || ["全校"]).join(" · "))}</dd></div>
+          <div><dt>资料形态</dt><dd>${escapeHtml(document.format || "网页")}</dd></div>
+          <div><dt>来源状态</dt><dd>学校官网公开资料</dd></div>
+        </dl>
+        <section class="knowledge-highlights">
+          <div class="detail-section-heading"><span>这份资料能解决什么</span><small>${document.highlights?.length || 0} 项</small></div>
+          <ul>${(document.highlights || []).map((item) => `<li><span>✓</span>${escapeHtml(item)}</li>`).join("")}</ul>
+        </section>
+        <div class="knowledge-tags">${(document.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+        ${document.status === "reference" ? `<aside class="knowledge-reference-note"><strong>时效提醒</strong><p>这是历史批次或操作参考。涉及具体日期、金额、材料或系统入口时，请以当年最新通知为准。</p></aside>` : ""}
+        <div class="knowledge-actions">
+          <a href="${escapeHtml(document.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看学校官网原文 ↗</a>
+          <button type="button" data-knowledge-ask="${escapeHtml(document.id)}">带着这份资料问 Agent</button>
+        </div>
+        <p class="knowledge-source-note">知识中心展示的是便于检索的摘要，不替代学校正式文件；Agent 回答也应附带这条来源。</p>
+      </div>
+    `;
+  }
+
+  function renderKnowledgeLibrary() {
+    if (!elements.knowledgeList || !knowledgeDocuments.length) return;
+    const filtered = filteredKnowledgeDocuments();
+    if (!state.knowledgeDocumentId || !filtered.some((document) => document.id === state.knowledgeDocumentId)) {
+      state.knowledgeDocumentId = filtered[0]?.id || null;
+    }
+
+    const selectedCategory = knowledgeCategoryById[state.knowledgeCategory] || knowledgeCategoryById.all || { label: "全部资料" };
+    elements.knowledgeCategories.innerHTML = knowledgeCategories.map((category) => {
+      const count = category.id === "all"
+        ? knowledgeDocuments.length
+        : knowledgeDocuments.filter((document) => document.category === category.id).length;
+      return `<button class="knowledge-category ${state.knowledgeCategory === category.id ? "active" : ""}" type="button" data-knowledge-category="${escapeHtml(category.id)}">
+        <span>${escapeHtml(category.icon)}</span><strong>${escapeHtml(category.label)}</strong><small>${count}</small>
+      </button>`;
+    }).join("");
+    elements.knowledgeResultTitle.textContent = state.knowledgeQuery
+      ? `“${state.knowledgeQuery}”的资料`
+      : selectedCategory.label;
+    elements.knowledgeResultCount.textContent = `${filtered.length} 份`;
+    elements.knowledgeList.innerHTML = filtered.length ? filtered.map((document) => {
+      const category = knowledgeCategoryById[document.category] || { icon: "文" };
+      const status = knowledgeStatusMeta[document.status] || knowledgeStatusMeta.stable;
+      return `<button class="knowledge-card ${state.knowledgeDocumentId === document.id ? "active" : ""}" type="button" data-knowledge-document="${escapeHtml(document.id)}">
+        <span class="knowledge-card-icon">${escapeHtml(category.icon)}</span>
+        <span class="knowledge-card-body">
+          <span class="knowledge-card-meta"><em class="${escapeHtml(status.tone)}">${escapeHtml(status.label)}</em><i>${escapeHtml(document.publishedAt)}</i><i>${escapeHtml(document.format)}</i></span>
+          <strong>${escapeHtml(document.title)}</strong>
+          <small>${escapeHtml(document.department)}</small>
+          <span>${escapeHtml(document.summary)}</span>
+        </span>
+        <b aria-hidden="true">→</b>
+      </button>`;
+    }).join("") : `<div class="knowledge-no-results"><span>未找到相关资料</span><button type="button" data-knowledge-reset>清除筛选</button></div>`;
+    renderKnowledgeDetail(knowledgeById[state.knowledgeDocumentId]);
+  }
+
+  function renderKnowledgeOverview() {
+    if (!elements.knowledgeDocumentCount) return;
+    const departments = new Set(knowledgeDocuments.map((document) => document.department.split("/")[0].trim()));
+    elements.knowledgeDocumentCount.textContent = String(knowledgeDocuments.length);
+    elements.knowledgeDepartmentCount.textContent = String(departments.size);
+    elements.knowledgeCurrentCount.textContent = String(knowledgeDocuments.filter((document) => document.status === "current").length);
+    elements.knowledgeVerifiedAt.textContent = `官网资料 · 核验于 ${knowledgeLibrary.verifiedAt || "2026-08-12"}`;
+    renderKnowledgeLibrary();
+  }
+
+  function resetKnowledgeFilters() {
+    state.knowledgeCategory = "all";
+    state.knowledgeAudience = "all";
+    state.knowledgeQuery = "";
+    state.knowledgeDocumentId = knowledgeDocuments[0]?.id || null;
+    elements.knowledgeSearch.value = "";
+    elements.knowledgeAudience.value = "all";
+    renderKnowledgeLibrary();
+  }
+
+  function openKnowledge() {
+    renderKnowledgeOverview();
+    elements.knowledgeModal.removeAttribute("inert");
+    elements.knowledgeModal.setAttribute("aria-hidden", "false");
+    elements.knowledgeModal.classList.add("open");
+    if (window.location.hash !== "#knowledge") window.history.replaceState(null, "", "#knowledge");
+    window.setTimeout(() => elements.knowledgeSearch.focus(), 0);
+  }
+
+  function closeKnowledge() {
+    if (!elements.knowledgeModal.classList.contains("open")) return;
+    elements.knowledgeModal.classList.remove("open");
+    elements.knowledgeModal.setAttribute("aria-hidden", "true");
+    elements.knowledgeModal.setAttribute("inert", "");
+    if (window.location.hash === "#knowledge") window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    elements.knowledgeButton.focus();
+  }
+
+  function applyKnowledgePath(path) {
+    const paths = {
+      newcomer: { category: "newcomer", audience: "newcomer", query: "" },
+      daily: { category: "digital", audience: "newcomer", query: "" },
+      graduate: { category: "graduate", audience: "graduate", query: "" },
+      security: { category: "security", audience: "all", query: "" },
+    };
+    const selection = paths[path];
+    if (!selection) return;
+    state.knowledgeCategory = selection.category;
+    state.knowledgeAudience = selection.audience;
+    state.knowledgeQuery = selection.query;
+    elements.knowledgeAudience.value = selection.audience;
+    elements.knowledgeSearch.value = selection.query;
+    renderKnowledgeLibrary();
+    elements.knowledgeList.scrollTop = 0;
+  }
+
   function addMessage(role, content, loading = false) {
     const item = document.createElement("div");
     item.className = `message ${role}${loading ? " loading" : ""}`;
@@ -1543,6 +1754,37 @@
 
   function bindEvents() {
     document.addEventListener("click", (event) => {
+      const knowledgeCategoryButton = event.target.closest("[data-knowledge-category]");
+      if (knowledgeCategoryButton) {
+        state.knowledgeCategory = knowledgeCategoryButton.dataset.knowledgeCategory;
+        state.knowledgeDocumentId = null;
+        renderKnowledgeLibrary();
+        return;
+      }
+      const knowledgeDocumentButton = event.target.closest("[data-knowledge-document]");
+      if (knowledgeDocumentButton) {
+        state.knowledgeDocumentId = knowledgeDocumentButton.dataset.knowledgeDocument;
+        renderKnowledgeLibrary();
+        return;
+      }
+      const knowledgeAskButton = event.target.closest("[data-knowledge-ask]");
+      if (knowledgeAskButton) {
+        const document = knowledgeById[knowledgeAskButton.dataset.knowledgeAsk];
+        if (document) {
+          closeKnowledge();
+          openAgent(knowledgeAgentPrompt(document));
+        }
+        return;
+      }
+      const knowledgePathButton = event.target.closest("[data-knowledge-path]");
+      if (knowledgePathButton) {
+        applyKnowledgePath(knowledgePathButton.dataset.knowledgePath);
+        return;
+      }
+      if (event.target.closest("[data-knowledge-reset]")) {
+        resetKnowledgeFilters();
+        return;
+      }
       const workflowButton = event.target.closest("[data-workflow-id]");
       if (workflowButton) {
         state.serviceWorkflowId = workflowButton.dataset.workflowId;
@@ -1645,12 +1887,22 @@
       state.query = event.target.value.trim();
       renderResults();
     });
+    elements.knowledgeSearch.addEventListener("input", (event) => {
+      state.knowledgeQuery = event.target.value.trim();
+      state.knowledgeDocumentId = null;
+      renderKnowledgeLibrary();
+    });
+    elements.knowledgeAudience.addEventListener("change", (event) => {
+      state.knowledgeAudience = event.target.value;
+      state.knowledgeDocumentId = null;
+      renderKnowledgeLibrary();
+    });
     elements.searchInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && elements.resultList.querySelector("[data-feature-id]")) elements.resultList.querySelector("[data-feature-id]").click();
     });
     document.addEventListener("keydown", (event) => {
       if (event.key === "/" && document.activeElement !== elements.searchInput) { event.preventDefault(); elements.searchInput.focus(); }
-      if (event.key === "Escape") { closeDetail(); closeNearby(); closeAnnotationEditor(); closeCoordinateEditor(); elements.agentDrawer.classList.remove("open"); closeGuide(); closeServices(); }
+      if (event.key === "Escape") { closeDetail(); closeNearby(); closeAnnotationEditor(); closeCoordinateEditor(); elements.agentDrawer.classList.remove("open"); closeGuide(); closeServices(); closeKnowledge(); }
     });
     document.querySelectorAll(".filter-chip").forEach((button) => button.addEventListener("click", () => {
       document.querySelectorAll(".filter-chip").forEach((item) => item.classList.remove("active"));
@@ -1661,6 +1913,8 @@
     document.querySelector("#detailClose").addEventListener("click", closeDetail);
     document.querySelector("#agentButton").addEventListener("click", () => openAgent());
     document.querySelector("#agentClose").addEventListener("click", () => elements.agentDrawer.classList.remove("open"));
+    elements.knowledgeButton.addEventListener("click", openKnowledge);
+    elements.knowledgeClose.addEventListener("click", closeKnowledge);
     elements.serviceButton.addEventListener("click", () => openServices());
     elements.serviceClose.addEventListener("click", closeServices);
     document.querySelector("#guideButton").addEventListener("click", openGuide);
@@ -1692,6 +1946,7 @@
     });
     elements.guideModal.addEventListener("click", (event) => { if (event.target === elements.guideModal) closeGuide(); });
     elements.serviceModal.addEventListener("click", (event) => { if (event.target === elements.serviceModal) closeServices(); });
+    elements.knowledgeModal.addEventListener("click", (event) => { if (event.target === elements.knowledgeModal) closeKnowledge(); });
     elements.nearbyButton.addEventListener("click", () => { if (state.nearbyOpen) closeNearby(); else openNearby(); });
     elements.nearbyClose.addEventListener("click", closeNearby);
     document.querySelector("#mobileCollapse").addEventListener("click", () => elements.sidebar.classList.toggle("collapsed"));
@@ -1760,6 +2015,7 @@
     renderGuideGallery();
     renderGuideBrowser();
     renderServiceWorkflows();
+    renderKnowledgeOverview();
     renderAll();
     bindEvents();
     elements.agentMode.textContent = window.APP_CONFIG.agentEnabled ? "校园知识模式" : "本地指南模式";
@@ -1767,6 +2023,7 @@
     addMessage("assistant", "你好，我是四牌楼校园 Agent，可以帮你查找学习、餐饮、宿舍、办事和交通信息。");
     loadTencentMap();
     loadPublishedContent();
+    if (window.location.hash === "#knowledge") openKnowledge();
   }
 
   initialize();
