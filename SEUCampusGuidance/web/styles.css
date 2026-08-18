@@ -361,7 +361,7 @@ h1, h2, h3, p { margin-top: 0; }
 .route-steps small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
 .route-external { display: flex; justify-content: center; align-items: center; min-height: 40px; margin-top: 5px; color: var(--forest-800); background: var(--sage-150); border-radius: 11px; font-size: 11px; font-weight: 750; text-decoration: none; }
 
-.agent-drawer { position: fixed; z-index: 60; top: 0; right: 0; width: min(430px, 100vw); height: 100vh; display: grid; grid-template-rows: 75px 1fr auto auto auto; padding: 0 18px 14px; background: var(--paper); box-shadow: -25px 0 70px rgba(16,45,36,.2); transform: translateX(105%); transition: .28s ease; }
+.agent-drawer { position: fixed; z-index: 2500; top: 0; right: 0; width: min(430px, 100vw); height: 100vh; display: grid; grid-template-rows: 75px 1fr auto auto auto; padding: 0 18px 14px; background: var(--paper); box-shadow: -25px 0 70px rgba(16,45,36,.2); transform: translateX(105%); transition: .28s ease; }
 .agent-drawer.open { transform: translateX(0); }
 .agent-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
 .agent-header > div { display: grid; grid-template-columns: 40px 1fr; column-gap: 10px; align-items: center; }
