@@ -126,7 +126,77 @@
     : { categories: [], documents: [], verifiedAt: "" };
   const knowledgeDocuments = Array.isArray(knowledgeLibrary.documents) ? knowledgeLibrary.documents : [];
   const knowledgeCategories = Array.isArray(knowledgeLibrary.categories) ? knowledgeLibrary.categories : [];
+  const sharedKnowledge = window.SHARED_KNOWLEDGE && typeof window.SHARED_KNOWLEDGE === "object"
+    ? window.SHARED_KNOWLEDGE
+    : { meta: {}, build: {}, places: [], services: [], departments: [], sources: [], mapFeatures: [] };
+  const sharedPlaces = Array.isArray(sharedKnowledge.places) ? sharedKnowledge.places : [];
+  const sharedServices = Array.isArray(sharedKnowledge.services) ? sharedKnowledge.services : [];
+  const sharedDepartments = Array.isArray(sharedKnowledge.departments) ? sharedKnowledge.departments : [];
+  const sharedSources = Array.isArray(sharedKnowledge.sources) ? sharedKnowledge.sources : [];
+  const sharedMapFeatures = Array.isArray(sharedKnowledge.mapFeatures) ? sharedKnowledge.mapFeatures : [];
+  const sharedPlaceById = Object.fromEntries(sharedPlaces.map((place) => [place.id, place]));
+  const sharedServiceById = Object.fromEntries(sharedServices.map((service) => [service.id, service]));
+  const sharedDepartmentById = Object.fromEntries(sharedDepartments.map((department) => [department.id, department]));
+  const sharedSourceById = Object.fromEntries(sharedSources.map((source) => [source.id, source]));
+  const sharedFeatureById = Object.fromEntries(sharedMapFeatures.map((feature) => [feature.id, feature]));
+  const sharedServiceCategoryLabels = {
+    visit: "参观服务",
+    "campus-card": "校园卡",
+    "student-status": "教务学籍",
+    archives: "档案服务",
+    security: "户籍与安全",
+  };
+  const sharedServiceIcons = { visit: "览", "campus-card": "卡", "student-status": "证", archives: "档", security: "户" };
+  const generatedServiceWorkflows = sharedServices.map((service) => ({
+    id: `official-${service.id}`,
+    icon: sharedServiceIcons[service.category] || "办",
+    category: `${sharedServiceCategoryLabels[service.category] || "校园服务"} · 官方核验`,
+    title: service.title,
+    summary: service.summary,
+    preparation: [...(service.materials || [])],
+    steps: [...(service.steps || [])],
+    notice: `${service.notice}（信息核验：${service.verifiedAt}）`,
+    mapFeatureIds: [service.placeId],
+    agentPrompt: `请依据统一知识库说明“${service.title}”的地点、时间、材料和办理步骤，并提醒我核对最新官方通知。`,
+    sharedServiceId: service.id,
+  }));
+  const departmentCategoryLabels = {
+    party: "党群工作", administration: "综合行政", teaching: "教务培养", student: "学生服务",
+    research: "科研服务", personnel: "人事人才", finance: "财务服务", international: "国际交流",
+    security: "校园安全", "campus-services": "后勤保障", information: "网络信息",
+    "library-archives": "图书档案", "admissions-employment": "招生就业",
+    "assets-construction": "设备基建", planning: "发展规划", sports: "体育服务",
+  };
+  const departmentIcons = {
+    party: "党", administration: "校", teaching: "教", student: "生", research: "研", personnel: "人",
+    finance: "财", international: "外", security: "安", "campus-services": "勤", information: "网",
+    "library-archives": "藏", "admissions-employment": "招", "assets-construction": "建", planning: "规", sports: "体",
+  };
+  const generatedDepartmentWorkflows = sharedDepartments.filter((department) => !department.aggregateInto).map((department) => ({
+    id: `department-${department.id}`,
+    icon: departmentIcons[department.category] || "部",
+    category: `${departmentCategoryLabels[department.category] || "职能部门"} · 官方核验`,
+    title: department.name,
+    summary: department.summary,
+    preparation: [...(department.responsibilities || [])],
+    steps: [],
+    notice: `办公地点、电话和坐班安排可能变化，前往前请打开部门官网复核。（信息核验：${department.verifiedAt}）`,
+    mapFeatureIds: [...new Set(allDepartmentOffices(department).map((office) => office.placeId).filter(Boolean))],
+    agentPrompt: `请依据统一知识库整合说明“${department.name}”及其下设科室：逐一列出职责、各校区办公室、房间和电话，不要拆成多个重复结果，并提醒我核对最新官方通知。`,
+    entityType: "department",
+    sharedDepartmentId: department.id,
+  }));
+  const replacedLegacyWorkflows = new Set(["campus-card-reissue", "academic-affairs"]);
+  serviceWorkflows.splice(0, serviceWorkflows.length,
+    ...generatedServiceWorkflows,
+    ...generatedDepartmentWorkflows,
+    ...serviceWorkflows.filter((workflow) => !replacedLegacyWorkflows.has(workflow.id)));
   const featureCoordinateStorageKey = "seu-campus-map-coordinate-overrides-v1";
+  const toTencentCoordinate = (latitude, longitude, coordinateSystem = "WGS84") => (
+    coordinateSystem === "GCJ-02"
+      ? { latitude, longitude }
+      : window.CampusCoordinates.wgs84ToGcj02(latitude, longitude)
+  );
 
   function readFeatureCoordinateOverrides() {
     try {
@@ -145,7 +215,37 @@
     ...importedAnnotations.filter((feature) => feature.replacesId),
   ];
   const replacementsById = new Map(manualReplacements.map((feature) => [feature.replacesId, feature]));
-  const mergedFeatures = window.MAP_FEATURES.map((feature) => {
+  const baseFeatureIds = new Set(window.MAP_FEATURES.map((feature) => feature.id));
+  const sharedDepartmentFeatures = sharedDepartments.filter((department) => !department.aggregateInto).map((department) => ({
+    id: `department-${department.id}`,
+    name: department.name,
+    category: "office",
+    icon: departmentIcons[department.category] || "部",
+    location: departmentResultSummary(department),
+    hours: "",
+    status: "unknown",
+    verified: false,
+    tags: [
+      departmentCategoryLabels[department.category] || "职能部门",
+      ...(department.aliases || []),
+      ...(department.units || []).flatMap((unit) => [unit.name, ...(unit.aliases || [])]),
+    ],
+    description: department.summary,
+    knowledgeOnly: true,
+    officialKnowledge: true,
+    sharedDepartmentId: department.id,
+  }));
+  const enrichedFeatures = window.MAP_FEATURES.map((feature) => {
+    const sharedFeature = sharedFeatureById[feature.id];
+    if (!sharedFeature) return feature;
+    return {
+      ...feature,
+      ...sharedFeature,
+      id: feature.id,
+      tags: [...new Set([...(feature.tags || []), ...(sharedFeature.tags || [])])],
+    };
+  });
+  const mergedFeatures = enrichedFeatures.map((feature) => {
     const replacement = replacementsById.get(feature.id);
     if (!replacement) return feature;
     return {
@@ -157,22 +257,25 @@
   });
   window.MAP_FEATURES = [
     ...mergedFeatures,
+    ...sharedMapFeatures.filter((feature) => !baseFeatureIds.has(feature.id)),
+    ...sharedDepartmentFeatures,
     ...manualPoi.filter((feature) => !feature.replacesId),
     ...importedAnnotations.filter((feature) => !feature.replacesId),
-  ].map((feature) => featureCoordinateOverrides[feature.id]
-    ? { ...feature, ...featureCoordinateOverrides[feature.id], id: feature.id }
-    : feature);
+  ].map((feature) => {
+    const resolved = featureCoordinateOverrides[feature.id]
+      ? { ...feature, ...featureCoordinateOverrides[feature.id], id: feature.id }
+      : feature;
+    if (!resolved.knowledgeOnly && Number.isFinite(Number(resolved.lat)) && Number.isFinite(Number(resolved.lng))) {
+      Object.assign(resolved, fallbackPositionFromCoordinate(Number(resolved.lat), Number(resolved.lng), resolved.coordinateSystem));
+    }
+    return resolved;
+  });
 
   const themeById = Object.fromEntries(window.MAP_THEMES.map((theme) => [theme.id, theme]));
   const featureById = Object.fromEntries(window.MAP_FEATURES.map((feature) => [feature.id, feature]));
   const workflowById = Object.fromEntries(serviceWorkflows.map((workflow) => [workflow.id, workflow]));
   const knowledgeById = Object.fromEntries(knowledgeDocuments.map((document) => [document.id, document]));
   const knowledgeCategoryById = Object.fromEntries(knowledgeCategories.map((category) => [category.id, category]));
-  const toTencentCoordinate = (latitude, longitude, coordinateSystem = "WGS84") => (
-    coordinateSystem === "GCJ-02"
-      ? { latitude, longitude }
-      : window.CampusCoordinates.wgs84ToGcj02(latitude, longitude)
-  );
   const sheetCategory = {
     "宿舍信息": "dorm", "食堂信息": "dining", "图书馆与学习设施": "study",
     "行政窗口": "office", "交通信息": "transport", "周边餐饮": "nearby",
@@ -260,6 +363,65 @@
 
   function normalize(value) {
     return String(value ?? "").toLowerCase().replace(/\s+/g, "");
+  }
+
+  const genericDepartmentQueries = new Set(["管理", "服务", "办公室", "中心", "科室", "电话", "地点", "校区", "行政"]);
+  const genericDepartmentTerms = new Set(["办公室", "处办公室", "综合办公室", "行政办公室", "服务中心", "管理办公室"]);
+
+  function allDepartmentOffices(department) {
+    return [
+      ...(department?.offices || []),
+      ...(department?.units || []).flatMap((unit) => unit.offices || []),
+    ];
+  }
+
+  function uniqueDepartmentOffices(department) {
+    const seen = new Set();
+    return allDepartmentOffices(department).filter((office) => {
+      const key = [office.campusId, office.location, office.room, ...(office.phones || [])].join("|");
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function departmentResultSummary(department) {
+    const unitCount = (department?.units || []).length;
+    const officeCount = uniqueDepartmentOffices(department).length;
+    return `${unitCount} 个科室 · ${officeCount} 处办公点`;
+  }
+
+  function departmentSearchTerms(department) {
+    const departmentTerms = [department?.name, ...(department?.aliases || [])];
+    const unitTerms = (department?.units || []).flatMap((unit) => [unit.name, ...(unit.aliases || [])]);
+    return [...new Set([...departmentTerms, ...unitTerms]
+      .map(normalize)
+      .filter((term) => term.length >= 2 && !genericDepartmentTerms.has(term)))];
+  }
+
+  function queryMatchesDepartment(department, query) {
+    if (!query || genericDepartmentQueries.has(query)) return false;
+    return departmentSearchTerms(department).some((term) => query.includes(term) || term.includes(query));
+  }
+
+  function departmentsMatchingQuery(query) {
+    return sharedDepartments.filter((department) => !department.aggregateInto && queryMatchesDepartment(department, query));
+  }
+
+  function featureBelongsToDepartment(feature, department, query) {
+    if (!feature || feature.sharedDepartmentId === department.id) return false;
+    const terms = departmentSearchTerms(department);
+    const featureName = normalize(feature.name);
+    if (terms.includes(featureName)) return true;
+    const relatedPlaceIds = new Set(allDepartmentOffices(department).map((office) => office.placeId).filter(Boolean));
+    const featurePlaceId = feature.sharedPlaceId || feature.id;
+    const featureText = normalize([feature.name, feature.location, feature.description, ...(feature.tags || [])].join(" "));
+    if (relatedPlaceIds.has(featurePlaceId) && featureText.includes(query)) return true;
+    if (feature.record) {
+      const recordText = normalize(JSON.stringify(feature.record));
+      return terms.some((term) => recordText.includes(term));
+    }
+    return false;
   }
 
   function categoryColor(category) {
@@ -458,6 +620,8 @@
   }
 
   function statusLabel(feature) {
+    if (feature?.sharedDepartmentId) return "聚合部门";
+    if (feature?.knowledgeOnly && feature?.officialKnowledge) return "官方资料";
     if (feature?.knowledgeOnly) return "指南内容";
     return "地图地点";
   }
@@ -853,16 +1017,24 @@
 
   function filteredFeatures() {
     const query = normalize(state.query);
+    const matchedDepartments = departmentsMatchingQuery(query);
     const spatial = window.MAP_FEATURES.filter((feature) => {
       const matchesTheme = state.theme === "all" || feature.category === state.theme;
       const matchesQuery = !query || normalize([feature.name, feature.location, feature.description, ...(feature.tags || [])].join(" ")).includes(query);
-      const matchesFilter = state.filter === "guide" ? feature.knowledgeOnly : state.filter === "mapped" ? !feature.knowledgeOnly : true;
-      return matchesFilter && matchesTheme && matchesQuery;
+      const matchesFilter = state.filter === "guide"
+        ? feature.knowledgeOnly
+        : state.filter === "mapped"
+          ? !feature.knowledgeOnly || (feature.sharedDepartmentId && matchedDepartments.some((department) => department.id === feature.sharedDepartmentId))
+          : true;
+      const departmentIsDiscoverable = !feature.sharedDepartmentId || Boolean(query) || state.filter === "guide" || state.theme === "office";
+      return matchesFilter && matchesTheme && matchesQuery && departmentIsDiscoverable;
     });
     const knowledge = (state.filter !== "mapped" && (query || state.filter === "guide"))
       ? searchKnowledge().filter((feature) => state.theme === "all" || feature.category === state.theme)
       : [];
-    const results = [...spatial, ...knowledge];
+    const results = [...spatial, ...knowledge].filter((feature) => (
+      !matchedDepartments.some((department) => featureBelongsToDepartment(feature, department, query))
+    ));
     if (!state.userLocation) return results;
     return results.sort((left, right) => {
       const leftDistance = featureDistance(left);
@@ -880,7 +1052,9 @@
     elements.resultTitle.textContent = state.query
       ? `“${state.query}”的结果`
       : state.filter === "guide" ? "指南内容" : state.filter === "mapped" ? "地图地点" : activeTheme.label;
-    elements.resultCount.textContent = `${results.length} 项`;
+    elements.resultCount.textContent = results.length === 1 && results[0].sharedDepartmentId
+      ? "1 个聚合结果"
+      : `${results.length} 项`;
     elements.resultList.innerHTML = results.length ? results.map((feature) => `
       <button class="result-card ${state.selectedId === feature.id ? "active" : ""}" data-feature-id="${feature.id}" data-knowledge="${feature.knowledgeOnly ? "true" : "false"}">
         <span class="result-icon" style="--category-color:${categoryColor(feature.category)}">${escapeHtml(feature.icon)}</span>
@@ -968,12 +1142,13 @@
 
   function linkedGuideRecords(feature) {
     if (!feature || !window.GUIDE_DATA?.records?.length) return [];
-    const terms = [feature.name, ...(featureGuideTerms[feature.id] || [])]
-      .map(canonicalGuideName)
-      .filter((term) => term.length >= 2);
+    const department = feature.sharedDepartmentId ? sharedDepartmentById[feature.sharedDepartmentId] : null;
+    const terms = (department
+      ? departmentSearchTerms(department)
+      : [feature.name, ...(featureGuideTerms[feature.id] || [])].map(canonicalGuideName).filter((term) => term.length >= 2));
     return window.GUIDE_DATA.records.filter((record) => {
-      const title = canonicalGuideName(record.title);
-      return terms.some((term) => title.includes(term) || term.includes(title));
+      const recordText = department ? normalize(JSON.stringify(record)) : canonicalGuideName(record.title);
+      return terms.some((term) => recordText.includes(term) || (!department && term.includes(recordText)));
     });
   }
 
@@ -1024,6 +1199,14 @@
     }
     const records = linkedGuideRecords(feature);
     if (!records.length) return "";
+    if (feature.sharedDepartmentId) {
+      return `<section class="detail-guide-section department-guide-section">
+        <div class="detail-section-heading"><span>旧版指南补充</span><small>${records.length} 项已并入本页</small></div>
+        <div class="department-guide-records">${records.map((record) => `
+          <article class="department-guide-record"><h4>${escapeHtml(record.title)}</h4>${renderRecordFields(record)}</article>
+        `).join("")}</div>
+      </section>`;
+    }
     return `<section class="detail-guide-section">
       <div class="detail-section-heading"><span>相关信息</span><small>${records.length} 项</small></div>
       <div class="detail-guide-records">${records.map((record, index) => `
@@ -1032,6 +1215,138 @@
           ${renderRecordFields(record)}
         </details>
       `).join("")}</div>
+    </section>`;
+  }
+
+  function renderSharedSource(sourceId) {
+    const source = sharedSourceById[sourceId];
+    if (!source) return "";
+    return `<a class="official-source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">
+      <span>${escapeHtml(source.publisher)}</span>
+      <strong>${escapeHtml(source.title)}</strong>
+      <small>${source.volatile ? "易变信息 · " : ""}核验 ${escapeHtml(source.verifiedAt)}</small>
+    </a>`;
+  }
+
+  function renderSharedService(service) {
+    const contact = (service.phones || []).map((phone) => `<a href="tel:${escapeHtml(phone.replace(/[^\d+]/g, ""))}">${escapeHtml(phone)}</a>`).join("　");
+    return `<details class="official-service-card">
+      <summary>
+        <span><b>办</b><strong>${escapeHtml(service.title)}</strong></span>
+        <span class="detail-guide-chevron" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="official-service-content">
+        <p>${escapeHtml(service.summary)}</p>
+        <dl>
+          <div><dt>地点</dt><dd>${escapeHtml(service.location)}${service.room ? ` · ${escapeHtml(service.room)}` : ""}</dd></div>
+          <div><dt>时间</dt><dd>${escapeHtml(service.hours)}</dd></div>
+          ${contact ? `<div><dt>电话</dt><dd>${contact}</dd></div>` : ""}
+        </dl>
+        ${(service.steps || []).length ? `<ol>${service.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>` : ""}
+        <p class="official-service-notice">${escapeHtml(service.notice)}</p>
+        ${service.onlineUrl ? `<a class="official-online-link" href="${escapeHtml(service.onlineUrl)}" target="_blank" rel="noreferrer">打开线上入口 ↗</a>` : ""}
+      </div>
+    </details>`;
+  }
+
+  function renderSharedKnowledge(feature) {
+    const place = sharedPlaceById[feature.sharedPlaceId || feature.id];
+    if (!place) return "";
+    const services = (place.serviceIds || []).map((id) => sharedServiceById[id]).filter(Boolean);
+    const primarySource = sharedSourceById[place.primarySourceId];
+    const timeline = (place.history || []).length ? `<div class="official-timeline">
+      ${place.history.map((item) => `<div><time>${escapeHtml(item.year)}</time><p>${escapeHtml(item.text)}</p></div>`).join("")}
+    </div>` : "";
+    const coordinateNote = place.coordinate && !place.coordinate.verified
+      ? `<p class="official-coordinate-note">地图点位采用 OpenStreetMap 参考坐标，尚非校方权威测绘坐标。<a href="${escapeHtml(place.coordinate.sourceUrl)}" target="_blank" rel="noreferrer">查看点位 ↗</a></p>`
+      : "";
+    return `<section class="official-knowledge-section">
+      <div class="official-knowledge-heading">
+        <div><span>统一知识库</span><strong>${escapeHtml(place.kind)}</strong></div>
+        <small>官方资料核验 ${escapeHtml(primarySource?.verifiedAt || sharedKnowledge.meta?.verifiedAt || "")}</small>
+      </div>
+      <p class="official-long-description">${escapeHtml(place.description)}</p>
+      ${timeline}
+      <div class="official-current-use"><span>现在这里</span><p>${escapeHtml(place.currentUse)}</p></div>
+      ${place.heritage ? `<div class="official-current-use"><span>保护与价值</span><p>${escapeHtml(place.heritage)}</p></div>` : ""}
+      ${services.length ? `<div class="official-services"><h3>这里能办什么</h3>${services.map(renderSharedService).join("")}</div>` : ""}
+      <div class="official-sources"><h3>资料来源</h3>${(place.sourceIds || []).map(renderSharedSource).join("")}</div>
+      ${coordinateNote}
+    </section>`;
+  }
+
+  function renderDepartmentPhoneLinks(phones = []) {
+    return phones.map((phone) => `<a href="tel:${escapeHtml(phone.replace(/[^\d+]/g, ""))}">${escapeHtml(phone)}</a>`).join("<span aria-hidden=\"true\">·</span>");
+  }
+
+  function renderDepartmentOfficeCard(office, className = "department-office-card") {
+    const campus = (sharedKnowledge.campuses || []).find((item) => item.id === office.campusId);
+    const phones = renderDepartmentPhoneLinks(office.phones || []);
+    const linkedPlace = office.placeId ? featureById[office.placeId] : null;
+    return `<article class="${className}">
+      <div class="department-office-heading"><span>${escapeHtml(campus?.name || office.campusId)}</span><strong>${escapeHtml(office.location)}</strong></div>
+      <p class="department-office-room">${escapeHtml(office.room || "具体房间以官网为准")}</p>
+      ${phones ? `<p class="department-contact">${phones}</p>` : ""}
+      ${office.email ? `<a class="department-email" href="mailto:${escapeHtml(office.email)}">${escapeHtml(office.email)}</a>` : ""}
+      ${office.serviceNote ? `<small>${escapeHtml(office.serviceNote)}</small>` : ""}
+      ${linkedPlace ? `<button type="button" data-workflow-place="${escapeHtml(linkedPlace.id)}">地图查看 · ${escapeHtml(linkedPlace.name)}</button>` : ""}
+    </article>`;
+  }
+
+  function renderDepartmentUnitCard(unit, index) {
+    const offices = (unit.offices || []).map((office) => renderDepartmentOfficeCard(office, "department-unit-office")).join("");
+    return `<article class="department-unit-card" data-department-unit="${escapeHtml(unit.id)}">
+      <header>
+        <div><span>科室 ${String(index + 1).padStart(2, "0")}</span><h4>${escapeHtml(unit.name)}</h4></div>
+        <small>${unit.offices?.length ? `${unit.offices.length} 处办公点` : "线上或电话分流"}</small>
+      </header>
+      ${(unit.aliases || []).length ? `<p class="department-unit-aliases">常见称呼：${escapeHtml(unit.aliases.join("、"))}</p>` : ""}
+      <ul class="department-unit-responsibilities">${(unit.responsibilities || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      ${offices ? `<div class="department-unit-office-list">${offices}</div>` : ""}
+      ${unit.serviceNote ? `<p class="department-unit-note">${escapeHtml(unit.serviceNote)}</p>` : ""}
+      ${(unit.links || []).length ? `<div class="department-unit-links">${unit.links.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)} ↗</a>`).join("")}</div>` : ""}
+    </article>`;
+  }
+
+  function renderDepartmentUnits(department) {
+    return `<div class="department-unit-grid">${(department.units || []).map(renderDepartmentUnitCard).join("")}</div>`;
+  }
+
+  function renderSharedDepartment(feature) {
+    const department = sharedDepartmentById[feature.sharedDepartmentId];
+    if (!department) return "";
+    const offices = uniqueDepartmentOffices(department);
+    const campuses = new Set(offices.map((office) => office.campusId));
+    const officeCards = (department.offices || []).map((office) => renderDepartmentOfficeCard(office)).join("");
+    return `<section class="official-knowledge-section department-knowledge-section">
+      <div class="official-knowledge-heading">
+        <div><span>统一知识库 · 聚合部门</span><strong>${escapeHtml(departmentCategoryLabels[department.category] || "校级部门")}</strong></div>
+        <small>官方资料核验 ${escapeHtml(department.verifiedAt)}</small>
+      </div>
+      <div class="department-scope-stats" role="group" aria-label="部门信息覆盖范围">
+        <div><strong>${department.units.length}</strong><span>下设科室</span></div>
+        <div><strong>${offices.length}</strong><span>办公点</span></div>
+        <div><strong>${campuses.size}</strong><span>覆盖校区</span></div>
+      </div>
+      <p class="official-long-description">${escapeHtml(department.summary)}</p>
+      <div class="department-responsibilities">
+        <h3>部门职责总览</h3>
+        <ul>${(department.responsibilities || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      </div>
+      ${officeCards ? `<div class="department-offices"><h3>部门综合联系方式</h3>${officeCards}</div>` : ""}
+      <section class="department-units">
+        <div class="detail-section-heading"><span>下设科室与办公地点</span><small>${department.units.length} 个科室 · 全部展开</small></div>
+        ${renderDepartmentUnits(department)}
+      </section>
+      <div class="department-links">
+        <a href="${escapeHtml(department.website)}" target="_blank" rel="noreferrer">打开部门官网 ↗</a>
+        ${(department.links || []).map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)} ↗</a>`).join("")}
+      </div>
+      <details class="department-source-details">
+        <summary>官方资料来源 <span>${department.sourceIds.length} 项</span></summary>
+        <div class="official-sources">${(department.sourceIds || []).map(renderSharedSource).join("")}</div>
+      </details>
+      <p class="official-coordinate-note">电话、房间和坐班日期属于易变信息，出发前请通过部门官网再次确认。</p>
     </section>`;
   }
 
@@ -1173,7 +1488,9 @@
   }
 
   function renderDetail(feature) {
-    const tags = (feature.tags || [])
+    const isDepartment = Boolean(feature.sharedDepartmentId);
+    elements.detailContent.classList.toggle("department-detail", isDepartment);
+    const tags = (isDepartment ? [] : (feature.tags || []))
       .filter((tag) => !["人工标注", "知识记录"].includes(tag))
       .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
       .join("");
@@ -1191,10 +1508,12 @@
       <div class="detail-location">⌖ ${escapeHtml(displayLocation || "四牌楼校区")}</div>
       </div>
       <div class="detail-body">
-      ${feature.record ? "" : `<p class="detail-description">${escapeHtml(displayDescription)}</p>`}
+      ${feature.record || isDepartment ? "" : `<p class="detail-description">${escapeHtml(displayDescription)}</p>`}
       ${hasGuideTime ? `<div class="detail-grid"><span>开放时间</span><strong>${escapeHtml(feature.hours)}</strong></div>` : ""}
       ${featureDistance(feature) !== null ? `<div class="detail-grid"><span>距你</span><strong>${formatDistance(featureDistance(feature))} · 直线距离</strong></div>` : ""}
       ${tags ? `<div class="detail-grid"><span>设施与服务</span><div class="tag-list">${tags}</div></div>` : ""}
+      ${renderSharedKnowledge(feature)}
+      ${renderSharedDepartment(feature)}
       ${renderRelatedGuide(feature)}
       ${renderRouteSummary(feature)}
       <div class="detail-actions">
@@ -1296,6 +1615,38 @@
     `).join("");
     const workflow = workflowById[state.serviceWorkflowId];
     const places = (workflow.mapFeatureIds || []).map((id) => featureById[id]).filter(Boolean);
+    const department = workflow.entityType === "department" ? sharedDepartmentById[workflow.sharedDepartmentId] : null;
+    elements.workflowDetail.classList.toggle("department-view", Boolean(department));
+    if (department) {
+      const offices = (department.offices || []).map((office) => renderDepartmentOfficeCard(office)).join("");
+      const uniqueOffices = uniqueDepartmentOffices(department);
+      elements.workflowDetail.innerHTML = `
+        <span class="workflow-category">${escapeHtml(workflow.category)}</span>
+        <h3>${escapeHtml(department.name)}</h3>
+        <p class="workflow-summary">${escapeHtml(department.summary)}</p>
+        <div class="department-scope-stats" aria-label="部门信息覆盖范围">
+          <div><strong>${department.units.length}</strong><span>下设科室</span></div>
+          <div><strong>${uniqueOffices.length}</strong><span>办公点</span></div>
+          <div><strong>${new Set(uniqueOffices.map((office) => office.campusId)).size}</strong><span>覆盖校区</span></div>
+        </div>
+        <section class="workflow-preparation">
+          <div class="detail-section-heading"><span>主要职责</span><small>${department.responsibilities.length} 项</small></div>
+          <ul>${department.responsibilities.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </section>
+        ${offices ? `<section class="workflow-offices"><div class="detail-section-heading"><span>部门综合联系方式</span><small>${department.offices.length} 处</small></div><div class="workflow-office-grid">${offices}</div></section>` : ""}
+        <section class="department-units workflow-department-units">
+          <div class="detail-section-heading"><span>下设科室与办公地点</span><small>${department.units.length} 个科室 · 全部展开</small></div>
+          ${renderDepartmentUnits(department)}
+        </section>
+        <section class="workflow-links">
+          <div class="detail-section-heading"><span>官方入口</span><small>核验 ${escapeHtml(department.verifiedAt)}</small></div>
+          <div><a href="${escapeHtml(department.website)}" target="_blank" rel="noreferrer">部门官网 ↗</a>${(department.links || []).map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)} ↗</a>`).join("")}</div>
+        </section>
+        <aside class="workflow-notice"><strong>信息提醒</strong><p>${escapeHtml(workflow.notice)}</p></aside>
+        <div class="workflow-actions"><button class="primary-action" type="button" data-workflow-ask="${escapeHtml(workflow.id)}">继续问校园 Agent</button></div>
+      `;
+      return;
+    }
     elements.workflowDetail.innerHTML = `
       <span class="workflow-category">${escapeHtml(workflow.category)}</span>
       <h3>${escapeHtml(workflow.title)}</h3>

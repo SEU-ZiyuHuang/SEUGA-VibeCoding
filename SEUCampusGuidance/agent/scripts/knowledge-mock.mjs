@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { CHUNKS, KNOWLEDGE_BUILD } from "../data/knowledge.mjs";
+import { SHARED_KNOWLEDGE_BUILD } from "../data/shared-knowledge.mjs";
 import {
   emptyKnowledgeOverlay,
   mergeKnowledgeOverlay,
@@ -56,6 +57,15 @@ assert.equal(managedSource?.managed, true, "Agent 来源应标记线上修订");
 assert.equal(managedSource?.sourceLabel, audit.sourceLabel, "Agent 来源应携带公开来源说明");
 assert.equal(managedSource?.verifiedAt, audit.verifiedAt, "Agent 来源应携带核验日期");
 assert.equal("verifiedBy" in managedSource, false, "Agent 来源不得暴露核验人");
+
+const officialEvents = [];
+for await (const event of runAgent({ message: "四牌楼学生证盖章在哪", campus: "sipailou" })) officialEvents.push(event);
+const officialSource = officialEvents.find((event) => event.event === "sources")?.data.sources
+  .find((source) => source.id === "sipailou/service-undergraduate-status-stamp");
+const officialDone = officialEvents.find((event) => event.event === "done")?.data;
+assert.equal(officialSource?.official, true, "统一知识库来源应标记为官方资料");
+assert.match(officialSource?.sourceUrl || "", /^https:\/\/jwc\.seu\.edu\.cn\//, "官方来源应保留可追溯链接");
+assert.ok(officialDone?.placeIds.includes("microwave-building"), "Agent 完成事件应返回可供地图联动的地点 ID");
 globalThis.fetch = originalFetch;
 if (originalKey === undefined) delete process.env.DEEPSEEK_API_KEY;
 else process.env.DEEPSEEK_API_KEY = originalKey;
@@ -95,6 +105,6 @@ stale.chunkChanges["wuxi/deleted-from-baseline"] = { action: "disable", audit };
 const staleCheck = validateKnowledgeOverlay(stale);
 assert.equal(staleCheck.ok, false);
 assert.ok(staleCheck.warnings.length > 0);
-assert.equal(KNOWLEDGE_BUILD.chunkCount, mergeKnowledgeOverlay(emptyKnowledgeOverlay()).chunks.length, "空修订必须保持原知识块数");
+assert.equal(KNOWLEDGE_BUILD.chunkCount + SHARED_KNOWLEDGE_BUILD.chunkCount, mergeKnowledgeOverlay(emptyKnowledgeOverlay()).chunks.length, "空修订必须保持两类静态知识块数");
 
 console.log("✓ 知识修订合并、校验、动态检索与兼容性测试全部通过");

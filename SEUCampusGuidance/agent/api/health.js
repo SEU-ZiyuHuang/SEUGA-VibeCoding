@@ -1,7 +1,6 @@
 // GET /api/health —— 部署自检。不泄露 Key 本身，只报是否配置。
 
 import { isConfigured } from "../lib/deepseek.mjs";
-import { KNOWLEDGE_BUILD, CAMPUSES } from "../data/knowledge.mjs";
 import { storageConfigured } from "./_shared/config-store.js";
 import { readActiveKnowledge, knowledgeStorageConfigured } from "./_shared/knowledge-store.js";
 
@@ -18,7 +17,7 @@ export default {
       model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
       knowledgeStorageConfigured: knowledgeStorageConfigured(),
       knowledge: {
-        generatedAt: KNOWLEDGE_BUILD.generatedAt,
+        generatedAt: activeKnowledge.knowledge.build.generatedAt,
         chunks: activeKnowledge.knowledge.build.chunkCount,
         campuses: activeKnowledge.knowledge.campuses.map((campus) => ({ slug: campus.slug, name: campus.name, version: campus.version })),
         release: activeKnowledge.release?.pathname || null,

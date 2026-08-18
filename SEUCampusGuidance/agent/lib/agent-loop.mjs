@@ -28,18 +28,18 @@ const MAX_SOURCES = 6;
 const REPLAY_SLICE = 24;
 const DECISION_TIMEOUT_MS = 20_000; // 决策轮比全局 35s 更早放弃，见 deepseek.complete 的说明
 
-// 快路径阈值。实测标定，不是拍脑袋定的——22 条标注样本（scripts/fastpath-mock.mjs）上 0 误判。
+// 快路径阈值由 scripts/fastpath-mock.mjs 的标注样本持续回归。
 //
 // wiki 化 + keywords/summary 参与打分之后，两类问题的得分被拉开得很干净：
-//   该走多轮的最高分 26.87（「水电费怎么交」）
-//   该走快路径的最低分 74.76（「图书馆几点关门」）
-// 中间是一段没有样本的空隙，取 50 落在正中，两侧各有约 2 倍余量。
+// 新增职能部门页后，部分模糊问法也可能高分命中“负责单位”，但正文未必包含
+// 用户真正要问的性能事实，因此仍通过语义护栏保留一次改写检索机会。
 //
 // 区分度只留作并列时的弱保护：分数下限已经能完全分开两类，所以从 1.2 放宽到 1.05
 // ——之前 1.2 会误伤「图书馆几点关门」（top1/top2 = 1.11，但 74.76 分已经足够确定）。
 // 改动这两个数请重跑 npm run test:fastpath。
 const FAST_PATH_MIN_SCORE = 50;
 const FAST_PATH_MIN_MARGIN = 1.05;
+const AMBIGUOUS_PERFORMANCE_QUERY = /网速(?:快|慢|怎样|怎么样|如何)|(?:快|慢).{0,3}网速/;
 
 function event(name, data) {
   return { event: name, data };
@@ -65,10 +65,16 @@ function buildSources(seen) {
       pages: chunk.pages,
       version: chunk.version,
       managed: Boolean(chunk.managed),
+      official: Boolean(chunk.official),
       sourceLabel: chunk.sourceLabel || "",
       sourceUrl: chunk.sourceUrl || "",
       verifiedAt: chunk.verifiedAt || "",
+      placeIds: [...(chunk.placeIds || [])],
     }));
+}
+
+function buildPlaceIds(seen) {
+  return [...new Set([...seen.values()].flatMap((chunk) => chunk.placeIds || []))].slice(0, 8);
 }
 
 function* sliceForReplay(text) {
@@ -90,6 +96,7 @@ export function shouldFastPath({ message, seed, emergency }) {
   if (process.env.AGENT_FAST_PATH === "0") return false;
   if (emergency) return false; // 急救问题永远走完整流程
   if (detectAllCampuses(message).length > 1) return false; // 跨校区要分别检索两个校区
+  if (AMBIGUOUS_PERFORMANCE_QUERY.test(String(message || "").replace(/\s+/g, ""))) return false;
   if (!seed.length) return false;
 
   const top = seed[0].score ?? 0;
@@ -260,6 +267,6 @@ export async function* runAgent({ message, campus: campusLock = null, history = 
     rounds: round,
     tookMs: Date.now() - startedAt,
     fastPath, // 供 A/B 与线上排查：这次有没有跳过决策轮
-    placeIds: [], // 地图联动是 P2，字段先占位
+    placeIds: buildPlaceIds(seen),
   });
 }

@@ -216,10 +216,10 @@ function renderSources(turn, sources) {
       tag.textContent = `源图 ${source.pages.join("、")}`;
       item.append(tag);
     }
-    if (source.managed && source.sourceLabel) {
+    if ((source.official || source.managed) && source.sourceLabel) {
       const label = document.createElement(source.sourceUrl ? "a" : "span");
       label.className = "page-tag managed-source";
-      label.textContent = `线上核验：${source.sourceLabel}${source.verifiedAt ? `（${source.verifiedAt}）` : ""}`;
+      label.textContent = `${source.official && !source.managed ? "官方来源" : "线上核验"}：${source.sourceLabel}${source.verifiedAt ? `（${source.verifiedAt}）` : ""}`;
       if (source.sourceUrl) {
         label.href = source.sourceUrl;
         label.target = "_blank";
@@ -475,12 +475,12 @@ async function renderAbout() {
     : "";
   elements.aboutBody.innerHTML = `
     <h3>这是什么</h3>
-    <p>东南大学六校区新生生活信息问答。你问一句，它会去 2025 版《东南大学新生实用信息简明指南》里检索相关章节，再据此回答，并标出用了哪几节、对应原图第几页。</p>
+    <p>东南大学六校区校园信息问答。它会同时检索 2025 版《东南大学新生实用信息简明指南》和经校内官网核验的统一知识库，再据此回答，并标出使用的章节与官方来源。</p>
     <h3>知识来源与版本</h3>
     <ul>${campusRows || "<li>九龙湖 / 四牌楼 / 丁家桥 / 苏州 / 江北 / 无锡</li>"}</ul>
     ${health?.knowledge ? `<p>知识库共 ${health.knowledge.chunks} 个章节，构建于 ${String(health.knowledge.generatedAt).slice(0, 10)}。</p>` : ""}
     <h3>重要提醒</h3>
-    <p>本站是<strong>学生社团作品，不是东南大学官方服务</strong>，也不代表校方立场。指南是静态资料，营业时间、班次、电话、收费、门禁、商户都可能已经变了，出门前请以现场公告或官方渠道为准。</p>
+    <p>本站是<strong>学生社团作品，不是东南大学官方服务</strong>，也不代表校方立场。即使引用校内官网，营业时间、班次、电话、房间、收费与门禁也可能调整，出门前请打开所附官方来源复核。</p>
     <p>遇到急病、受伤、火灾、治安问题，请直接拨打 120／119／110 并联系保卫处或现场工作人员，不要等这里的答案。</p>
     <h3>版权与署名</h3>
     <p>原指南由<strong>东南大学地理协会（@东奔南走）</strong>制作发布，以 CC BY-SA 4.0 许可共享。本站为基于原指南的衍生应用，保留原作者署名与相同方式共享要求。各校区指南的完整制作名单见原图末页。</p>

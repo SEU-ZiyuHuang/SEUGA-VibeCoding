@@ -8,6 +8,9 @@ const KEYWORD_WEIGHT = 1.2;
 const SUMMARY_WEIGHT = 0.5;
 const LENGTH_B = 0.45;
 const MAX_TERM_HITS = 3;
+const PRIMARY_TITLE_WEIGHT = 3.2;
+const TIME_INTENT_PATTERN = /几点|时间|开门|关门|开放|营业|什么时候|几点钟/;
+const SCHEDULE_FACT_PATTERN = /(?:[01]?\d|2[0-3])[:：][0-5]\d|开放时间|办理时间|工作日|周[一二三四五六日天]/;
 
 function countOccurrences(haystack, needle) {
   let count = 0;
@@ -39,6 +42,10 @@ export function tokenize(value) {
   return [...terms];
 }
 
+function compactSearchText(value) {
+  return String(value || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+}
+
 export function createRetriever(knowledge = baselineKnowledge()) {
   const chunks = Array.isArray(knowledge?.chunks) ? knowledge.chunks : [];
   const campuses = Array.isArray(knowledge?.campuses) ? knowledge.campuses : [];
@@ -56,6 +63,7 @@ export function createRetriever(knowledge = baselineKnowledge()) {
     const innerHeadings = (chunk.text.match(/^#{3,4}\s+.+$/gm) || []).join(" ");
     return [chunk.id, {
       title: `${chunk.sectionPath} ${innerHeadings}`.toLowerCase(),
+      primaryTitle: compactSearchText(String(chunk.sectionPath || "").split("｜").at(-1)),
       keywords: (chunk.keywords || []).join(" ").toLowerCase(),
       summary: String(chunk.summary || "").toLowerCase(),
       body: chunk.text.toLowerCase(),
@@ -77,7 +85,7 @@ export function createRetriever(knowledge = baselineKnowledge()) {
     return extra.size ? `${text} ${[...extra].join(" ")}` : text;
   }
 
-  function scoreChunk(chunk, terms) {
+  function scoreChunk(chunk, terms, query = "") {
     const index = searchIndex.get(chunk.id);
     if (!index) return 0;
     let score = 0;
@@ -89,13 +97,18 @@ export function createRetriever(knowledge = baselineKnowledge()) {
       const hits = countOccurrences(index.body, term);
       if (hits) score += weight * (1 + (hits - 1) * 0.35);
     }
-    return score / index.norm;
+    const compactQuery = compactSearchText(query);
+    if (index.primaryTitle.length >= 2 && compactQuery.includes(index.primaryTitle)) {
+      score += Math.min(Array.from(index.primaryTitle).length, 8) ** 2 * PRIMARY_TITLE_WEIGHT;
+    }
+    const intentFactor = TIME_INTENT_PATTERN.test(String(query)) && !SCHEDULE_FACT_PATTERN.test(index.body) ? 0.55 : 1;
+    return (score / index.norm) * intentFactor;
   }
 
-  function rank(pool, terms, k) {
+  function rank(pool, terms, k, query) {
     if (!terms.length) return [];
     return pool
-      .map((chunk) => ({ chunk, score: scoreChunk(chunk, terms) }))
+      .map((chunk) => ({ chunk, score: scoreChunk(chunk, terms, query) }))
       .filter((entry) => entry.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, k)
@@ -105,11 +118,11 @@ export function createRetriever(knowledge = baselineKnowledge()) {
   function searchGuide({ campus, query, topK = 3 }) {
     const pool = byCampus.get(campus) || [];
     const k = Math.max(1, Math.min(topK, 8));
-    const literal = rank(pool, tokenize(query), k);
+    const literal = rank(pool, tokenize(query), k, query);
     if (literal.length) return literal;
     const expanded = expandQuery(query);
     if (expanded === query) return [];
-    return rank(pool, tokenize(expanded), k).map((hit) => ({ ...hit, expanded: true }));
+    return rank(pool, tokenize(expanded), k, expanded).map((hit) => ({ ...hit, expanded: true }));
   }
 
   function listSections(campus) {

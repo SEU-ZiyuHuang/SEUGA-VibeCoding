@@ -26,7 +26,7 @@
         </div>
         <div class="top-actions">
           <span id="dataStatus" class="status-pill success">指南版本 · 2025.08</span>
-          <button id="serviceButton" class="ghost-button service-button" type="button">办事服务</button>
+          <button id="serviceButton" class="ghost-button service-button" type="button">办事与部门</button>
           <button id="knowledgeButton" class="ghost-button knowledge-button" type="button">知识中心</button>
           <button id="annotationButton" class="ghost-button annotation-button" type="button" hidden aria-hidden="true" tabindex="-1">标注地图</button>
           <button id="guideButton" class="ghost-button">校园指南</button>
@@ -44,7 +44,7 @@
             <button id="mobileCollapse" class="icon-button" aria-label="收起列表">−</button>
           </div>
 
-          <div id="themeList" class="theme-list" aria-label="主题分类"></div>
+          <div id="themeList" class="theme-list" role="group" aria-label="主题分类"></div>
 
           <div class="filter-row">
             <button class="filter-chip active" data-filter="all">全部</button>
@@ -377,12 +377,12 @@
         <div class="modal-header">
           <div>
             <span class="eyebrow">CAMPUS SERVICES</span>
-            <h2 id="serviceModalTitle">校园办事服务</h2>
+            <h2 id="serviceModalTitle">校园办事与职能部门</h2>
           </div>
-          <button id="serviceClose" class="icon-button" type="button" aria-label="关闭办事服务">×</button>
+          <button id="serviceClose" class="icon-button" type="button" aria-label="关闭办事与部门">×</button>
         </div>
         <div class="service-layout">
-          <nav id="workflowList" class="workflow-list" aria-label="办事流程"></nav>
+          <nav id="workflowList" class="workflow-list" aria-label="办事流程与职能部门"></nav>
           <article id="workflowDetail" class="workflow-detail" aria-live="polite"></article>
         </div>
       </div>
@@ -392,6 +392,7 @@
     <script>window.APP_CONFIG = window.APP_CONFIG || { tencentMapKey: "", agentEnabled: false };</script>
     <script src="../data/guide-data.js"></script>
     <script src="../data/map-features.js"></script>
+    <script src="../data/shared-knowledge.js"></script>
     <script src="../data/manual-poi.js"></script>
     <script src="../data/annotation-import-20260806.js"></script>
     <script src="../data/guide-pages.js"></script>

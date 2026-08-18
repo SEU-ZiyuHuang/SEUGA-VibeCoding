@@ -1,6 +1,6 @@
 // 工具定义与执行。
 //
-// 知识库现在是 wiki 结构：一个页面一个主题，带摘要、关键词和相关页链接。
+// 知识库是页面化结构：2025 新生指南与官方统一知识库共用同一检索接口。
 //
 // 检索层已经内置了别名兜底（字面 0 命中时自动把口语词补成指南用词），所以工具描述里
 // 不再说「没有同义扩展」——那是假话了。但改写引导仍然保留：别名表覆盖不了所有说法，
@@ -20,8 +20,8 @@ export const TOOLS = [
     function: {
       name: "search_guide",
       description: [
-        "在东南大学六校区《新生实用信息简明指南》知识库中检索章节原文（含源图页码）。",
-        "这是你获取一切校园事实的唯一途径：宿舍、食堂、图书馆、体育场馆、快递外卖、医疗、接驳车、地铁公交、周边商业，全部必须先检索再回答。",
+        "在东南大学校园知识库中检索：既包括六校区《新生实用信息简明指南》，也包括经校内官网核验的建筑介绍和办事信息。",
+        "这是你获取校园事实的唯一途径：宿舍、食堂、建筑校史、办事地点、图书馆、体育场馆、快递外卖、医疗、交通与周边商业，都必须先检索再回答。",
         "检索以字面子串匹配为主，另有一层口语词兜底（字面查不到时会自动把「剪头发」这类说法补成「理发」）。",
         "但兜底覆盖不全，返回为空或不相关时不要放弃，换成指南里更可能出现的书面词再检一次，例如：",
         "「洗澡」→「浴室 热水」；「网速」→「校园网 宽带」；「床帘多大」→「床铺 尺寸」；「怎么去机场」→「机场 禄口」。",
@@ -92,20 +92,30 @@ export function safeParseArgs(raw, { campus, message }) {
   return args;
 }
 
+function sourceDescriptor(chunk) {
+  if (chunk.managed && chunk.sourceLabel) {
+    return `运营来源 ${chunk.sourceLabel}${chunk.verifiedAt ? ` · 核验 ${chunk.verifiedAt}` : ""}`;
+  }
+  if (chunk.official) {
+    return `官方来源 ${chunk.sourceLabel || "东南大学官网"}${chunk.verifiedAt ? ` · 核验 ${chunk.verifiedAt}` : ""}`;
+  }
+  return `源图 ${chunk.pages.join("、") || "无标注"}`;
+}
+
 /** 把检索结果渲染成给模型看的纯文本。已给过的章节只回标题，省掉重复的输入 token。 */
 export function renderSearchResult(hits, { campus, query, seen, retriever = createRetriever() }) {
   const total = retriever.countChunks(campus);
   if (!hits.length) {
     return [
-      `未命中：检索词「${query}」在${campusName(campus)}指南中没有匹配到任何章节。`,
+      `未命中：检索词「${query}」在${campusName(campus)}知识库中没有匹配到任何章节。`,
       `该校区共 ${total} 个页面：`,
       ...retriever.listSections(campus).map((section) =>
         `  - ${section.sectionPath}（id=${section.id}）${section.summary ? `：${section.summary}` : ""}`),
-      "请换用指南更可能使用的书面词再检一次（把口语换成正式名称），或改检其他校区。",
+      "请换用知识库更可能使用的正式名称再检一次，或改检其他校区。",
     ].join("\n");
   }
   const blocks = hits.map((hit, index) => {
-    const head = `【${index + 1}】${hit.campusName} · ${hit.version} · ${hit.sectionPath} · 源图 ${hit.pages.join("、") || "无标注"} · id=${hit.id}`
+    const head = `【${index + 1}】${hit.campusName} · ${hit.version} · ${hit.sectionPath} · ${sourceDescriptor(hit)} · id=${hit.id}`
       + (hit.summary ? `\n摘要：${hit.summary}` : "");
     if (seen.has(hit.id)) return `${head}\n（此节正文已在前一次检索中提供，不再重复）`;
     seen.set(hit.id, hit);
@@ -142,7 +152,7 @@ export function executeTool(name, args, context) {
   if (name === "list_sections") {
     const sections = retriever.listSections(args.campus);
     const text = [
-      `${campusName(args.campus)}指南共 ${sections.length} 个页面：`,
+      `${campusName(args.campus)}知识库共 ${sections.length} 个页面：`,
       ...sections.map((section) =>
         `  - ${section.sectionPath}（id=${section.id}）${section.summary ? `\n      ${section.summary}` : ""}`),
       "按 id 用 read_section 取整页正文，或用 search_guide 检索关键词。",
@@ -161,7 +171,7 @@ export function executeTool(name, args, context) {
     const footer = related.length
       ? `\n\n相关页面（需要时用 read_section 打开）：\n${related.map((item) => `  - ${item.sectionPath}（id=${item.id}）`).join("\n")}`
       : "";
-    const text = `${chunk.campusName} · ${chunk.version} · ${chunk.sectionPath} · 源图 ${chunk.pages.join("、") || "无标注"}\n${chunk.text}${footer}`;
+    const text = `${chunk.campusName} · ${chunk.version} · ${chunk.sectionPath} · ${sourceDescriptor(chunk)}\n${chunk.text}${footer}`;
     budget.remaining -= text.length;
     return { text, hits: [chunk] };
   }

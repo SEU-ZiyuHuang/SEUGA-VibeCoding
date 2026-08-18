@@ -1,0 +1,236 @@
+[
+  {
+    "departmentId": "president-office",
+    "sourceIds": ["president-office-contact"],
+    "units": [
+      { "id": "general-office", "name": "综合办公室", "aliases": ["校办综合办"], "responsibilities": ["综合协调、会议接待和日常行政事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "333", "phones": ["025-52090099"] }] },
+      { "id": "seal-service", "name": "印信与用印服务", "aliases": ["校办盖章", "学校用印"], "responsibilities": ["学校印章使用、登记和校区用印服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "109", "phones": ["025-52091201"], "serviceNote": "通常周一、周三、周四办理。" }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "123", "phones": ["025-83790198"], "placeId": "mengfang-library", "serviceNote": "通常周二、周五办理。" }] },
+      { "id": "document-circulation", "name": "公文流转", "aliases": ["校办公文"], "responsibilities": ["学校公文收发、流转与归档协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "319", "phones": ["025-52090044"] }] },
+      { "id": "information-petitions", "name": "信息公开、信访与对口支援", "aliases": ["校长信箱", "信息公开", "信访"], "responsibilities": ["信息公开、来信来访、定点帮扶与对口支援联络"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "323", "phones": ["025-52090035", "025-52090052"] }] },
+      { "id": "legal-affairs", "name": "法律事务", "aliases": ["法务", "法律咨询"], "responsibilities": ["学校法律事务、合同与依法治校相关协调"], "offices": [{ "campusId": "sipailou", "location": "逸夫建筑馆", "room": "九楼", "phones": ["025-83795967"], "placeId": "yifu-architecture" }] },
+      { "id": "printing-room", "name": "文印室", "aliases": ["校办打印"], "responsibilities": ["校级公文和行政材料文印服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "216", "phones": ["025-52090039"] }] }
+    ]
+  },
+  {
+    "departmentId": "organization-department",
+    "sourceIds": ["organization-office-contact"],
+    "units": [
+      { "id": "cadre-office", "name": "干部工作办公室", "aliases": ["干部科"], "responsibilities": ["干部队伍建设、选任管理、考核监督与相关服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "208", "phones": ["025-52090133", "025-52090135"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "239", "phones": ["025-83792065"], "placeId": "mengfang-library" }] },
+      { "id": "party-school-office", "name": "党建、党校办公室", "aliases": ["党建办公室", "党校办公室"], "responsibilities": ["基层党建、党员教育管理和党校培训相关工作"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "207", "phones": ["025-52090134"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "239", "phones": ["025-83792065"], "placeId": "mengfang-library" }] }
+    ]
+  },
+  {
+    "departmentId": "academic-affairs",
+    "sourceIds": ["academic-office-contact"],
+    "units": [
+      { "id": "department-office", "name": "处办公室", "aliases": ["教务处办公室", "教务处盖章"], "responsibilities": ["综合协调、公文归档、教学经费、考核、印章和来访接待"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "201", "phones": ["025-52090216"], "serviceNote": "用印通常周一至周四在九龙湖。" }, { "campusId": "sipailou", "location": "微波楼", "room": "104", "phones": ["025-83790711"], "placeId": "microwave-building", "serviceNote": "处办公室用印通常周五在四牌楼。" }] },
+      { "id": "teaching-affairs", "name": "教务科", "aliases": ["排课科", "考试科", "办事厅"], "responsibilities": ["排课选课、课程考试、四六级与计算机等级考试、成绩管理和教学事故处理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "101（办事厅、考试咨询）", "phones": ["025-52090218"] }, { "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "102（排课选课等教务业务）", "phones": ["025-52090226"] }, { "campusId": "sipailou", "location": "微波楼", "room": "100", "phones": ["025-83794380"], "placeId": "microwave-building" }], "sourceIds": ["academic-teaching-office"] },
+      { "id": "student-status", "name": "学籍管理科", "aliases": ["学籍科", "成绩单盖章", "在读证明", "毕业证明"], "responsibilities": ["学籍异动、毕业与学位资格、电子注册、辅修、推免、转专业、学生证和成绩证明"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "103（学生证、成绩单盖章、在读证明）", "phones": ["025-52090224"] }, { "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "104（学籍、毕业资格、学籍异动）", "phones": ["025-52090227"] }, { "campusId": "jiulonghu", "location": "九龙湖校区教三", "room": "200（学业指导）", "phones": ["025-52090228"] }, { "campusId": "sipailou", "location": "微波楼", "room": "100", "phones": ["025-83792666"], "placeId": "microwave-building", "serviceNote": "盖章通常周二、周五下午在四牌楼，其他时间在九龙湖。" }], "sourceIds": ["undergraduate-status-office"] },
+      { "id": "teaching-research", "name": "教学研究科", "aliases": ["教研科"], "responsibilities": ["培养方案、专业与课程建设、教材、教学改革、教学成果与质量评估"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "205", "phones": ["025-52090221", "025-52090220"] }, { "campusId": "sipailou", "location": "微波楼", "room": "104", "phones": ["025-83790711"], "placeId": "microwave-building" }], "sourceIds": ["academic-research-office"] },
+      { "id": "practical-teaching", "name": "实践教学科", "aliases": ["实践科", "竞赛办", "SRTP"], "responsibilities": ["实习实践、毕业设计、学科竞赛、创新训练、课外研学和本科国际交流"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "207", "phones": ["025-52090230", "025-52090233", "025-52090229", "025-52090234"] }], "sourceIds": ["academic-practice-office"] },
+      { "id": "teaching-service-center", "name": "教学服务中心", "aliases": ["教材科", "教材服务"], "responsibilities": ["教材采购、讲义委印、保管、发放与新生教材服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "106", "phones": ["025-52090357"] }, { "campusId": "sipailou", "location": "四牌楼校区礼西路书库", "room": "教学服务中心", "phones": ["025-83792258"] }], "sourceIds": ["academic-teaching-service"] },
+      { "id": "classroom-service-center", "name": "公共教室管理与服务中心", "aliases": ["教室管理中心", "教室借用"], "responsibilities": ["公共教室资源规划、借用审核、巡查与设施服务协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教七", "room": "200-2", "phones": ["025-52097760"] }], "sourceIds": ["academic-classroom-service"] },
+      { "id": "printing-center", "name": "文印中心", "aliases": ["试卷印刷", "试卷委印"], "responsibilities": ["本科课程试卷委印、领取与文印服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区教五", "room": "301", "phones": ["025-52090232"] }, { "campusId": "sipailou", "location": "五四楼", "room": "115", "phones": ["025-83794959"], "placeId": "wusi-building" }], "sourceIds": ["academic-office-contact"] },
+      { "id": "dingjiaqiao-academic-office", "name": "丁家桥教务办", "aliases": ["丁家桥教务科"], "responsibilities": ["丁家桥校区本科教学运行与教务服务"], "offices": [{ "campusId": "dingjiaqiao", "location": "丁家桥校区文枢楼", "room": "201", "phones": ["025-83272295"] }], "sourceIds": ["academic-dingjiaqiao-office"] }
+    ]
+  },
+  {
+    "departmentId": "graduate-school",
+    "sourceIds": ["graduate-school-contact"],
+    "units": [
+      { "id": "admissions-office", "name": "招生办公室", "aliases": ["研招办", "硕士招生", "博士招生"], "responsibilities": ["硕博研究生、港澳台及中外合作办学招生与考试考务"], "offices": [{ "campusId": "sipailou", "location": "逸夫建筑馆", "room": "203", "phones": ["025-83790123", "025-83792583"], "placeId": "yifu-architecture" }] },
+      { "id": "graduate-affairs", "name": "党委研究生工作部（管理办公室）", "aliases": ["研工部", "研究生管理办", "研究生学籍"], "responsibilities": ["研究生思政、奖助、学籍学历、日常管理、资助和创新实践"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区纪忠楼", "room": "101A、101B", "phones": ["025-52098701", "025-52090209", "025-52090208"] }, { "campusId": "sipailou", "location": "逸夫建筑馆", "room": "206", "phones": ["025-83793783", "025-83794273", "025-83795363"], "placeId": "yifu-architecture" }] },
+      { "id": "training-office", "name": "研究生培养办公室", "aliases": ["培养办", "研究生教务"], "responsibilities": ["培养方案、排课考试、成绩、中期考核、教学改革、专业实践与国际交流"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区纪忠楼", "room": "102", "phones": ["025-52090205", "025-52090206", "025-52090207"] }, { "campusId": "sipailou", "location": "逸夫建筑馆", "room": "107", "phones": ["025-83796153", "025-83792739", "025-83792529", "025-83795359"], "placeId": "yifu-architecture" }] },
+      { "id": "degree-office", "name": "学位办公室", "aliases": ["学位办", "论文盲审", "学位证明"], "responsibilities": ["学位申请与授予、论文评审抽检、导师队伍、证书信息和学位点建设"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区纪忠楼", "room": "Y103", "phones": ["025-52090204"] }, { "campusId": "sipailou", "location": "逸夫建筑馆", "room": "207、208", "phones": ["025-83796075", "025-83796279", "025-83790712"], "placeId": "yifu-architecture" }] },
+      { "id": "administrative-office", "name": "行政办公室", "aliases": ["研究生院办公室"], "responsibilities": ["综合协调、印章财务、公文信息系统和对外接待"], "offices": [{ "campusId": "sipailou", "location": "逸夫建筑馆", "room": "204", "phones": ["025-83790701", "025-83794826", "025-83795752"], "placeId": "yifu-architecture" }] }
+    ]
+  },
+  {
+    "departmentId": "student-affairs",
+    "sourceIds": ["student-affairs-current", "employment-contact-current"],
+    "units": [
+      { "id": "department-office", "name": "学生处（学工部）办公室", "aliases": ["学生处办公室"], "responsibilities": ["学生工作综合协调、公文会务和部门日常事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "五楼", "phones": ["025-52090279"] }] },
+      { "id": "counselor-development", "name": "辅导员发展中心", "aliases": ["辅导员中心"], "responsibilities": ["辅导员队伍建设、培训发展与工作支持"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "五楼", "phones": ["025-52090280"] }] },
+      { "id": "ideological-office", "name": "本科生思想政治工作办公室", "aliases": ["本科生思政办"], "responsibilities": ["本科生思想政治教育、主题教育和辅导员工作协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "五楼", "phones": ["025-52090269"] }] },
+      { "id": "undergraduate-management", "name": "本科生管理工作办公室", "aliases": ["本科生管理办", "学生资助"], "responsibilities": ["本科生日常管理、评奖评优、资助、学业与安全稳定工作"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "五楼", "phones": ["025-52090282", "025-52090283"] }] },
+      { "id": "apartment-center", "name": "学生公寓管理中心", "aliases": ["宿舍管理中心", "公寓中心"], "responsibilities": ["学生公寓教育管理、社区服务与住宿事务协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "五楼", "phones": ["025-52090268"] }] },
+      { "id": "mental-health-center", "name": "心理健康教育中心", "aliases": ["心理中心", "心理咨询"], "responsibilities": ["心理健康教育、咨询、危机预防与支持"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "五楼", "phones": ["025-52090277"] }] },
+      { "id": "national-defense-center", "name": "国防教育中心", "aliases": ["征兵办公室", "军训办"], "responsibilities": ["国防教育、军训和大学生征兵相关工作"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "以学生处最新通知为准", "phones": ["025-52090159"] }] },
+      { "id": "employment-center", "name": "就业指导中心", "aliases": ["就业办", "生涯教育中心"], "responsibilities": ["生涯教育、校园招聘、用人单位服务和学生就业手续咨询"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "就业指导相关办公室", "phones": ["025-52090274", "025-52090275"] }, { "campusId": "sipailou", "location": "四牌楼校区就业服务点", "room": "出发前电话确认", "phones": ["025-83795903", "025-83792592"] }] }
+    ]
+  },
+  {
+    "departmentId": "human-resources",
+    "sourceIds": ["human-resources-contact"],
+    "units": [
+      { "id": "general-research-office", "name": "综合事务与研究办公室", "aliases": ["人事处综合办"], "responsibilities": ["政策研究、综合协调、公文印章、考勤财务、数据和信访处分等事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "408", "phones": ["025-52090261"], "serviceNote": "传真：025-52090250。" }] },
+      { "id": "resource-allocation", "name": "人力资源配置办公室", "aliases": ["招聘调配", "薪酬社保"], "responsibilities": ["岗位编制、招聘调配、离职延聘、薪酬绩效、社会保险和医疗报销"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "432（配置）、430（薪酬）、434（社保）", "phones": ["025-52090256", "025-52090249", "025-52090262"] }] },
+      { "id": "staff-development", "name": "教职工发展办公室", "aliases": ["职称办", "考核聘用"], "responsibilities": ["职称评聘、岗位分级、合同聘期考核、教师资格、培训与外派交流"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "431、433", "phones": ["025-52090258", "025-52090259"] }] },
+      { "id": "personnel-service-center", "name": "人事服务中心", "aliases": ["人事服务大厅", "入职离职", "人事证明"], "responsibilities": ["入职调动离职、聘用合同、人事证明、请销假、因私出国、退休和日常咨询"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "435", "phones": ["025-52090260"] }, { "campusId": "sipailou", "location": "四牌楼校区群贤楼", "room": "一楼人事服务大厅", "phones": ["025-83795941"] }] },
+      { "id": "personnel-records", "name": "人事档案服务", "aliases": ["教职工档案", "人事档案"], "responsibilities": ["教职工人事档案收集、审核、保管、利用、转递与数字化"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "515", "phones": ["025-52090345"] }] }
+    ]
+  },
+  {
+    "departmentId": "research-office",
+    "sourceIds": ["research-office-contact"],
+    "units": [
+      { "id": "general-management", "name": "综合管理科", "aliases": ["科研院综合科", "科研院用印"], "responsibilities": ["综合协调、科研院用印、宣传、公文和科研服务热线"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "201", "phones": ["025-52091173", "025-52091180", "025-52090238"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "104", "phones": ["025-83792076", "025-83792319"], "placeId": "mengfang-library" }] },
+      { "id": "project-management", "name": "项目管理中心", "aliases": ["项目管理科", "科研项目办", "科技合同章"], "responsibilities": ["理工医科研项目、科技合同、经费入账与相关项目过程管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "113", "phones": ["025-52091170"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "108", "phones": ["025-83791320", "025-83792864"], "placeId": "mengfang-library" }] },
+      { "id": "high-tech-social-development", "name": "高新技术与社会发展办公室", "aliases": ["高新办", "社会发展办"], "responsibilities": ["高新技术和社会发展领域科研项目组织与管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "202", "phones": ["025-52091184", "025-52091161"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "103", "phones": ["025-83792628"], "placeId": "mengfang-library" }] },
+      { "id": "basic-overseas", "name": "基础研究与海外合作办公室", "aliases": ["基础办", "海外合作办"], "responsibilities": ["基础研究项目和相关海外科研合作事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "227", "phones": ["025-52091165", "025-52091182", "025-52091163"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "103", "phones": ["025-83790506"], "placeId": "mengfang-library" }] },
+      { "id": "research-bases", "name": "科研基地与协同创新办公室", "aliases": ["基地办", "协同创新办"], "responsibilities": ["科研基地、平台和协同创新载体建设管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "228", "phones": ["025-52091176"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "103", "phones": ["025-83792003"], "placeId": "mengfang-library" }] },
+      { "id": "achievements-ip", "name": "科研成果与知识产权办公室", "aliases": ["成果办", "知识产权办", "专利办"], "responsibilities": ["科技成果、奖励、知识产权和成果统计服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "226", "phones": ["025-52091172", "025-52091164", "025-52091179"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "108", "phones": ["025-83793955", "025-83795442"], "placeId": "mengfang-library" }] },
+      { "id": "applied-technology", "name": "应用技术院（应技办）", "aliases": ["应用技术院", "应技办", "成果转化"], "responsibilities": ["应用技术、产学研合作和科技成果转化相关管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "203", "phones": ["025-52091171", "025-52091183", "025-52091169"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "108", "phones": ["025-83792864"], "placeId": "mengfang-library" }] },
+      { "id": "defense-confidentiality", "name": "国防科研与保密业务", "aliases": ["国防院", "质量办", "保密办"], "responsibilities": ["国防科研项目、质量管理与科研保密相关事务"], "offices": [{ "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "128、130", "phones": ["025-83790552", "025-83792771", "025-83794838", "025-83790720"], "placeId": "mengfang-library" }, { "campusId": "dingjiaqiao", "location": "丁家桥校区行政楼", "room": "239", "phones": ["025-83272392"] }] }
+    ]
+  },
+  {
+    "departmentId": "social-sciences-office",
+    "sourceIds": ["social-sciences-contact"],
+    "units": [
+      { "id": "projects-achievements", "name": "社科项目与成果管理办公室", "aliases": ["社科项目办", "社科成果办"], "responsibilities": ["人文社科项目、成果、奖励与相关科研服务"], "offices": [{ "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "119", "phones": ["025-83793762"], "placeId": "mengfang-library" }, { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "110、112、426", "phones": ["025-52091078", "025-52090240"] }] },
+      { "id": "planning-bases", "name": "社科规划与基地建设办公室", "aliases": ["社科规划办", "文科基地办"], "responsibilities": ["人文社科发展规划、科研基地与平台建设管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "112", "phones": ["025-52090240"] }, { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "119", "phones": ["025-83793762"], "placeId": "mengfang-library" }] }
+    ]
+  },
+  {
+    "departmentId": "finance-office",
+    "sourceIds": ["finance-office-reference", "campus-card-guide"],
+    "units": [
+      { "id": "department-office", "name": "办公室", "aliases": ["财务处办公室"], "responsibilities": ["财务处综合行政、印章、公文与业务协调"], "offices": [{ "campusId": "sipailou", "location": "五四楼", "room": "三楼", "phones": ["025-83795348"], "placeId": "wusi-building" }, { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "一楼", "phones": ["025-52095337"] }] },
+      { "id": "finance-section-one", "name": "财务一科", "aliases": ["财务科"], "responsibilities": ["学校财务核算与相关财务业务办理"], "offices": [{ "campusId": "sipailou", "location": "五四楼", "room": "三楼", "phones": ["025-83792312"], "placeId": "wusi-building" }] },
+      { "id": "accounting-affairs", "name": "会计事务管理科", "aliases": ["会计科", "财务服务窗口"], "responsibilities": ["会计事务、票据政策和服务窗口业务"], "offices": [{ "campusId": "sipailou", "location": "五四楼", "room": "一楼", "phones": ["025-83792462"], "placeId": "wusi-building" }, { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "一楼财务服务窗口", "phones": ["025-52090295"] }] },
+      { "id": "special-funds", "name": "专项科", "aliases": ["科研专项", "科研票据"], "responsibilities": ["专项经费、科研项目票据开具审核等业务"], "offices": [{ "campusId": "sipailou", "location": "五四楼", "room": "具体窗口以财务处通知为准", "phones": ["025-83792741"], "placeId": "wusi-building" }, { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "一楼财务服务区", "phones": ["025-52098529"] }] },
+      { "id": "campus-card-office", "name": "校园卡管理办公室", "aliases": ["一卡通中心", "校园卡中心", "补卡"], "responsibilities": ["校园卡挂失、补换卡、充值与相关账户服务"], "offices": [{ "campusId": "sipailou", "location": "五四楼", "room": "一楼西校园卡窗口", "phones": ["025-83792462"], "placeId": "wusi-building" }, { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "一楼校园卡服务窗口", "phones": ["025-52090295"] }] }
+    ]
+  },
+  {
+    "departmentId": "international-office",
+    "sourceIds": ["international-office-contact"],
+    "units": [
+      { "id": "hong-kong-macao-taiwan", "name": "港澳台事务", "aliases": ["港澳台办"], "responsibilities": ["港澳台合作交流与相关人员项目事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "213", "phones": ["025-52090193", "025-52090192"] }] },
+      { "id": "cooperation-agreements", "name": "合作协议", "aliases": ["国际合作协议"], "responsibilities": ["国际校际合作协议和合作伙伴关系管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "213", "phones": ["025-52090196"] }] },
+      { "id": "foreign-experts", "name": "外国专家事务", "aliases": ["外专办", "外国专家"], "responsibilities": ["外国专家聘请、来访与相关管理服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "213", "phones": ["025-52090199"] }] },
+      { "id": "student-exchange", "name": "学生交流、交换与国际会议", "aliases": ["学生海外交流", "交换生"], "responsibilities": ["学生海外交流交换项目和国际会议协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "213", "phones": ["025-52090195"] }] },
+      { "id": "external-exchange", "name": "对外交流事务", "aliases": ["外事接待", "对外交流"], "responsibilities": ["学校外事接待和对外交流综合事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "210", "phones": ["025-52090197", "025-83792412"] }] },
+      { "id": "outbound-affairs", "name": "出国境事务", "aliases": ["因公出国", "因公出境"], "responsibilities": ["因公出国境审批、材料与相关外事服务"], "offices": [{ "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "127", "phones": ["025-83793215", "025-83795067"], "placeId": "mengfang-library" }] },
+      { "id": "passport-visa", "name": "护照签证事务", "aliases": ["因公护照", "签证服务"], "responsibilities": ["因公护照、签证及相关证照材料服务"], "offices": [{ "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "127", "phones": ["025-83793015"], "placeId": "mengfang-library" }] }
+    ]
+  },
+  {
+    "departmentId": "security-office",
+    "sourceIds": ["security-office-current", "security-unit-directory"],
+    "units": [
+      { "id": "general-service", "name": "综合服务办公室", "aliases": ["户籍科", "户政服务", "政保"], "responsibilities": ["部门综合事务、户籍迁转、政保审查与校园安全宣传"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区保卫楼", "room": "204、207、215", "phones": ["025-52090109", "025-52090105", "025-52090122"] }, { "campusId": "sipailou", "location": "沙塘园保卫处", "room": "102、302", "phones": ["025-83792086", "025-83792676"], "placeId": "security" }] },
+      { "id": "fire-safety", "name": "消防监管办公室", "aliases": ["消防科", "动火审批"], "responsibilities": ["消防制度、检查整改、设施建设、培训演练和动火施工审批"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区保卫楼", "room": "211", "phones": ["025-52090119"] }, { "campusId": "sipailou", "location": "沙塘园保卫处", "room": "301", "phones": ["025-83792675"], "placeId": "security" }] },
+      { "id": "order-management", "name": "秩序管理办公室", "aliases": ["交通科", "治安科", "监控调阅", "车辆通行"], "responsibilities": ["校园交通治安、车辆与人员通行、监控调阅和安防系统建设"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区保卫楼", "room": "206、207、209", "phones": ["025-52090102", "025-52090122"] }, { "campusId": "sipailou", "location": "沙塘园保卫处", "room": "103", "phones": ["025-83792671"], "placeId": "security" }] },
+      { "id": "campus-guard", "name": "校卫总队", "aliases": ["校卫队", "校园报警", "门岗巡逻"], "responsibilities": ["门岗巡逻、交通秩序、突发事件处置和大型活动安全保障"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区保卫楼", "room": "101、107、310、312", "phones": ["025-52090110", "025-52090107", "025-52090106"] }, { "campusId": "sipailou", "location": "沙塘园保卫处", "room": "101、104、105", "phones": ["025-83790110", "025-83793213"], "placeId": "security" }, { "campusId": "dingjiaqiao", "location": "丁家桥校区文枢楼", "room": "103", "phones": ["025-83270110"] }] }
+    ]
+  },
+  {
+    "departmentId": "general-services",
+    "sourceIds": ["general-services-current"],
+    "units": [
+      { "id": "general-supervision", "name": "综合协调与服务监督", "aliases": ["后勤监督", "总务投诉"], "responsibilities": ["后勤综合协调、服务监督、意见受理与业务分流"], "offices": [{ "campusId": "jiulonghu", "location": "总务处后勤服务体系", "room": "按具体业务分流", "phones": ["025-52090314"], "serviceNote": "监督电话工作日8:30—12:00、13:30—17:00。" }] },
+      { "id": "campus-operations", "name": "校园运维管理", "aliases": ["校园运维", "零修报修"], "responsibilities": ["校园设施运维、零星维修和公共设施修缮协调"], "offices": [], "serviceNote": "优先从总务处官网“零修报修/公共设施修缮”入口办理；科室房间未集中公开。" },
+      { "id": "catering", "name": "膳食与餐饮服务", "aliases": ["食堂管理", "餐饮投诉"], "responsibilities": ["食堂运行、食品安全、餐饮服务监管和场地使用协调"], "offices": [], "serviceNote": "从总务处“餐饮服务”入口查询；需要人工分流可拨打监督电话025-52090314。" },
+      { "id": "energy-water-electricity", "name": "能源、水电与空调服务", "aliases": ["水电费", "能源管理", "空调安装"], "responsibilities": ["能源运行、水电费用、空调安装和相关保障服务"], "offices": [], "serviceNote": "水电缴费和空调安装优先通过总务处对应线上入口办理。" },
+      { "id": "property-environment", "name": "物业、环境与绿化管理", "aliases": ["物业管理", "绿化管理", "树木修剪"], "responsibilities": ["物业服务监督、校园环境、绿地和树木修剪占用管理"], "offices": [], "serviceNote": "树木修剪、砍伐和绿地占用从总务处服务指南进入。" },
+      { "id": "transport-meetings", "name": "车辆交通与会务服务", "aliases": ["校车", "接驳车", "车辆服务", "会务服务"], "responsibilities": ["校园车辆与接驳保障、交通服务和会务支持"], "offices": [], "serviceNote": "班车与接驳时刻易变，以总务处当期通告为准。" },
+      { "id": "furniture-assets", "name": "家具与后勤固定资产服务", "aliases": ["家具采购", "家具报废"], "responsibilities": ["家具类固定资产采购、管理和报废流程服务"], "offices": [], "serviceNote": "优先使用家具管理系统及总务处固定资产服务入口。" }
+    ]
+  },
+  {
+    "departmentId": "information-center",
+    "sourceIds": ["nic-current"],
+    "units": [
+      { "id": "user-service", "name": "用户服务与统一热线", "aliases": ["80808", "网络报修", "账号报修"], "responsibilities": ["校园网、账号、统一身份认证和公共信息系统问题受理分流"], "offices": [{ "campusId": "sipailou", "location": "进香河校区综合楼", "room": "二楼", "phones": ["025-83790808"], "email": "80808@seu.edu.cn" }, { "campusId": "jiulonghu", "location": "九龙湖校区金智楼北楼", "room": "二楼", "phones": ["025-83790808"], "email": "80808@seu.edu.cn" }] },
+      { "id": "campus-network", "name": "校园网运行服务", "aliases": ["校园网", "无线网", "宿舍网"], "responsibilities": ["校园网络接入、运行维护、故障处置和网络基础设施服务"], "offices": [], "serviceNote": "统一拨打025-83790808或邮件80808@seu.edu.cn分流。" },
+      { "id": "information-systems", "name": "信息系统与数字校园", "aliases": ["信息门户", "网上办事大厅", "统一身份认证"], "responsibilities": ["校级信息系统、数字校园平台和统一身份认证运行支持"], "offices": [], "serviceNote": "系统故障通过统一服务热线或网络报修入口提交。" },
+      { "id": "data-computing", "name": "数据、算力与基础平台", "aliases": ["数据中心", "国产算力", "算力服务"], "responsibilities": ["数据中心、公共数据平台和校级算力基础服务"], "offices": [], "serviceNote": "具体申请条件和入口以中心官网“国产算力服务/校园信息化建设”为准。" },
+      { "id": "cybersecurity", "name": "网络与信息安全", "aliases": ["网络安全", "信息安全"], "responsibilities": ["网络安全监测、预警、应急处置和安全宣传"], "offices": [], "serviceNote": "普通账号与网络故障仍先由统一服务热线分流；安全事件按中心官网要求上报。" }
+    ]
+  },
+  {
+    "departmentId": "library-department",
+    "sourceIds": ["library-contact-current", "library-unit-directory"],
+    "units": [
+      { "id": "resource-development", "name": "资源发展部", "aliases": ["文献资源建设", "图书采购"], "responsibilities": ["纸质与数字文献采购、编目、馆藏发展、资产和捐赠交换资料管理"], "offices": [], "serviceNote": "业务联系方式由图书馆办公室或总服务台分流。" },
+      { "id": "reader-services", "name": "读者服务部", "aliases": ["借还书", "证籍管理", "空间服务"], "responsibilities": ["李文正馆借阅阅览、空间、证籍、自助设备、阅读推广和学习支持"], "offices": [{ "campusId": "jiulonghu", "location": "李文正图书馆", "room": "总服务台", "phones": ["025-52090331"], "email": "library@pub.seu.edu.cn" }] },
+      { "id": "urban-reader-services", "name": "城区读者服务部", "aliases": ["四牌楼图书馆服务", "丁家桥图书馆服务"], "responsibilities": ["四牌楼、丁家桥和江北相关流通阅览、空间、证籍与学习支持"], "offices": [{ "campusId": "sipailou", "location": "四牌楼校区图书馆", "room": "一楼总服务台", "phones": ["025-83792630"], "placeId": "library" }, { "campusId": "dingjiaqiao", "location": "丁家桥校区图书馆", "room": "总服务台", "phones": ["025-83272462"] }] },
+      { "id": "subject-services", "name": "学科服务部", "aliases": ["学科馆员", "查收查引", "参考咨询"], "responsibilities": ["学科联络、查收查引、科研支持、信息素养教育和参考咨询"], "offices": [], "serviceNote": "优先从图书馆网站“科研支持/学科馆员”入口提交，现场可在总服务台咨询。" },
+      { "id": "novelty-ip-services", "name": "查新与知识产权信息服务部", "aliases": ["科技查新", "知识产权中心", "专利分析"], "responsibilities": ["科技查新、专利信息分析、知识产权信息和相关培训服务"], "offices": [], "serviceNote": "通过图书馆网站“科技查新/知识产权服务”入口查看流程与当期联系人。" },
+      { "id": "technology-data", "name": "技术支持与数据管理部", "aliases": ["图书馆技术部", "智慧图书馆"], "responsibilities": ["智慧图书馆、信息系统、网络设备、业务数据和数字资源长期保存"], "offices": [], "serviceNote": "读者端系统问题可先联系总服务台或智能咨询。" },
+      { "id": "culture-special-collections", "name": "文化与特藏部", "aliases": ["特藏部", "阅读推广"], "responsibilities": ["特藏资源、文化展陈、阅读推广、融媒体和图书馆文化品牌活动"], "offices": [], "serviceNote": "特藏开放和活动安排以图书馆当期公告为准。" },
+      { "id": "library-office", "name": "办公室", "aliases": ["图书馆办公室"], "responsibilities": ["图书馆综合行政、党务人事、财务科研、馆舍物业和外联协调"], "offices": [{ "campusId": "jiulonghu", "location": "李文正图书馆", "room": "办公室", "phones": ["025-52090328"], "email": "library@pub.seu.edu.cn" }] }
+    ]
+  },
+  {
+    "departmentId": "archives-department",
+    "sourceIds": ["archives-service", "archives-online-hall"],
+    "units": [
+      { "id": "custody-use", "name": "保管利用部", "aliases": ["查档服务", "档案利用"], "responsibilities": ["馆藏档案保管、查询利用与相关证明服务"], "offices": [{ "campusId": "sipailou", "location": "东南大学档案馆", "room": "421", "phones": ["025-83792861"], "placeId": "archives-building" }] },
+      { "id": "collection-guidance", "name": "收集指导部", "aliases": ["档案归档", "档案接收"], "responsibilities": ["校内档案收集接收、归档业务指导与质量管理"], "offices": [{ "campusId": "sipailou", "location": "东南大学档案馆", "room": "512", "phones": ["025-83794725"], "placeId": "archives-building" }] },
+      { "id": "special-archives", "name": "专门档案部", "aliases": ["专门档案", "专业档案"], "responsibilities": ["专门类别档案管理与相关查询服务"], "offices": [{ "campusId": "sipailou", "location": "东南大学档案馆", "room": "422", "phones": ["025-83792913"], "placeId": "archives-building" }] }
+    ]
+  },
+  {
+    "departmentId": "undergraduate-admissions",
+    "sourceIds": ["admissions-contact-current"],
+    "units": [
+      { "id": "consultation", "name": "招生咨询与综合服务", "aliases": ["招生热线", "报考咨询"], "responsibilities": ["本科招生政策、报考、录取与日常综合咨询"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区本科生招生办公室", "room": "以招生网最新说明为准", "phones": ["400-691-0286", "025-52090271"], "email": "zhaoban@seu.edu.cn" }] },
+      { "id": "special-admissions", "name": "专题与特殊类型招生", "aliases": ["强基计划", "综合评价", "高校专项", "保送生", "港澳台招生"], "responsibilities": ["强基、综合评价、外语保送、少年生、艺术、港澳台侨、高校专项等专题招生"], "offices": [], "serviceNote": "不同项目时间和联系人随年度简章变化，统一从招生网对应专题和热线查询。" }
+    ]
+  },
+  {
+    "departmentId": "employment-services",
+    "aggregateInto": "student-affairs",
+    "sourceIds": ["employment-contact-current"],
+    "units": [
+      { "id": "employer-services", "name": "用人单位与校园招聘服务", "aliases": ["单位招聘", "校园宣讲会", "双选会"], "responsibilities": ["用人单位接洽、校园招聘活动、岗位信息与招聘市场服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "就业指导相关办公室", "phones": ["025-52090274"] }, { "campusId": "sipailou", "location": "四牌楼校区就业服务点", "room": "出发前电话确认", "phones": ["025-83795903"] }] },
+      { "id": "student-services", "name": "学生咨询与就业手续服务", "aliases": ["就业手续", "去向登记", "就业材料"], "responsibilities": ["学生就业政策、去向登记、材料与相关手续咨询"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "就业指导相关办公室", "phones": ["025-52090275"] }, { "campusId": "sipailou", "location": "四牌楼校区就业服务点", "room": "出发前电话确认", "phones": ["025-83792592"] }] },
+      { "id": "career-education", "name": "生涯教育与就业指导", "aliases": ["生涯规划", "就业指导"], "responsibilities": ["生涯规划课程、求职能力提升、就业咨询和基层就业引导"], "offices": [], "serviceNote": "课程和活动地点随学期变化，可由学生咨询电话025-52090275分流。" }
+    ]
+  },
+  {
+    "departmentId": "lab-equipment-office",
+    "sourceIds": ["lab-equipment-current", "lab-equipment-organization"],
+    "units": [
+      { "id": "department-office", "name": "处办公室", "aliases": ["实设处办公室", "设备处办公室"], "responsibilities": ["部门综合协调、公文用印和日常行政事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区后勤公寓楼", "room": "5—6楼，具体房间以官网为准", "phones": [] }, { "campusId": "sipailou", "location": "微波楼", "room": "504", "phones": [], "placeId": "microwave-building" }] },
+      { "id": "laboratory-management", "name": "实验室管理科", "aliases": ["实验室建设", "实验室数据"], "responsibilities": ["实验室建设管理、实验技术队伍、教学资源、实验材料与数据上报"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区后勤公寓楼", "room": "604、605、606", "phones": ["025-52090355", "025-52090354", "025-52091617"] }], "sourceIds": ["lab-management-contact"] },
+      { "id": "equipment-management", "name": "设备管理科", "aliases": ["设备建账", "设备报废", "仪器设备采购"], "responsibilities": ["仪器设备采购论证、建账、调拨、使用与报废等全生命周期管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区后勤公寓楼", "room": "505", "phones": ["025-52090231"], "serviceNote": "通常周一至周五办理。" }, { "campusId": "sipailou", "location": "微波楼", "room": "504", "phones": ["025-83792431"], "placeId": "microwave-building", "serviceNote": "公开页面标注通常周二、周五坐班。" }], "sourceIds": ["equipment-management-contact"] },
+      { "id": "large-equipment-platform", "name": "大型装备平台科", "aliases": ["大型仪器共享", "大仪平台", "大型设备"], "responsibilities": ["大型仪器论证验收、开放共享、维修测试基金、绩效考核和共享平台管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区后勤公寓楼", "room": "503、504", "phones": ["025-52091041"] }, { "campusId": "sipailou", "location": "微波楼", "room": "504", "phones": ["025-83792432", "025-83792705"], "placeId": "microwave-building" }], "sourceIds": ["large-equipment-contact", "equipment-sharing-platform"] },
+      { "id": "lab-safety-management", "name": "实验室安全管理科", "aliases": ["实验室安全", "危化品", "危废", "辐射安全"], "responsibilities": ["安全准入、检查整改、危化品、辐射、特种设备、气瓶和危险废弃物管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区后勤公寓楼", "room": "509、510", "phones": ["025-52091627", "025-52090353"] }, { "campusId": "sipailou", "location": "微波楼", "room": "504", "phones": ["025-83792702", "025-83792703"], "placeId": "microwave-building" }], "sourceIds": ["lab-safety-contact"] }
+    ]
+  },
+  {
+    "departmentId": "capital-construction",
+    "sourceIds": ["capital-construction-contact"],
+    "units": [
+      { "id": "planning-cost", "name": "计划与造价管理办公室", "aliases": ["计划造价办", "造价科"], "responsibilities": ["建设项目前期计划、投资估算、概预算和造价控制"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区总务楼", "room": "102、103", "phones": ["025-52091363", "025-52091026"] }] },
+      { "id": "engineering-management", "name": "工程管理办公室", "aliases": ["工程管理科", "施工管理"], "responsibilities": ["建设项目施工质量、进度、安全、验收移交与保修协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区总务楼", "room": "106、107", "phones": ["025-52090482", "025-52091364"] }] },
+      { "id": "technical-management", "name": "技术管理办公室", "aliases": ["总工办", "技术科"], "responsibilities": ["建设项目设计、技术方案和重大技术问题协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区总务楼", "room": "108", "phones": ["025-52090486"] }] },
+      { "id": "general-office", "name": "综合办公室", "aliases": ["基建处办公室"], "responsibilities": ["基本建设处综合行政、文档、协调和来访分流"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区总务楼", "room": "105", "phones": ["025-52091042"] }] }
+    ]
+  },
+  {
+    "departmentId": "development-planning",
+    "sourceIds": ["development-planning-contact", "development-planning-units"],
+    "units": [
+      { "id": "department-office", "name": "办公室", "aliases": ["规划处办公室"], "responsibilities": ["综合行政、协调联络和部门日常事务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "511", "phones": ["025-52091386"] }] },
+      { "id": "planning-governance", "name": "发展规划与治理体系", "aliases": ["规划科", "治理体系"], "responsibilities": ["学校事业发展规划、综合改革与治理体系研究"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "509、511", "phones": ["025-52091386", "025-52091380"] }] },
+      { "id": "discipline-resources", "name": "学科建设与资源配置", "aliases": ["学科建设科", "双一流办公室", "资源配置"], "responsibilities": ["学科建设、双一流建设、项目库和资源配置统筹"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "508、509", "phones": ["025-52091379", "025-52091383", "025-52091384"] }] },
+      { "id": "information-data", "name": "信息与数据", "aliases": ["事业数据", "规划数据"], "responsibilities": ["学校事业数据、统计分析和规划决策信息支持"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "511", "phones": ["025-52091386", "025-52091387", "025-83793530"] }] }
+    ]
+  },
+  {
+    "departmentId": "sports-department",
+    "sourceIds": ["sports-contact-current"],
+    "units": [
+      { "id": "administrative-office", "name": "行政办公室", "aliases": ["体育系办公室"], "responsibilities": ["体育系综合行政、师生事务和对外联络"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区体育馆主馆", "room": "101", "phones": ["025-52090819"] }, { "campusId": "sipailou", "location": "四牌楼校区体育馆", "room": "行政办公室", "phones": ["025-83792472"], "placeId": "gym" }] },
+      { "id": "academic-office", "name": "教务办公室", "aliases": ["体育教务", "体育课选课"], "responsibilities": ["公共体育课程、选课、成绩与教学运行服务"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区体育馆主馆", "room": "102", "phones": ["025-52090820"], "serviceNote": "公开页面标注通常周一、周三在九龙湖。" }, { "campusId": "sipailou", "location": "四牌楼校区体育馆", "room": "101", "phones": ["025-83794442"], "placeId": "gym", "serviceNote": "公开页面标注通常周二、周四、周五在四牌楼。" }] },
+      { "id": "mass-sports", "name": "群体与课外体育", "aliases": ["群体办公室", "阳光体育", "体质测试"], "responsibilities": ["学生体质测试、群体活动、体育社团和校园竞赛"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区体育馆主馆", "room": "108", "phones": ["025-52090821"] }] },
+      { "id": "teaching-postgraduate", "name": "教学与研究生工作", "aliases": ["体育研究生", "体育教学管理"], "responsibilities": ["体育教学建设、研究生培养与相关科研协调"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区体育馆主馆", "room": "108", "phones": ["025-52090822"] }] },
+      { "id": "stadium-management", "name": "九龙湖体育场管理办公室", "aliases": ["桃园田径场管理", "场馆管理"], "responsibilities": ["九龙湖体育场运行、使用协调与场地管理"], "offices": [{ "campusId": "jiulonghu", "location": "九龙湖校区桃园田径场", "room": "看台下管理办公室", "phones": ["025-52090824"] }] }
+    ]
+  }
+]
