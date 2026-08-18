@@ -6,6 +6,7 @@
 // 与新版的区别：单轮、非流式、由模型返回 JSON（因为要给出地图点位 id）。
 
 import { MAP_FEATURES } from "../data/map-features.mjs";
+import { SHARED_MAP_FEATURES } from "../data/shared-knowledge.mjs";
 import { createRetriever, tokenize } from "./retrieve.mjs";
 import { detectCampus } from "./campus.mjs";
 import { buildLegacySystemPrompt } from "./prompt.mjs";
@@ -13,6 +14,15 @@ import { complete } from "./deepseek.mjs";
 
 // 地图抽屉只服务四牌楼校区，所以问题里认不出校区时落到四牌楼，而不是全局默认的九龙湖。
 const LEGACY_CAMPUS = "sipailou";
+const sharedFeatureById = new Map(SHARED_MAP_FEATURES.map((feature) => [feature.id, feature]));
+const baseFeatureIds = new Set(MAP_FEATURES.map((feature) => feature.id));
+const ALL_MAP_FEATURES = [
+  ...MAP_FEATURES.map((feature) => {
+    const shared = sharedFeatureById.get(feature.id);
+    return shared ? { ...feature, ...shared, id: feature.id, tags: [...new Set([...(feature.tags || []), ...(shared.tags || [])])] } : feature;
+  }),
+  ...SHARED_MAP_FEATURES.filter((feature) => !baseFeatureIds.has(feature.id)),
+];
 
 function scoreFeature(feature, terms) {
   const haystack = JSON.stringify(feature).toLowerCase();
@@ -21,7 +31,7 @@ function scoreFeature(feature, terms) {
 
 function findRelevantContext(message, campus, retriever) {
   const terms = tokenize(message);
-  const features = MAP_FEATURES
+  const features = ALL_MAP_FEATURES
     .map((feature) => ({ feature, score: scoreFeature(feature, terms) }))
     .filter((entry) => entry.score > 0)
     .sort((a, b) => b.score - a.score)
@@ -55,7 +65,7 @@ export async function answerLegacy(message, { signal, knowledge = null } = {}) {
     return {
       message: String(parsed.message || "暂时没有找到可靠答案。"),
       placeIds: Array.isArray(parsed.placeIds)
-        ? parsed.placeIds.filter((id) => MAP_FEATURES.some((feature) => feature.id === id))
+        ? parsed.placeIds.filter((id) => ALL_MAP_FEATURES.some((feature) => feature.id === id))
         : [],
     };
   } catch {

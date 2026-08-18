@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "2026.08-campus-3",
+  "title": "东南大学校园统一知识库",
+  "description": "供校园地图前端与校园 Agent 共用的结构化事实源。覆盖四牌楼主要建筑、高频办事地点，以及学校核心职能部门与下设科室的聚合信息。",
+  "verifiedAt": "2026-08-18",
+  "maintainers": ["SEUGA 项目组"],
+  "licenseNote": "校方页面内容仅作事实摘录并保留原始链接；开放地图坐标来自 OpenStreetMap contributors，ODbL 1.0。",
+  "freshnessPolicy": {
+    "stable": "建筑历史等稳定事实每年复核一次",
+    "volatile": "办公时间、电话、窗口地点等易变事实建议每 90 天复核一次",
+    "displayRule": "易变事实必须展示核验日期，并提醒以主管部门最新通知为准"
+  }
+}

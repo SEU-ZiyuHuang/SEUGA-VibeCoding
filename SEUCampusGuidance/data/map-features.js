@@ -26,6 +26,7 @@ window.MAP_FEATURES = [
 
 window.MAP_THEMES = [
   { id: "all", label: "全校导览", icon: "⌖", color: "#173f32" },
+  { id: "landmark", label: "校史建筑", icon: "史", color: "#7a4e34" },
   { id: "study", label: "学习空间", icon: "书", color: "#4f7c58" },
   { id: "dining", label: "食堂餐饮", icon: "食", color: "#c27a36" },
   { id: "dorm", label: "宿舍生活", icon: "宿", color: "#758b3d" },
@@ -36,4 +37,3 @@ window.MAP_THEMES = [
   { id: "transport", label: "交通出行", icon: "地", color: "#287a6b" },
   { id: "nearby", label: "校园周边", icon: "吃", color: "#8b633d" }
 ];
-

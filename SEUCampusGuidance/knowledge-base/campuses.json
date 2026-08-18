@@ -1,0 +1,29 @@
+[
+  {
+    "id": "sipailou",
+    "name": "四牌楼校区",
+    "aliases": ["四牌楼", "老校区", "本部"],
+    "city": "南京",
+    "address": "江苏省南京市玄武区四牌楼2号",
+    "summary": "东南大学百年办学历史的重要承载地，拥有大礼堂、孟芳图书馆、梅庵、体育馆等近现代校园建筑。",
+    "sourceIds": ["sipailou-overview"]
+  },
+  {
+    "id": "jiulonghu",
+    "name": "九龙湖校区",
+    "aliases": ["九龙湖", "江宁校区"],
+    "city": "南京",
+    "address": "江苏省南京市江宁区东南大学路2号",
+    "summary": "东南大学主校区，多数校级行政部门在行政楼、纪忠楼、金智楼、大学生活动中心等建筑办公。",
+    "sourceIds": ["seu-organization-current"]
+  },
+  {
+    "id": "dingjiaqiao",
+    "name": "丁家桥校区",
+    "aliases": ["丁家桥", "医学院校区"],
+    "city": "南京",
+    "address": "江苏省南京市鼓楼区丁家桥87号",
+    "summary": "东南大学医学相关教学与服务校区，设有丁家桥校区图书馆等公共服务设施。",
+    "sourceIds": ["library-contact-current"]
+  }
+]

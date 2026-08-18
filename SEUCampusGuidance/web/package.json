@@ -6,7 +6,9 @@
   "description": "东南大学校园地图与智能指南 Demo",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check coordinates.js && node --check prepare-vercel.mjs && node --check app.js && node --check ../data/knowledge-documents.js && node --check admin.js && node --check api/runtime-config.js && node --check api/agent/chat.js && node --check api/map/walking.js && node --check api/content.js && node --check api/admin/session.js && node --check api/admin/content.js && node --check api/_shared/admin-auth.js && node --check api/_shared/content-store.js"
+    "build:shared": "node ../scripts/build-shared-knowledge.mjs",
+    "verify:shared": "node ../scripts/build-shared-knowledge.mjs --check",
+    "check": "node --check server.mjs && node --check coordinates.js && node --check prepare-vercel.mjs && node --check app.js && node --check ../data/knowledge-documents.js && node --check ../data/shared-knowledge.js && node --check admin.js && node --check api/runtime-config.js && node --check api/agent/chat.js && node --check api/map/walking.js && node --check api/content.js && node --check api/admin/session.js && node --check api/admin/content.js && node --check api/_shared/admin-auth.js && node --check api/_shared/content-store.js && node --check ../scripts/build-shared-knowledge.mjs"
   },
   "engines": {
     "node": ">=20"

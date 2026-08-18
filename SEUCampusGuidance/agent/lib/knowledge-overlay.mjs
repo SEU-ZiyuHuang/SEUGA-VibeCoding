@@ -1,4 +1,14 @@
 import { KNOWLEDGE_BUILD, CAMPUSES, CHUNKS, ALIASES } from "../data/knowledge.mjs";
+import { SHARED_KNOWLEDGE_BUILD, SHARED_CHUNKS, SHARED_ALIASES } from "../data/shared-knowledge.mjs";
+
+const BASE_GENERATED_AT = `${KNOWLEDGE_BUILD.generatedAt}+${SHARED_KNOWLEDGE_BUILD.contentVersion}`;
+const BASE_CHUNKS = Object.freeze([...CHUNKS, ...SHARED_CHUNKS]);
+const BASE_ALIASES = Object.freeze(Object.fromEntries(
+  [...new Set([...Object.keys(ALIASES), ...Object.keys(SHARED_ALIASES)])].map((key) => [
+    key,
+    [...new Set([...(ALIASES[key] || []), ...(SHARED_ALIASES[key] || [])])],
+  ]),
+));
 
 export const KNOWLEDGE_LIMITS = Object.freeze({
   maxChanges: 200,
@@ -12,7 +22,7 @@ export const KNOWLEDGE_LIMITS = Object.freeze({
 });
 
 const CAMPUS_IDS = new Set(CAMPUSES.map((campus) => campus.slug));
-const BASE_CHUNK_IDS = new Set(CHUNKS.map((chunk) => chunk.id));
+const BASE_CHUNK_IDS = new Set(BASE_CHUNKS.map((chunk) => chunk.id));
 const MANAGED_ID = /^([a-z0-9-]+)\/managed-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 function cleanString(value, maximum = 12_000) {
@@ -47,7 +57,7 @@ function cleanAliasPairs(value) {
 export function emptyKnowledgeOverlay() {
   return {
     schemaVersion: 1,
-    baseGeneratedAt: KNOWLEDGE_BUILD.generatedAt,
+    baseGeneratedAt: BASE_GENERATED_AT,
     campusChanges: {},
     chunkChanges: {},
     releaseNote: "",
@@ -60,7 +70,7 @@ export function emptyKnowledgeOverlay() {
 export function sanitizeKnowledgeOverlay(value) {
   const input = value && typeof value === "object" && !Array.isArray(value) ? value : {};
   const result = emptyKnowledgeOverlay();
-  result.baseGeneratedAt = cleanString(input.baseGeneratedAt, 80) || KNOWLEDGE_BUILD.generatedAt;
+  result.baseGeneratedAt = cleanString(input.baseGeneratedAt, 120) || BASE_GENERATED_AT;
   result.releaseNote = cleanString(input.releaseNote, 500);
 
   for (const [campus, raw] of Object.entries(input.campusChanges || {}).slice(0, KNOWLEDGE_LIMITS.maxChanges)) {
@@ -94,11 +104,29 @@ export function sanitizeKnowledgeOverlay(value) {
 }
 
 export function baselineKnowledge() {
+  const chunks = BASE_CHUNKS.map((chunk) => ({
+    ...chunk,
+    keywords: [...(chunk.keywords || [])],
+    related: [...(chunk.related || [])],
+    pages: [...(chunk.pages || [])],
+    placeIds: [...(chunk.placeIds || [])],
+    managed: false,
+  }));
   return {
-    build: { ...KNOWLEDGE_BUILD },
-    campuses: CAMPUSES.map((campus) => ({ ...campus })),
-    chunks: CHUNKS.map((chunk) => ({ ...chunk, keywords: [...(chunk.keywords || [])], related: [...(chunk.related || [])], pages: [...(chunk.pages || [])], managed: false })),
-    aliases: Object.fromEntries(Object.entries(ALIASES).map(([key, values]) => [key, [...values]])),
+    build: {
+      ...KNOWLEDGE_BUILD,
+      generatedAt: SHARED_KNOWLEDGE_BUILD.generatedAt,
+      baseGeneratedAt: BASE_GENERATED_AT,
+      chunkCount: chunks.length,
+      chunkChars: chunks.reduce((sum, chunk) => sum + chunk.text.length, 0),
+      aliasCount: Object.keys(BASE_ALIASES).length,
+      sharedKnowledge: { ...SHARED_KNOWLEDGE_BUILD },
+    },
+    campuses: CAMPUSES.map((campus) => campus.slug === "sipailou"
+      ? { ...campus, version: `${campus.version}；统一知识库 ${SHARED_KNOWLEDGE_BUILD.contentVersion}` }
+      : { ...campus }),
+    chunks,
+    aliases: Object.fromEntries(Object.entries(BASE_ALIASES).map(([key, values]) => [key, [...values]])),
     warnings: [],
     overlayApplied: false,
   };
@@ -131,8 +159,8 @@ export function mergeKnowledgeOverlay(value) {
   const campusMap = new Map(base.campuses.map((campus) => [campus.slug, campus]));
   const chunkMap = new Map(base.chunks.map((chunk) => [chunk.id, chunk]));
 
-  if (overlay.baseGeneratedAt !== KNOWLEDGE_BUILD.generatedAt) {
-    warnings.push(`修订基于 ${overlay.baseGeneratedAt}，当前静态基线为 ${KNOWLEDGE_BUILD.generatedAt}`);
+  if (overlay.baseGeneratedAt !== BASE_GENERATED_AT) {
+    warnings.push(`修订基于 ${overlay.baseGeneratedAt}，当前静态基线为 ${BASE_GENERATED_AT}`);
   }
 
   for (const [campusId, change] of Object.entries(overlay.campusChanges)) {
@@ -233,7 +261,7 @@ export function validateKnowledgeOverlay(value) {
   const count = Object.keys(raw.campusChanges || {}).length + Object.keys(raw.chunkChanges || {}).length;
   if (count > KNOWLEDGE_LIMITS.maxChanges) problems.push(`修订总数不能超过 ${KNOWLEDGE_LIMITS.maxChanges} 项`);
   if (JSON.stringify(raw).length > KNOWLEDGE_LIMITS.maxSerializedChars) problems.push("知识草稿超过 400 KB");
-  if (overlay.baseGeneratedAt !== KNOWLEDGE_BUILD.generatedAt) warnings.push("静态知识基线已更新，请检查旧修订是否仍适用");
+  if (overlay.baseGeneratedAt !== BASE_GENERATED_AT) warnings.push("静态知识基线已更新，请检查旧修订是否仍适用");
 
   for (const [campus, change] of Object.entries(overlay.campusChanges)) {
     if (!CAMPUS_IDS.has(campus)) problems.push(`未知校区：${campus}`);
@@ -250,7 +278,7 @@ export function validateKnowledgeOverlay(value) {
       if (!BASE_CHUNK_IDS.has(id) && !MANAGED_ID.test(id)) problems.push(`${id} 不是可停用的页面`);
       continue;
     }
-    const current = CHUNKS.find((chunk) => chunk.id === id);
+    const current = BASE_CHUNKS.find((chunk) => chunk.id === id);
     const managed = MANAGED_ID.exec(id);
     if (!current && !managed) problems.push(`${id} 不在静态基线中，也不是合法的 managed ID`);
     const campus = current?.campus || change.campus || managed?.[1];
@@ -289,7 +317,7 @@ export function knowledgeCatalog(overlay = emptyKnowledgeOverlay()) {
   const normalized = sanitizeKnowledgeOverlay(overlay);
   const merged = mergeKnowledgeOverlay(normalized);
   const mergedMap = new Map(merged.chunks.map((chunk) => [chunk.id, chunk]));
-  const baseMap = new Map(CHUNKS.map((chunk) => [chunk.id, chunk]));
+  const baseMap = new Map(BASE_CHUNKS.map((chunk) => [chunk.id, chunk]));
   const ids = new Set([...baseMap.keys(), ...Object.keys(normalized.chunkChanges)]);
   return [...ids].map((id) => {
     const base = baseMap.get(id) || null;

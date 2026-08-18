@@ -1,0 +1,397 @@
+[
+  {
+    "id": "president-office",
+    "name": "校长办公室",
+    "aliases": ["校办", "学校办公室", "印信室", "法制办公室"],
+    "category": "administration",
+    "summary": "承担学校综合协调、公文文秘、信息督办、印信、法律事务和接待等工作。",
+    "responsibilities": ["学校综合协调与重要会议服务", "公文、信息、督办和机要事务", "校级印章与事业单位法人证书相关服务", "合同法务与依法治校支持"],
+    "website": "https://xiaoban.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "综合办公室；印信室109", "phones": ["025-52090099", "025-52091201"], "serviceNote": "校级用印常规安排为周一、周三、周四在九龙湖办理；节假日和临时调整以通知为准。" },
+      { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "印信室123", "phones": ["025-83790198"], "placeId": "mengfang-library", "serviceNote": "校级用印常规安排为周二、周五在四牌楼办理，出发前请再次确认。" },
+      { "campusId": "sipailou", "location": "逸夫建筑馆", "room": "9楼法制办公室", "phones": ["025-83795967"], "placeId": "yifu-architecture", "serviceNote": "合同、法律事务应先按学校流程准备材料。" }
+    ],
+    "links": [{ "label": "科室设置及联系方式", "url": "https://xiaoban.seu.edu.cn/753/list.htm" }],
+    "sourceIds": ["president-office-contact", "seu-organization-current"],
+    "primarySourceId": "president-office-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "organization-department",
+    "name": "党委组织部",
+    "aliases": ["组织部", "党校", "党建办公室", "干部工作办公室"],
+    "category": "party",
+    "summary": "负责学校基层党建、党员教育管理、党校培训和干部队伍建设等工作。",
+    "responsibilities": ["基层党组织建设与党员教育管理", "党校培训和党建研究", "干部选拔、培养、考核与监督", "相关材料和党务咨询"],
+    "website": "https://zzb.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "207、208、316等", "phones": ["025-52090134", "025-52090133", "025-52090135"], "serviceNote": "不同业务分属党建、党校和干部工作办公室，请先电话确认房间。" },
+      { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "239", "phones": ["025-83792065"], "placeId": "mengfang-library", "serviceNote": "四牌楼办公室办理范围和坐班安排以组织部最新通知为准。" }
+    ],
+    "links": [{ "label": "部门联系方式", "url": "https://zzb.seu.edu.cn/2807/list.htm" }],
+    "sourceIds": ["organization-office-contact", "seu-organization-current"],
+    "primarySourceId": "organization-office-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "academic-affairs",
+    "name": "教务处",
+    "aliases": ["本科生院教务处", "本科教务", "学籍管理科", "教务科"],
+    "category": "teaching",
+    "summary": "负责本科培养方案、教学运行、学籍、考试、成绩、实践教学和教学质量等事务。",
+    "responsibilities": ["本科教学运行、排课与考试管理", "学籍、成绩、证书和在读证明", "实践教学、创新创业与教材建设", "教学质量与教师教学发展相关协调"],
+    "website": "https://jwc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区教学5号楼", "room": "201处办公室", "phones": ["025-52090216"], "serviceNote": "综合办公及用印常规在九龙湖办理。" },
+      { "campusId": "sipailou", "location": "微波楼", "room": "104（周五用印）；100学籍管理参考", "phones": ["025-83792666"], "placeId": "microwave-building", "serviceNote": "学生证、成绩单盖章等事项的房间和日期可能调整，应先查看学籍管理科页面。" }
+    ],
+    "links": [
+      { "label": "教务处首页", "url": "https://jwc.seu.edu.cn/" },
+      { "label": "学籍管理科", "url": "https://jwc.seu.edu.cn/xjk_21855/list.htm" }
+    ],
+    "sourceIds": ["academic-office-contact", "undergraduate-status-office"],
+    "primarySourceId": "academic-office-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "graduate-school",
+    "name": "研究生院",
+    "aliases": ["研院", "研招办", "研究生培养办", "学位办", "研工部"],
+    "category": "teaching",
+    "summary": "承担研究生招生、培养、学位、质量管理和研究生教育管理等工作。",
+    "responsibilities": ["硕士与博士研究生招生", "培养方案、选课、学籍和教学运行", "学位申请、审核与质量保障", "研究生教育管理和就业相关协调"],
+    "website": "https://seugs.seu.edu.cn/",
+    "offices": [
+      { "campusId": "sipailou", "location": "逸夫建筑馆", "room": "招生203；培养107；行政204；研工206", "phones": ["025-83790123", "025-83792583", "025-83796153", "025-83790701"], "placeId": "yifu-architecture", "serviceNote": "研究生招生、培养、学位与管理分属不同房间，请按事项选择电话。" },
+      { "campusId": "jiulonghu", "location": "九龙湖校区纪忠楼", "room": "101B、102等", "phones": ["025-52090209", "025-52090206"], "serviceNote": "培养与研工等业务在纪忠楼一层设有办公室。" }
+    ],
+    "links": [
+      { "label": "研究生院联系方式", "url": "https://seugs.seu.edu.cn/27256/list.htm" },
+      { "label": "研究生招生", "url": "https://yzb.seu.edu.cn/" }
+    ],
+    "sourceIds": ["graduate-school-contact"],
+    "primarySourceId": "graduate-school-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "student-affairs",
+    "name": "党委学生工作部、学生处",
+    "aliases": ["学生处", "学工部", "本科生管理办公室", "心理健康教育中心"],
+    "category": "student",
+    "summary": "负责本科生思想教育、日常管理、资助、学生社区、心理健康和就业指导等服务。",
+    "responsibilities": ["本科生思想教育和日常管理", "奖助学金、资助与勤工助学协调", "学生社区与公寓教育管理", "心理健康教育和咨询", "生涯教育与就业指导"],
+    "website": "https://xsc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "5楼及相关办公室", "phones": ["025-52090279", "025-52090282", "025-52090283", "025-52090277"], "serviceNote": "综合、本科生管理、心理等业务电话不同，紧急心理危机应同时联系辅导员或校内应急渠道。" }
+    ],
+    "links": [
+      { "label": "学生处首页", "url": "https://xsc.seu.edu.cn/" },
+      { "label": "机构与联系方式", "url": "https://xsc.seu.edu.cn/65021/list.htm" }
+    ],
+    "sourceIds": ["student-affairs-current", "employment-contact-current"],
+    "primarySourceId": "student-affairs-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "human-resources",
+    "name": "人事处",
+    "aliases": ["人事处人才工作办公室", "人事科", "师资科", "博士后管理办公室"],
+    "category": "personnel",
+    "summary": "负责学校人事政策、人才引进、岗位聘用、师资队伍、薪酬社保和博士后等工作。",
+    "responsibilities": ["教职工人事与岗位聘用", "人才引进和师资队伍建设", "薪酬、社保与相关证明", "博士后进出站及日常管理"],
+    "website": "https://rsc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "408综合办公室及各业务科室", "phones": ["025-52090261"], "serviceNote": "人事业务分科室办理，综合办公室可先行分流。" }
+    ],
+    "links": [{ "label": "机构设置", "url": "https://rsc.seu.edu.cn/56160/list.htm" }],
+    "sourceIds": ["human-resources-contact"],
+    "primarySourceId": "human-resources-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "research-office",
+    "name": "科研院",
+    "aliases": ["科研处", "科技处", "科研项目办", "成果与知识产权办公室"],
+    "category": "research",
+    "summary": "负责学校自然科学科研项目、基地平台、成果、知识产权和科研合作等管理服务。",
+    "responsibilities": ["纵向与横向科研项目管理", "科研基地、平台和重大任务组织", "科技成果、奖励与知识产权管理", "科研合同、经费协同与用印服务"],
+    "website": "https://kjc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "201综合服务及相关办公室", "phones": ["025-52091173"], "serviceNote": "科研院综合服务可先通过热线分流；不同项目类型对应不同办公室。" },
+      { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "102、103、104、108等", "phones": ["025-83791320", "025-83792076", "025-83792319"], "placeId": "mengfang-library", "serviceNote": "用印常规为周二、周五在四牌楼104办理，其余日期在九龙湖，临时安排以通知为准。" }
+    ],
+    "links": [{ "label": "科研院联系方式", "url": "https://kjc.seu.edu.cn/lxwm_14998/list.htm" }],
+    "sourceIds": ["research-office-contact"],
+    "primarySourceId": "research-office-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "social-sciences-office",
+    "name": "社会科学处",
+    "aliases": ["社科处", "文科科研处", "社科项目办"],
+    "category": "research",
+    "summary": "负责全校人文社会科学研究规划、项目、成果、平台和学术交流管理服务。",
+    "responsibilities": ["人文社科项目申报与过程管理", "社科成果、奖励和统计", "文科平台、基地与规划建设", "人文社科学术交流和服务"],
+    "website": "https://skc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "119", "phones": ["025-83793762"], "placeId": "mengfang-library", "serviceNote": "四牌楼主要受理文科科研项目和成果管理咨询。" },
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "110、112、426", "phones": ["025-52090240", "025-52091078"], "serviceNote": "不同房间承担项目、成果与规划基地等业务。" }
+    ],
+    "links": [{ "label": "联系方式", "url": "https://skc.seu.edu.cn/2016/0418/c4968a156065/page.htm" }],
+    "sourceIds": ["social-sciences-contact"],
+    "primarySourceId": "social-sciences-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "finance-office",
+    "name": "财务处",
+    "aliases": ["财务处会计科", "财务服务窗口", "校园一卡通中心"],
+    "category": "finance",
+    "summary": "负责学校预算、核算、报销、收费、资金和校园卡等财务服务。",
+    "responsibilities": ["预算与经费管理", "会计核算、报销和票据业务", "学生收费及财务证明", "校园一卡通财务与充值服务"],
+    "website": "https://cwc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "sipailou", "location": "五四楼", "room": "一楼会计事务与校园卡；三楼办公室", "phones": ["025-83792462", "025-83795043", "025-83795348"], "placeId": "wusi-building", "serviceNote": "报销、会计和校园卡分属不同窗口；财务处网站可能仅限校内访问。" },
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "一楼财务服务区", "phones": ["025-52095337", "025-52090295"], "serviceNote": "校园卡和财务业务的窗口开放安排以当期通知为准。" }
+    ],
+    "links": [{ "label": "财务处首页（可能需校内网）", "url": "https://cwc.seu.edu.cn/" }],
+    "sourceIds": ["finance-office-reference", "campus-card-guide"],
+    "primarySourceId": "finance-office-reference",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "international-office",
+    "name": "国际合作处（港澳台办公室）",
+    "aliases": ["国际处", "外办", "港澳台办", "出国境管理办公室", "护照签证办公室"],
+    "category": "international",
+    "summary": "负责国际合作、校际交流、学生海外交流、外国专家与因公出国境等事务。",
+    "responsibilities": ["国际合作协议与校际交流", "学生海外交流项目", "外国专家与国际会议协调", "因公出国境、护照和签证服务", "港澳台交流事务"],
+    "website": "https://oic.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "210—213", "phones": ["025-52090191", "025-52090195", "025-52090196", "025-52090197"], "serviceNote": "国际合作、学生交流和外事服务分科室办理。" },
+      { "campusId": "sipailou", "location": "孟芳图书馆（老图书馆）", "room": "127", "phones": ["025-83793215", "025-83795067", "025-83793015"], "placeId": "mengfang-library", "serviceNote": "出国境与护照签证业务应先核对线上流程和材料清单。" }
+    ],
+    "links": [{ "label": "国际合作处联系方式", "url": "https://oic.seu.edu.cn/lxwm/list.htm" }],
+    "sourceIds": ["international-office-contact"],
+    "primarySourceId": "international-office-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "security-office",
+    "name": "保卫处",
+    "aliases": ["保卫部", "校园警务", "户籍科", "校园报警"],
+    "category": "security",
+    "summary": "负责校园安全、治安、消防、交通、户籍和应急联络等工作。",
+    "responsibilities": ["校园治安、巡查与报警处置", "消防安全和校园交通管理", "师生集体户籍服务", "大型活动安全与应急协调"],
+    "website": "https://bwc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "sipailou", "location": "沙塘园保卫楼", "room": "户籍科102参考", "phones": ["025-83790110", "025-83792086"], "placeId": "security", "serviceNote": "83790110为四牌楼校园报警电话；户籍业务前请电话确认房间。" },
+      { "campusId": "jiulonghu", "location": "九龙湖校区教一综合服务大厅及保卫服务点", "room": "户籍服务10号窗口参考", "phones": ["025-52090110", "025-52091209"], "serviceNote": "紧急情况优先拨打110或校区报警电话。" }
+    ],
+    "links": [{ "label": "保卫处首页", "url": "https://bwc.seu.edu.cn/" }],
+    "sourceIds": ["security-office-current", "security-room-reference"],
+    "primarySourceId": "security-office-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "general-services",
+    "name": "总务处",
+    "aliases": ["后勤", "后勤保障", "报修", "水电服务", "餐饮服务"],
+    "category": "campus-services",
+    "summary": "统筹校园餐饮、物业、能源水电、修缮、交通和环境等后勤保障服务。",
+    "responsibilities": ["食堂和餐饮服务监管", "水电能源与零星维修协调", "物业、环境和校园生活保障", "校车与交通保障相关服务"],
+    "website": "https://zwc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "总务处后勤服务体系", "room": "按具体业务分流", "phones": ["025-52090314"], "serviceNote": "服务监督电话工作日8:30—12:00、13:30—17:00；报修和餐饮等应优先使用官网对应入口。" },
+      { "campusId": "sipailou", "location": "四牌楼校区后勤服务点", "room": "按具体业务分流", "phones": ["025-52090314"], "serviceNote": "该电话用于服务监督与分流，具体现场服务点以总务处页面和校内平台为准。" }
+    ],
+    "links": [{ "label": "总务处服务入口", "url": "https://zwc.seu.edu.cn/" }],
+    "sourceIds": ["general-services-current"],
+    "primarySourceId": "general-services-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "information-center",
+    "name": "网络与信息中心",
+    "aliases": ["网信中心", "网络中心", "信息中心", "校园网服务", "80808"],
+    "category": "information",
+    "summary": "负责校园网络、统一身份认证、公共信息系统、数据中心和网络安全等服务。",
+    "responsibilities": ["校园网接入与网络故障支持", "统一身份认证和公共账号服务", "校级信息系统、数据与基础平台运行", "网络与信息安全保障"],
+    "website": "https://nic.seu.edu.cn/",
+    "offices": [
+      { "campusId": "sipailou", "location": "进香河校区综合楼（四牌楼附近）", "room": "二楼", "phones": ["025-83790808"], "email": "80808@seu.edu.cn", "serviceNote": "校园网、账号和公共信息系统问题可先拨打统一服务热线。" },
+      { "campusId": "jiulonghu", "location": "九龙湖校区金智楼北楼", "room": "二楼", "phones": ["025-83790808"], "email": "80808@seu.edu.cn", "serviceNote": "复杂业务可先通过服务热线或邮件确认负责科室。" }
+    ],
+    "links": [{ "label": "网络与信息中心", "url": "https://nic.seu.edu.cn/" }],
+    "sourceIds": ["nic-current"],
+    "primarySourceId": "nic-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "library-department",
+    "name": "图书馆",
+    "aliases": ["东大图书馆", "李文正图书馆", "四牌楼图书馆", "丁家桥图书馆"],
+    "category": "library-archives",
+    "summary": "提供馆藏借阅、学习空间、数字资源、学科咨询、查收查引和文献传递等服务。",
+    "responsibilities": ["纸质馆藏借阅与空间服务", "数据库和数字资源访问", "查收查引、科技查新与学科咨询", "文献传递、培训与阅读推广"],
+    "website": "https://lib.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区李文正图书馆", "room": "总服务台及办公室", "phones": ["025-52090331", "025-52090328"], "email": "library@pub.seu.edu.cn", "serviceNote": "空间通常8:00—22:00开放，具体以节假日公告为准。" },
+      { "campusId": "sipailou", "location": "四牌楼校区图书馆", "room": "一楼总服务台", "phones": ["025-83792630"], "email": "library@pub.seu.edu.cn", "placeId": "library", "serviceNote": "借还、自修和多数阅览空间通常8:00—22:00开放。" },
+      { "campusId": "dingjiaqiao", "location": "丁家桥校区图书馆", "room": "总服务台", "phones": ["025-83272462"], "email": "library@pub.seu.edu.cn", "serviceNote": "医学馆藏与开放安排以图书馆当期公告为准。" }
+    ],
+    "links": [
+      { "label": "开放时间", "url": "https://lib.seu.edu.cn/list.php?fid=220" },
+      { "label": "联系我们", "url": "https://lib.seu.edu.cn/list.php?fid=630" }
+    ],
+    "sourceIds": ["library-open-current", "library-contact-current"],
+    "primarySourceId": "library-contact-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "archives-department",
+    "name": "档案馆",
+    "aliases": ["学校档案馆", "查档", "成绩档案", "学籍档案"],
+    "category": "library-archives",
+    "summary": "负责学校档案收集、保管、利用、编研和专门档案服务，支持线上预约。",
+    "responsibilities": ["学校各类档案接收与保管", "校史、学籍及相关档案查询利用", "专门档案与证明服务", "档案数字化、编研与展陈"],
+    "website": "https://archives.seu.edu.cn/",
+    "offices": [
+      { "campusId": "sipailou", "location": "东南大学档案馆", "room": "保管利用部421、收集指导部512、专门档案部422等", "phones": ["025-83792861", "025-83794725", "025-83792913"], "placeId": "archives-building", "serviceNote": "建议先通过网上办事大厅预约，并按事项确认房间和材料。" }
+    ],
+    "links": [
+      { "label": "档案馆服务信息", "url": "https://archives.seu.edu.cn/789/list.htm" },
+      { "label": "网上办事大厅说明", "url": "https://archives.seu.edu.cn/2020/1019/c30521a350299/page.htm" }
+    ],
+    "sourceIds": ["archives-service", "archives-online-hall"],
+    "primarySourceId": "archives-online-hall",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "undergraduate-admissions",
+    "name": "本科生招生办公室",
+    "aliases": ["招生办", "本科招办", "东大招生咨询"],
+    "category": "admissions-employment",
+    "summary": "负责本科招生政策、咨询、宣传和录取相关工作。",
+    "responsibilities": ["本科招生政策和报考咨询", "招生宣传与咨询活动", "录取信息和特殊类型招生服务", "招生资料与信息发布"],
+    "website": "https://zsb.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区本科生招生办公室", "room": "以招生网最新说明为准", "phones": ["400-691-0286", "025-52090271"], "email": "zhaoban@seu.edu.cn", "serviceNote": "热线用于本科招生咨询；具体咨询高峰期安排以招生网公告为准。" }
+    ],
+    "links": [{ "label": "本科招生网", "url": "https://zsb.seu.edu.cn/" }],
+    "sourceIds": ["admissions-contact-current"],
+    "primarySourceId": "admissions-contact-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "employment-services",
+    "name": "学生就业指导中心",
+    "aliases": ["就业办", "就业指导中心", "生涯教育中心", "就业手续"],
+    "category": "admissions-employment",
+    "summary": "提供学生生涯教育、招聘信息、就业指导和就业手续相关服务。",
+    "responsibilities": ["生涯规划和就业指导", "校园招聘与用人单位服务", "就业手续、去向和材料咨询", "就业市场与信息平台维护"],
+    "website": "https://xsc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区大学生活动中心", "room": "就业指导相关办公室", "phones": ["025-52090274", "025-52090275"], "serviceNote": "具体手续可先通过电话或学校就业平台核对。" },
+      { "campusId": "sipailou", "location": "四牌楼校区就业服务点", "room": "房间以学生处最新通知为准", "phones": ["025-83795903", "025-83792592"], "serviceNote": "四牌楼办公地点可能随学期调整，出发前务必电话确认。" }
+    ],
+    "links": [{ "label": "学生处机构与联系方式", "url": "https://xsc.seu.edu.cn/65021/list.htm" }],
+    "sourceIds": ["employment-contact-current"],
+    "primarySourceId": "employment-contact-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "lab-equipment-office",
+    "name": "实验室与设备管理处",
+    "aliases": ["设备处", "实验室管理处", "实验室安全", "大型仪器共享"],
+    "category": "assets-construction",
+    "summary": "负责实验室建设与安全、仪器设备管理、大型仪器开放共享等工作。",
+    "responsibilities": ["实验室建设与安全管理", "仪器设备采购论证、验收和处置协调", "大型仪器开放共享与绩效管理", "实验技术队伍和相关平台服务"],
+    "website": "https://sbc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区后勤公寓楼", "room": "5—6楼相关办公室", "phones": [], "serviceNote": "具体事项按设备、实验室安全和共享平台分流；官网未在同一页面集中公布电话，建议先用线上入口。" },
+      { "campusId": "sipailou", "location": "微波楼", "room": "504", "phones": ["025-83792432"], "placeId": "microwave-building", "serviceNote": "大型仪器共享等业务可先电话确认或使用共享平台。" }
+    ],
+    "links": [
+      { "label": "实验室与设备管理处", "url": "https://sbc.seu.edu.cn/" },
+      { "label": "大型仪器共享平台", "url": "https://dypub.seu.edu.cn/main/equips" }
+    ],
+    "sourceIds": ["lab-equipment-current", "equipment-sharing-platform"],
+    "primarySourceId": "lab-equipment-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "capital-construction",
+    "name": "基本建设处",
+    "aliases": ["基建处", "工程管理科", "计划与造价管理科", "校园建设"],
+    "category": "assets-construction",
+    "summary": "负责学校基本建设规划、项目设计、投资造价、施工管理、验收移交和保修协调。",
+    "responsibilities": ["校园基本建设规划与项目前期", "设计、投资估算和造价管理", "施工质量、进度和安全管理", "竣工验收、移交与保修协调"],
+    "website": "https://jbjsc.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区总务楼", "room": "办公室105；计划造价102/103；工程管理106/107", "phones": ["025-52091042", "025-52091363", "025-52090482"], "serviceNote": "工程咨询应按项目阶段联系计划造价、工程管理或综合办公室。" }
+    ],
+    "links": [
+      { "label": "基建处联系方式", "url": "https://jbjsc.seu.edu.cn/18326/list.htm" },
+      { "label": "校园建设动态", "url": "https://jbjsc.seu.edu.cn/" }
+    ],
+    "sourceIds": ["capital-construction-contact"],
+    "primarySourceId": "capital-construction-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "development-planning",
+    "name": "党委发展规划与学科建设部（发展规划与学科建设处）",
+    "aliases": ["发展规划处", "学科建设处", "双一流办公室", "规划部"],
+    "category": "planning",
+    "summary": "负责学校事业发展规划、综合改革、学科建设、资源配置和事业数据分析。",
+    "responsibilities": ["中长期事业发展规划与评估", "一流大学和一流学科建设", "学科布局、申报和评估", "机构与资源配置规划", "事业数据统计分析"],
+    "website": "https://ghb.seu.edu.cn/main.htm",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区行政楼", "room": "具体房间以部门通知为准", "phones": ["025-52091387"], "serviceNote": "面向院系和校内单位的规划、学科建设业务可先通过综合电话分流。" }
+    ],
+    "links": [{ "label": "部门网站", "url": "https://ghb.seu.edu.cn/main.htm" }],
+    "sourceIds": ["development-planning-contact"],
+    "primarySourceId": "development-planning-contact",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  },
+  {
+    "id": "sports-department",
+    "name": "体育系",
+    "aliases": ["体育部", "体育教务", "体育场馆管理", "群体办公室"],
+    "category": "sports",
+    "summary": "承担公共体育教学、学生体质与群体活动、运动队和体育场馆管理等工作。",
+    "responsibilities": ["本科公共体育课程教学", "体质测试、群体活动和校园体育", "运动队训练与竞赛组织", "体育场馆运行与相关咨询"],
+    "website": "https://tyx.seu.edu.cn/",
+    "offices": [
+      { "campusId": "jiulonghu", "location": "九龙湖校区体育馆主馆", "room": "101行政；102教务；其他办公室", "phones": ["025-52090819", "025-52090820", "025-52090821"], "serviceNote": "教务办公室常规周一、周三在九龙湖，临时安排以体育系通知为准。" },
+      { "campusId": "sipailou", "location": "四牌楼校区体育馆", "room": "101教务办公室", "phones": ["025-83792472", "025-83794442"], "placeId": "gym", "serviceNote": "教务办公室常规周二、周四、周五在四牌楼，场馆开放另按公告执行。" }
+    ],
+    "links": [{ "label": "办公地址及电话", "url": "https://tyx.seu.edu.cn/2160/list.htm" }],
+    "sourceIds": ["sports-contact-current"],
+    "primarySourceId": "sports-contact-current",
+    "verifiedAt": "2026-08-18",
+    "volatile": true
+  }
+]

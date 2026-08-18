@@ -37,6 +37,9 @@ jobs:
       - name: Check syntax
         run: npm run check
 
+      - name: Verify shared knowledge artifacts
+        run: npm run verify:shared
+
       - name: Verify newline normalization
         run: npm run test:newlines
 

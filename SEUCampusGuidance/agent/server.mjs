@@ -15,7 +15,7 @@ import { isConfigured } from "./lib/deepseek.mjs";
 import { formatSse, errorEvent, SSE_HEADERS, HEARTBEAT_MS } from "./lib/sse.mjs";
 import { checkRateLimit, clientIp } from "./lib/ratelimit.mjs";
 import { validateChatInput } from "./lib/validate.mjs";
-import { KNOWLEDGE_BUILD, CAMPUSES } from "./data/knowledge.mjs";
+import { baselineKnowledge } from "./lib/knowledge-overlay.mjs";
 import { readActiveConfig, storageConfigured } from "./api/_shared/config-store.js";
 import adminSession from "./api/admin/session.js";
 import adminConfig from "./api/admin/config.js";
@@ -28,6 +28,7 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(rootDir, "public");
 const port = Number(process.env.PORT || 5174);
 const host = process.env.HOST || "127.0.0.1";
+const baseline = baselineKnowledge();
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -215,7 +216,7 @@ const server = http.createServer(async (request, response) => {
         knowledgeStorageConfigured: knowledgeStorageConfigured(),
         model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
         knowledge: {
-          generatedAt: KNOWLEDGE_BUILD.generatedAt,
+          generatedAt: activeKnowledge.knowledge.build.generatedAt,
           chunks: activeKnowledge.knowledge.build.chunkCount,
           campuses: activeKnowledge.knowledge.campuses.map((campus) => ({ slug: campus.slug, name: campus.name, version: campus.version })),
           release: activeKnowledge.release?.pathname || null,
@@ -238,6 +239,6 @@ const server = http.createServer(async (request, response) => {
 
 server.listen(port, host, () => {
   console.log(`校区指南 Agent: http://${host}:${port}`);
-  console.log(`知识库: ${KNOWLEDGE_BUILD.chunkCount} 个章节 / ${CAMPUSES.length} 个校区（构建于 ${KNOWLEDGE_BUILD.generatedAt.slice(0, 10)}）`);
+  console.log(`知识库: ${baseline.build.chunkCount} 个章节 / ${baseline.campuses.length} 个校区（基线 ${baseline.build.generatedAt}）`);
   console.log(`模型: ${isConfigured() ? process.env.DEEPSEEK_MODEL || "deepseek-v4-flash" : "DEEPSEEK_API_KEY 未配置，问答将返回 503"}`);
 });
