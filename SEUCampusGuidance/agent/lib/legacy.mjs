@@ -46,6 +46,23 @@ function findRelevantContext(message, campus, retriever) {
   return { mapFeatures: features, guideSections };
 }
 
+function buildExtractiveFallback(context) {
+  const top = context.guideSections[0];
+  if (!top?.text) {
+    return "在线模型没有生成完整回答，请换一种问法，或直接使用页面顶部搜索查看校园地点与办事信息。";
+  }
+
+  const lines = String(top.text)
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .filter((line) => line && !/^来源：?$/.test(line));
+  const sourceIndex = lines.findIndex((line) => /^- .+https?:\/\//.test(line));
+  const answerLines = sourceIndex >= 0 ? lines.slice(0, sourceIndex) : lines;
+  const answer = answerLines.join("\n").replace(/^#\s+/, "").slice(0, 5_000).trim();
+  const version = top.version ? `（依据${top.version}；办公地点、电话和时间等易变信息请在出发前复核。）` : "";
+  return `${answer}\n\n${version}`.trim();
+}
+
 export async function answerLegacy(message, { signal, knowledge = null } = {}) {
   const campus = detectCampus(message) || LEGACY_CAMPUS;
   const retriever = createRetriever(knowledge || undefined);
@@ -63,12 +80,12 @@ export async function answerLegacy(message, { signal, knowledge = null } = {}) {
   try {
     const parsed = JSON.parse(content.replace(/^```json\s*|\s*```$/g, ""));
     return {
-      message: String(parsed.message || "暂时没有找到可靠答案。"),
+      message: String(parsed.message || buildExtractiveFallback(context)),
       placeIds: Array.isArray(parsed.placeIds)
         ? parsed.placeIds.filter((id) => ALL_MAP_FEATURES.some((feature) => feature.id === id))
         : [],
     };
   } catch {
-    return { message: content || "暂时没有找到可靠答案。", placeIds: [] };
+    return { message: content || buildExtractiveFallback(context), placeIds: [] };
   }
 }
