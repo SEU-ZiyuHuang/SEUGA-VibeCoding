@@ -9,5 +9,6 @@ node_modules/
 # 指南原图与交接压缩包：不进公开仓库，私下传递
 2026四牌楼/
 seu-campus-guide-1.2.0-交接包.zip
-seu-campus-guide-1.2.0-交接包/   # zip 被自动解压出的副本，含原图
+# zip 被自动解压出的副本，含原图
+seu-campus-guide-1.2.0-交接包/
 seu-campus-guide-skill.zip
