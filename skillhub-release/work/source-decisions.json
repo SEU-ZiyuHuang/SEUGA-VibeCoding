@@ -1,0 +1,1820 @@
+[
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/campus-card-services.md#3.1",
+    "destination": "references/campuses/dingjiaqiao/campus-card-services.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/campus-card-services.md#3.2",
+    "destination": "references/campuses/dingjiaqiao/campus-card-services.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/campus-card-services.md",
+    "destination": "references/campuses/dingjiaqiao/campus-card-services.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/campus-map-and-gates.md",
+    "destination": "references/campuses/dingjiaqiao/campus-map-and-gates.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/canteen-hours.md",
+    "destination": "references/campuses/dingjiaqiao/canteen-hours.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/classroom-printing-and-rooms.md",
+    "destination": "references/campuses/dingjiaqiao/classroom-printing-and-rooms.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/courier-and-delivery.md",
+    "destination": "references/campuses/dingjiaqiao/courier-and-delivery.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/dormitory-facilities.md",
+    "destination": "references/campuses/dingjiaqiao/dormitory-facilities.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/hospital-and-convenience.md",
+    "destination": "references/campuses/dingjiaqiao/hospital-and-convenience.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/intercampus-transport.md",
+    "destination": "references/campuses/dingjiaqiao/intercampus-transport.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/laundry-and-hot-water.md",
+    "destination": "references/campuses/dingjiaqiao/laundry-and-hot-water.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/library-and-study.md#2.1",
+    "destination": "references/campuses/dingjiaqiao/library-and-study.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/library-and-study.md#2.2",
+    "destination": "references/campuses/dingjiaqiao/library-and-study.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/library-and-study.md#2.3",
+    "destination": "references/campuses/dingjiaqiao/library-and-study.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/library-and-study.md",
+    "destination": "references/campuses/dingjiaqiao/library-and-study.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/metro-and-bus.md",
+    "destination": "references/campuses/dingjiaqiao/metro-and-bus.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/nearby-food-and-shopping.md",
+    "destination": "references/campuses/dingjiaqiao/nearby-food-and-shopping.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/source-conflicts-and-freshness.md",
+    "destination": "references/campuses/dingjiaqiao/source-conflicts-and-freshness.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/sports-access-and-parking.md",
+    "destination": "references/campuses/dingjiaqiao/sports-access-and-parking.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/dingjiaqiao/student-affairs-and-common-spaces.md",
+    "destination": "references/campuses/dingjiaqiao/student-affairs-and-common-spaces.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/campus-map-and-gates.md",
+    "destination": "references/campuses/jiangbei/campus-map-and-gates.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/canteens-and-payment.md",
+    "destination": "references/campuses/jiangbei/canteens-and-payment.md",
+    "action": "replace",
+    "reason": "与新包江北对应主题按小节合并，正文在后续阶段生成"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/dormitory-and-access.md",
+    "destination": "references/campuses/jiangbei/dormitory-and-access.md",
+    "action": "replace",
+    "reason": "与新包江北对应主题按小节合并，正文在后续阶段生成"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/medical-and-library-services.md",
+    "destination": "references/campuses/jiangbei/medical-and-library-services.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/metro-and-bus-access.md",
+    "destination": "references/campuses/jiangbei/metro-and-bus-access.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/nearby-food-districts.md",
+    "destination": "references/campuses/jiangbei/nearby-food-districts.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/parcel-delivery-and-post.md",
+    "destination": "references/campuses/jiangbei/parcel-delivery-and-post.md",
+    "action": "replace",
+    "reason": "与新包江北对应主题按小节合并，正文在后续阶段生成"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/shopping-and-daily-services.md",
+    "destination": "references/campuses/jiangbei/shopping-and-daily-services.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/source-caveats-and-copyright.md",
+    "destination": "references/campuses/jiangbei/source-caveats-and-copyright.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiangbei/stations-airport-and-campuses.md",
+    "destination": "references/campuses/jiangbei/stations-airport-and-campuses.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/administrative-services.md",
+    "destination": "references/campuses/jiulonghu/administrative-services.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/around-campus-and-business-districts.md",
+    "destination": "references/campuses/jiulonghu/around-campus-and-business-districts.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/campus-map-and-gates.md",
+    "destination": "references/campuses/jiulonghu/campus-map-and-gates.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/canteens-and-medical.md",
+    "destination": "references/campuses/jiulonghu/canteens-and-medical.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/dormitories-on-campus.md",
+    "destination": "references/campuses/jiulonghu/dormitories-on-campus.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/lantai-dormitory.md",
+    "destination": "references/campuses/jiulonghu/lantai-dormitory.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/library-and-eae-centre.md#3.1",
+    "destination": "references/campuses/jiulonghu/library-and-eae-centre.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/library-and-eae-centre.md#3.4",
+    "destination": "references/campuses/jiulonghu/library-and-eae-centre.md",
+    "action": "replace",
+    "reason": "重复事实改为共同主题引用；旧文原样保留在输入目录"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/library-and-eae-centre.md",
+    "destination": "references/campuses/jiulonghu/library-and-eae-centre.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/metro-and-intercampus-transport.md",
+    "destination": "references/campuses/jiulonghu/metro-and-intercampus-transport.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/shuttle-lantai-line.md",
+    "destination": "references/campuses/jiulonghu/shuttle-lantai-line.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/shuttle-metro-line.md",
+    "destination": "references/campuses/jiulonghu/shuttle-metro-line.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/shuttle-wireless-valley-line.md",
+    "destination": "references/campuses/jiulonghu/shuttle-wireless-valley-line.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/source-differences-and-issues.md",
+    "destination": "references/campuses/jiulonghu/source-differences-and-issues.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/sports-and-pool.md",
+    "destination": "references/campuses/jiulonghu/sports-and-pool.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/jiulonghu/teaching-and-research-buildings.md",
+    "destination": "references/campuses/jiulonghu/teaching-and-research-buildings.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/administrative-services.md",
+    "destination": "references/campuses/sipailou/administrative-services.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/around-food-and-commerce.md",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/campus-map-and-buildings.md",
+    "destination": "references/campuses/sipailou/campus-map-and-buildings.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/canteens.md",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/delivery-and-takeout.md",
+    "destination": "references/campuses/sipailou/delivery-and-takeout.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/dorm-life.md",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/library-and-classrooms.md",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/medical-and-daily-services.md",
+    "destination": "references/campuses/sipailou/medical-and-daily-services.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/metro-bus-bike.md",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/notes-and-discrepancies.md",
+    "destination": "references/campuses/sipailou/notes-and-discrepancies.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/sipailou/sports-and-safety.md",
+    "destination": "references/campuses/sipailou/sports-and-safety.md",
+    "action": "replace",
+    "reason": "按2026图片与重点官方核验重组；历史独有建筑等信息由结构化实体保留"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/bus-routes-by-destination.md",
+    "destination": "references/campuses/suzhou/bus-routes-by-destination.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/campus-map-and-gates.md",
+    "destination": "references/campuses/suzhou/campus-map-and-gates.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/dorm-and-utilities.md",
+    "destination": "references/campuses/suzhou/dorm-and-utilities.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/metro-routes-and-times.md",
+    "destination": "references/campuses/suzhou/metro-routes-and-times.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/nearby-food-and-night-market.md",
+    "destination": "references/campuses/suzhou/nearby-food-and-night-market.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/repair-and-contacts.md",
+    "destination": "references/campuses/suzhou/repair-and-contacts.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/self-study-and-printing.md",
+    "destination": "references/campuses/suzhou/self-study-and-printing.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/shopping-and-sights.md",
+    "destination": "references/campuses/suzhou/shopping-and-sights.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/source-conflicts-and-copyright.md",
+    "destination": "references/campuses/suzhou/source-conflicts-and-copyright.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/sports-facilities.md",
+    "destination": "references/campuses/suzhou/sports-facilities.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/suzhou/stores-banks-and-hospitals.md",
+    "destination": "references/campuses/suzhou/stores-banks-and-hospitals.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/autonomous-shuttle.md",
+    "destination": "references/campuses/wuxi/autonomous-shuttle.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/bus-routes.md",
+    "destination": "references/campuses/wuxi/bus-routes.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/campus-card-services.md",
+    "destination": "references/campuses/wuxi/campus-card-services.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/campus-map-and-gates.md",
+    "destination": "references/campuses/wuxi/campus-map-and-gates.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/campus-shops-and-banks.md",
+    "destination": "references/campuses/wuxi/campus-shops-and-banks.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/canteen-and-meal-times.md",
+    "destination": "references/campuses/wuxi/canteen-and-meal-times.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/cycling-and-ebikes.md",
+    "destination": "references/campuses/wuxi/cycling-and-ebikes.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/delivery-and-takeout.md",
+    "destination": "references/campuses/wuxi/delivery-and-takeout.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/dormitory-and-laundry.md",
+    "destination": "references/campuses/wuxi/dormitory-and-laundry.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/library-and-study-spaces.md",
+    "destination": "references/campuses/wuxi/library-and-study-spaces.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/medical-services.md",
+    "destination": "references/campuses/wuxi/medical-services.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/metro-and-gate-routes.md",
+    "destination": "references/campuses/wuxi/metro-and-gate-routes.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/nearby-shopping.md",
+    "destination": "references/campuses/wuxi/nearby-shopping.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/nearby-sights.md",
+    "destination": "references/campuses/wuxi/nearby-sights.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/rail-to-nanjing.md",
+    "destination": "references/campuses/wuxi/rail-to-nanjing.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/source-and-copyright.md",
+    "destination": "references/campuses/wuxi/source-and-copyright.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/原校区指南-wiki/wuxi/sports-and-booking.md",
+    "destination": "references/campuses/wuxi/sports-and-booking.md",
+    "action": "retain-adapt",
+    "reason": "保留原文主体、页码与别名；增加历史边界，必要处定向去重"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#auditorium",
+    "destination": "references/official/place-auditorium.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#mengfang-library",
+    "destination": "references/official/place-mengfang-library.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#meian",
+    "destination": "references/official/place-meian.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#liuchaosong",
+    "destination": "references/official/place-liuchaosong.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#south-gate",
+    "destination": "references/official/place-south-gate.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#history-museum",
+    "destination": "references/official/place-history-museum.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#gym",
+    "destination": "references/official/place-gym.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#jianxiong",
+    "destination": "references/official/place-jianxiong.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#zhongda",
+    "destination": "references/official/place-zhongda.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#wu-memorial",
+    "destination": "references/official/place-wu-memorial.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#wusi-building",
+    "destination": "references/official/place-wusi-building.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#microwave-building",
+    "destination": "references/official/place-microwave-building.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#archives-building",
+    "destination": "references/official/place-archives-building.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#security",
+    "destination": "references/official/place-security.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#zhongshan",
+    "destination": "references/official/place-zhongshan.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#dongnan",
+    "destination": "references/official/place-dongnan.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#qiangong",
+    "destination": "references/official/place-qiangong.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#nangao",
+    "destination": "references/official/place-nangao.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#jinling",
+    "destination": "references/official/place-jinling.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#yifu-architecture",
+    "destination": "references/official/place-yifu-architecture.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#library",
+    "destination": "references/official/place-library.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#stadium",
+    "destination": "references/official/place-stadium.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#campus-hospital",
+    "destination": "references/official/place-campus-hospital.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#alumni-hall",
+    "destination": "references/official/place-alumni-hall.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/places/sipailou.json#asia-architecture-archive",
+    "destination": "references/official/place-asia-architecture-archive.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#president-office",
+    "destination": "references/official/department-president-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#organization-department",
+    "destination": "references/official/department-organization-department.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#academic-affairs",
+    "destination": "references/official/department-academic-affairs.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#graduate-school",
+    "destination": "references/official/department-graduate-school.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#student-affairs",
+    "destination": "references/official/department-student-affairs.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#human-resources",
+    "destination": "references/official/department-human-resources.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#research-office",
+    "destination": "references/official/department-research-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#social-sciences-office",
+    "destination": "references/official/department-social-sciences-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#finance-office",
+    "destination": "references/official/department-finance-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#international-office",
+    "destination": "references/official/department-international-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#security-office",
+    "destination": "references/official/department-security-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#general-services",
+    "destination": "references/official/department-general-services.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#information-center",
+    "destination": "references/official/department-information-center.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#library-department",
+    "destination": "references/official/department-library-department.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#archives-department",
+    "destination": "references/official/department-archives-department.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#undergraduate-admissions",
+    "destination": "references/official/department-undergraduate-admissions.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#employment-services",
+    "destination": "references/official/department-employment-services.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#lab-equipment-office",
+    "destination": "references/official/department-lab-equipment-office.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#capital-construction",
+    "destination": "references/official/department-capital-construction.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#development-planning",
+    "destination": "references/official/department-development-planning.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/departments.json#sports-department",
+    "destination": "references/official/department-sports-department.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/services/sipailou.json#history-museum-visit",
+    "destination": "references/official/service-history-museum-visit.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/services/sipailou.json#campus-card-sipailou",
+    "destination": "references/official/service-campus-card-sipailou.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/services/sipailou.json#undergraduate-status-stamp",
+    "destination": "references/official/service-undergraduate-status-stamp.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/services/sipailou.json#archives-request",
+    "destination": "references/official/service-archives-request.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "SEUCampusGuidance/knowledge-base/services/sipailou.json#household-registration-sipailou",
+    "destination": "references/official/service-household-registration-sipailou.md",
+    "action": "export",
+    "reason": "保留稳定ID、来源链接和原核验日期；不将转换日期当核验日期"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#一、紧急联系电话",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#二、医务速查",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#三、后勤速查（24 小时响应渠道）",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#四、信息化速查",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#五、地图速查（主要校区对照）",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#六、常见问题快问快答",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/00-速查速答.md#七、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#一、学校基本信息",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#二、历史沿革",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#三、主要校区",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#四、新生学院（2024 年 10 月成立）",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#五、六大书院（新生学院下设）",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#六、校园核心地标（按区域）",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#七、2026–2027 学年校历",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#八、校园文脉与建筑典故",
+    "destination": "references/common/school-and-calendar.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/01-学校概况.md#九、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#一、报到前的准备",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#三、入学档案与团关系接转",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#三、智慧迎新系统",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#四、校园网接入",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#五、办理大学生医保",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#六、国家助学贷款",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#七、新生军训",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#八、入学第一年医保",
+    "destination": "references/common/onboarding-undergrad.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/02-入学迎新.md#九、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#一、入住流程（新生报到）",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#二、维修服务",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#三、洗浴服务",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#四、自助洗衣、烘干、洗鞋",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#五、自助打印机",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#六、智能外卖柜",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#七、电梯故障",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#八、沙塘园 / 成园宿舍规格（四牌楼）",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#九、书院空间预约（梅庵书院 / 成园书院）",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#十、文昌桥宿舍区（四牌楼 · 北侧）",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#十一、宿舍区周边配套",
+    "destination": "references/campuses/sipailou/dorm-life.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/03-住宿生活.md#十二、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#一、食堂总览",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#二、各食堂联系方式",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#三、食堂营业时间（参考牌区指南 2026 图 05 沙塘园&成园宿舍区）",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#四、食堂业态亮点",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#五、食堂文化空间",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#六、外卖服务",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#七、沙塘园食堂门禁与进出规则（重要）",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#七点五、文昌宿舍区门禁与生活（详见 [03-住宿生活 §10](./03-住宿生活.md)）",
+    "destination": "references/campuses/sipailou/canteens.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#八、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/04-餐饮服务.md#八、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#一、校内步行至地铁站（Walk）",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#二、地铁（Metro）",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#三、用时速查（Duration · 全程最短耗时）",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#四、九龙湖到南京南站·详细路线",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#五、深夜交通（Night Traffic）",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#六、九龙湖校区校车",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#七、兰台住寝点接驳车（南师附中，工作日 / 节假日两套）",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#八、九龙湖校区公共交通（共享单车 / 共享电动自行车）",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#九、骑行 Cycling",
+    "destination": "references/campuses/sipailou/metro-bus-bike.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#十、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/05-校园交通.md#十一、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/06-快递物流.md#一、四牌楼校区",
+    "destination": "references/campuses/sipailou/delivery-and-takeout.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/06-快递物流.md#二、九龙湖校区",
+    "destination": "references/campuses/sipailou/delivery-and-takeout.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/06-快递物流.md#三、寄件地址速记表",
+    "destination": "references/campuses/sipailou/delivery-and-takeout.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/06-快递物流.md#四、智能外卖柜（同地点常可同时收外卖）",
+    "destination": "references/campuses/sipailou/delivery-and-takeout.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/06-快递物流.md#五、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/06-快递物流.md#六、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#一、学籍管理",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#二、选课与学分",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#三、考试与成绩",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#四、奖助学金",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#五、转专业与辅修",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#六、四牌楼校区教学建筑速查",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#七、重要教务系统网址",
+    "destination": "references/common/academics.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#八、文化素质教育学分（文教讲座）",
+    "destination": "references/common/lectures.md",
+    "action": "retain-section",
+    "reason": "按需摘编，保留适用范围及未核验声明"
+  },
+  {
+    "source": "seu-campus-guide/references/07-学习教务.md#九、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#一、教室使用通用规则",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#二、东南院 Dongnan Building（3 层）",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#三、五号楼 Wusi Building（5 层 · 2024 翻新 · 全智慧教室）",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#四、中山院 Zhongshan Building（6 层 · 核心楼）",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#五、礼东 / 礼西 E/W of Auditorium（各3层 · 对称建筑）",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#六、AED / 设施点位全景汇总（教学区）",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#七、教室查借系统使用手册（完整版）",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#八、上课 / 自习常见误区",
+    "destination": "references/campuses/sipailou/library-and-classrooms.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#九、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/08-教学楼与教室.md#十、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#〇、三校区图书馆地址与联系方式",
+    "destination": "references/common/library-hours.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#一、开放时间（官方 2026 版）",
+    "destination": "references/common/library-hours.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#二、借阅规则（2026 修订）",
+    "destination": "references/common/library-services.md",
+    "action": "retain-section",
+    "reason": "按需摘编，保留适用范围及未核验声明"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#三、跨校区委托借还",
+    "destination": "references/common/library-services.md",
+    "action": "retain-section",
+    "reason": "按需摘编，保留适用范围及未核验声明"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#四、自习与座位",
+    "destination": "references/common/library-hours.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#五、李文正图书馆\"找座\"攻略（含电源）",
+    "destination": "references/campuses/jiulonghu/library-seats.md",
+    "action": "retain-section",
+    "reason": "按需摘编，保留适用范围及未核验声明"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#六、特色空间与黑科技（新生指南 2026）",
+    "destination": "references/common/library-hours.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#七、入馆须知与管理规则",
+    "destination": "references/common/library-hours.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#八、实验室与报告厅（四牌楼 · 牌区指南图 03）",
+    "destination": "references/common/library-hours.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#九、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/09-图书馆与实验室.md#十、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/10-行政办事.md#一、校内行政办公室一览（四牌楼校区）",
+    "destination": "references/official/index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/10-行政办事.md#二、开学季常用办事（报到期）",
+    "destination": "references/official/index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/10-行政办事.md#三、办事前准备",
+    "destination": "references/official/index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/10-行政办事.md#四、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/10-行政办事.md#五、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#一、校园卡（一卡通）",
+    "destination": "references/common/campus-card.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#二、校园网（SEU-WLAN）",
+    "destination": "references/common/network.md",
+    "action": "retain-section",
+    "reason": "按需摘编，保留适用范围及未核验声明"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#三、数智东南 App",
+    "destination": "references/common/digital-app.md",
+    "action": "retain-section",
+    "reason": "按需摘编，保留适用范围及未核验声明"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#四、信息化服务热线与报修",
+    "destination": "references/common/campus-card.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#五、常用系统网址汇总",
+    "destination": "references/common/campus-card.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#六、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/11-校园卡与信息化.md#七、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/12-运动场馆.md#一、跑操（阳光体育）",
+    "destination": "references/campuses/sipailou/sports-and-safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/12-运动场馆.md#二、四牌楼校区运动场馆总览",
+    "destination": "references/campuses/sipailou/sports-and-safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/12-运动场馆.md#三、场馆分布位置",
+    "destination": "references/campuses/sipailou/sports-and-safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/12-运动场馆.md#四、锻炼小贴士",
+    "destination": "references/campuses/sipailou/sports-and-safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/12-运动场馆.md#五、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/12-运动场馆.md#六、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#一、校内医疗",
+    "destination": "references/common/insurance.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#二、周边医院速查",
+    "destination": "references/common/insurance.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#三、大学生医保",
+    "destination": "references/common/insurance.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#四、狂犬疫苗",
+    "destination": "references/common/insurance.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#五、生病就医流程建议",
+    "destination": "references/common/insurance.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#六、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/13-医疗与医保.md#七、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#一、宿舍防火防盗",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#二、防诈骗（\"三不一多\"原则）",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#三、国家安全",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#四、人身安全",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#五、心理健康",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#六、AED 使用",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#七、紧急联系卡（随身建议）",
+    "destination": "references/common/safety.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#八、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/14-安全与心理.md#九、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#一、银行服务",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#二、超市 / 便利店",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#三、美食商圈",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#四、通信运营商",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#五、电子产品维修",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#六、文具 & 文创",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#七、理发 / 生活服务",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#八、校外住宿（亲友来访）",
+    "destination": "references/campuses/sipailou/around-food-and-commerce.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#九、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/15-校园周边.md#十、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#一、路线总览",
+    "destination": "references/campuses/sipailou/tour.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#二、沿途点位详解",
+    "destination": "references/campuses/sipailou/tour.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#三、校园文脉背景",
+    "destination": "references/campuses/sipailou/tour.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#四、校史重要节点（漫游时可对应查看）",
+    "destination": "references/campuses/sipailou/tour.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#五、拍照 / 打卡小贴士",
+    "destination": "references/campuses/sipailou/tour.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#六、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/16-四牌楼漫游路线.md#七、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#一、校区概览",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#二、研究生新生报到指南（2026 级）",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#三、交通",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#四、宿舍区（研究生）",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#五、食堂与超市",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#六、快递服务",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#七、周边生活",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#八、电动车",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#九、实验室（东区 · 汇川楼）",
+    "destination": "references/campuses/jiangbei/_index.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#十、相关链接",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/17-江北校区指南.md#十一、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/99-资料来源与版权.md#一、主要资料来源",
+    "destination": "references/sources.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/99-资料来源与版权.md#二、本 wiki 文档结构",
+    "destination": "references/sources.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/99-资料来源与版权.md#三、交叉引用说明",
+    "destination": "references/sources.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/99-资料来源与版权.md#四、版权声明",
+    "destination": "references/sources.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/99-资料来源与版权.md#五、内容核对与免责",
+    "destination": "references/sources.md",
+    "action": "curate-or-replace",
+    "reason": "由目标专题筛选重写；新版图片/官方核验覆盖的采用核验口径，原文仍保留输入目录；未纳入内容可在外部原文审计逐节追溯"
+  },
+  {
+    "source": "seu-campus-guide/references/99-资料来源与版权.md#六、回到主目录",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/README.md#📖 怎么使用这套 Wiki",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/README.md#🗂 导航总表",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/README.md#🚨 最常用 10 个电话（完整见 [00-速查速答](./00-速查速答.md)）",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/README.md#🧭 地图速查（主要校区对照）",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  },
+  {
+    "source": "seu-campus-guide/references/README.md#🔗 主题矩阵（跨文档速查）",
+    "destination": "references/index.md",
+    "action": "deduplicate-navigation",
+    "reason": "改成无事实副本的主题导航"
+  }
+]

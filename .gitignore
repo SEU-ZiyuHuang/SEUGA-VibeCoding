@@ -5,3 +5,8 @@ node_modules/
 .env
 .env.local
 .vercel/
+
+# 指南原图与交接压缩包：不进公开仓库，私下传递
+2026四牌楼/
+seu-campus-guide-1.2.0-交接包.zip
+seu-campus-guide-skill.zip
